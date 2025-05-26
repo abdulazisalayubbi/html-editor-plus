@@ -207,7 +207,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         });
                         await setHeightJS();
                       }
-                      if (mounted && !visibleStream.isClosed) {
+                      final streamIsEmpty = await visibleStream.stream.isEmpty;
+                      if (mounted && !streamIsEmpty) {
                         var visibleDecimal = await visibleStream.stream.first;
                         var newHeight = widget.otherOptions.height;
                         if (visibleDecimal > 0.1) {
