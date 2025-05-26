@@ -55,7 +55,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   /// Stream to transfer the [VisibilityInfo.visibleFraction] to the [onWindowFocus]
   /// function of the webview
-  StreamController<double> visibleStream = StreamController<double>.broadcast();
+  late final StreamController<double> _visibleStream;
 
   /// Helps get the height of the toolbar to accurately adjust the height of
   /// the editor when the keyboard is visible.
@@ -70,6 +70,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   @override
   void initState() {
     docHeight = widget.otherOptions.height;
+    _visibleStream = StreamController<double>.broadcast();
     key = getRandString(10);
     if (widget.htmlEditorOptions.filePath != null) {
       filePath = widget.htmlEditorOptions.filePath!;
@@ -83,7 +84,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   void dispose() {
-    visibleStream.close();
+    _visibleStream.close();
     super.dispose();
   }
 
@@ -108,11 +109,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       child: VisibilityDetector(
         key: Key(key),
         onVisibilityChanged: (VisibilityInfo info) async {
-          if (!visibleStream.isClosed) {
+          if (!_visibleStream.isClosed) {
             cachedVisibleDecimal = info.visibleFraction == 1
                 ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
                 : info.visibleFraction;
-            visibleStream.add(info.visibleFraction == 1
+            _visibleStream.add(info.visibleFraction == 1
                 ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
                 : info.visibleFraction);
           }
@@ -179,7 +180,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     }
                     if (widget.htmlEditorOptions.adjustHeightForKeyboard &&
                         mounted &&
-                        !visibleStream.isClosed) {
+                        !_visibleStream.isClosed) {
                       Future<void> setHeightJS() async {
                         await controller.evaluateJavascript(source: """
                                 \$('div.note-editable').outerHeight(${max(docHeight - (toolbarKey.currentContext?.size?.height ?? 0), 30)});
@@ -207,9 +208,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         });
                         await setHeightJS();
                       }
-                      final streamIsEmpty = await visibleStream.stream.isEmpty;
+                      final streamIsEmpty = await _visibleStream.stream.isEmpty;
                       if (mounted && !streamIsEmpty) {
-                        var visibleDecimal = await visibleStream.stream.first;
+                        var visibleDecimal = await _visibleStream.stream.first;
                         var newHeight = widget.otherOptions.height;
                         if (visibleDecimal > 0.1) {
                           this.setState(() {
