@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_string_escapes, prefer_interpolation_to_compose_strings
-
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -209,14 +207,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         });
                         await setHeightJS();
                       }
-                      var visibleDecimal = await visibleStream.stream.first;
-                      var newHeight = widget.otherOptions.height;
-                      if (visibleDecimal > 0.1) {
-                        this.setState(() {
-                          docHeight = newHeight * visibleDecimal;
-                        });
-                        //todo add support for traditional summernote controls again?
-                        await setHeightJS();
+                      if (mounted && !visibleStream.isClosed) {
+                        var visibleDecimal = await visibleStream.stream.first;
+                        var newHeight = widget.otherOptions.height;
+                        if (visibleDecimal > 0.1) {
+                          this.setState(() {
+                            docHeight = newHeight * visibleDecimal;
+                          });
+                          //todo add support for traditional summernote controls again?
+                          await setHeightJS();
+                        }
                       }
                     }
                   },

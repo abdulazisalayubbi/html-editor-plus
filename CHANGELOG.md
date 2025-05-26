@@ -1,3 +1,6 @@
+## [0.0.6] = 2024-07-09
+* Updated plugin and demo to use Flutter 3.27
+* Updated mobile widget to avoid calling visibleStream if it's closed or if the widget is not mounted.
 ## [0.0.5] = 2024-07-09
 * Updated dependencies for Flutter 3.22.x
 * Fixed issues after dependencies update

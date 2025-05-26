@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:html_editor_plus/editor_plus.dart';
 import 'package:html_editor_plus_example/plus/core/control_button.dart';
