@@ -49,7 +49,7 @@ class FontButtons extends Toolbar {
 
   List<Icon> getIcons1() {
     var icons = <Icon>[];
-    if (bold) icons.add(const Icon(Icons.access_alarm));
+    if (bold) icons.add(const Icon(Icons.format_bold));
     if (italic) icons.add(const Icon(Icons.format_italic));
     if (underline) icons.add(const Icon(Icons.format_underline));
     if (clearAll) icons.add(const Icon(Icons.format_clear));
