@@ -646,7 +646,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   CustomDropdownMenuItem(
                     value: 'Courier New',
                     child: PointerInterceptor(
-                        child: const Text('Courier New',
+                        child: const Text('San Seriff',
                             style: TextStyle(fontFamily: 'Courier'))),
                   ),
                   CustomDropdownMenuItem(
