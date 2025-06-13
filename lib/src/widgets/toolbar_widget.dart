@@ -520,7 +520,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   left: BorderSide(
                                       color: Colors.grey, width: 3.0))),
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: const Text('Quote',
+                          child: const Text('Qoutesss',
                               style: TextStyle(
                                   fontFamily: 'times', color: Colors.grey))),
                     )),
