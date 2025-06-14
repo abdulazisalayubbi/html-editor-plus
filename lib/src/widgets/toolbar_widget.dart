@@ -508,11 +508,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               menuMaxHeight: widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                   MediaQuery.of(context).size.height / 3,
               style: widget.htmlToolbarOptions.textStyle,
+              selectedItemBuilder: (BuildContext context) {
+                return List<Widget>.generate(9, (index) {
+                  return const Icon(Icons.title); // <== tetap "H" icon
+                });
+              },
               items: [
                 CustomDropdownMenuItem(
                   value: 'p',
                   child: PointerInterceptor(
-                    child: Image.asset('assets/heading.png'),
+                    child: Text("Normal"),
                   ),
                 ),
                 CustomDropdownMenuItem(
