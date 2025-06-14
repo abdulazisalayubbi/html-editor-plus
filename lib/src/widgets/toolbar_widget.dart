@@ -619,12 +619,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
                     BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: Border.all(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.12))),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
