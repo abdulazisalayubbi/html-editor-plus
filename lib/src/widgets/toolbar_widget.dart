@@ -509,8 +509,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               style: widget.htmlToolbarOptions.textStyle,
               items: [
                 CustomDropdownMenuItem(
-                    value: 'p',
-                    child: PointerInterceptor(child: const Text('Normal'))),
+                  value: 'p',
+                  child: PointerInterceptor(
+                    child: Image.asset("assets/images/heading.png"),
+                  ),
+                ),
                 CustomDropdownMenuItem(
                     value: 'blockquote',
                     child: PointerInterceptor(
