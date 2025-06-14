@@ -508,11 +508,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               menuMaxHeight: widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                   MediaQuery.of(context).size.height / 3,
               style: widget.htmlToolbarOptions.textStyle,
-              selectedItemBuilder: (BuildContext context) {
-                return List<Widget>.generate(9, (index) {
-                  return const Icon(Icons.title); // <== tetap "H" icon
-                });
-              },
               items: [
                 CustomDropdownMenuItem(
                   value: 'p',
@@ -550,45 +545,45 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   child: PointerInterceptor(
                       child: const Text('Header 1',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16))),
+                              fontWeight: FontWeight.bold, fontSize: 32))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h2',
                   child: PointerInterceptor(
                       child: const Text('Header 2',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16))),
+                              fontWeight: FontWeight.bold, fontSize: 28))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h3',
                   child: PointerInterceptor(
                       child: const Text('Header 3',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16))),
+                              fontWeight: FontWeight.bold, fontSize: 24))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h4',
                   child: PointerInterceptor(
                       child: const Text('Header 4',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16))),
+                              fontWeight: FontWeight.bold, fontSize: 14))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h5',
                   child: PointerInterceptor(
                       child: const Text('Header 5',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16))),
+                              fontWeight: FontWeight.bold, fontSize: 12))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h6',
                   child: PointerInterceptor(
                       child: const Text('Header 6',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16))),
+                              fontWeight: FontWeight.bold, fontSize: 10))),
                 ),
               ],
-              value: 'p',
+              value: _fontSelectedItem,
               onChanged: (String? changed) async {
                 void updateSelectedItem(dynamic changed) {
                   if (changed is String) {
