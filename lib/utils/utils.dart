@@ -1133,13 +1133,10 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>>
         padding: padding.resolve(Directionality.of(context)),
         height: widget.isDense ? _denseButtonHeight : null,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (widget.isExpanded)
-              Expanded(child: innerItemsWidget)
-            else
-              innerItemsWidget,
+            innerItemsWidget,
             // IconTheme(
             //   data: IconThemeData(
             //     color: _iconColor,
