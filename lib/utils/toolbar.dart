@@ -77,8 +77,10 @@ class ColorButtons extends Toolbar {
 
   List<Icon> getIcons() {
     var icons = <Icon>[];
-    if (foregroundColor) icons.add(const Icon(Icons.format_color_text));
-    if (highlightColor) icons.add(const Icon(Icons.format_color_fill));
+    if (foregroundColor)
+      icons.add(const Icon(Icons.format_color_text, size: 20));
+    if (highlightColor)
+      icons.add(const Icon(Icons.format_color_fill, size: 20));
     return icons;
   }
 }
