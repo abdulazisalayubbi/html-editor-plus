@@ -511,6 +511,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
                 style: widget.htmlToolbarOptions.textStyle,
+                isDense: false,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'p',
@@ -550,8 +551,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     value: 'h1',
                     child: PointerInterceptor(
                         child: SizedBox(
-                      width: 150,
-                      height: 40,
                       child: const Text('Header 1',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 32)),
