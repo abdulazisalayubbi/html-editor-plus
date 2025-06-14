@@ -478,8 +478,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
     for (var t in widget.htmlToolbarOptions.defaultToolbarButtons) {
       if (t is StyleButtons && t.style) {
         toolbarChildren.add(Container(
-          width: 160,
-          margin: EdgeInsets.zero,
           padding: const EdgeInsets.only(left: 8.0),
           height: widget.htmlToolbarOptions.toolbarItemHeight,
           decoration: !widget.htmlToolbarOptions.renderBorder
