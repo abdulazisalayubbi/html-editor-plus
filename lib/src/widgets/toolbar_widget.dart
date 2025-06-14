@@ -1158,7 +1158,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
         toolbarChildren.add(ToggleButtons(
           constraints: BoxConstraints.tightFor(
-            width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+            width: 80,
             height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
           ),
           color: widget.htmlToolbarOptions.buttonColor,
