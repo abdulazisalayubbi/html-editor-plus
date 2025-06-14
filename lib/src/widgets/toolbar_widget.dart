@@ -1362,6 +1362,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       // }
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: List.generate(t.getIcons().length, (index) {
             final isSelected = _colorSelected[index];
             return Padding(
