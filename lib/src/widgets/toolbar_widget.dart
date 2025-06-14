@@ -478,6 +478,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
     for (var t in widget.htmlToolbarOptions.defaultToolbarButtons) {
       if (t is StyleButtons && t.style) {
         toolbarChildren.add(Container(
+          margin: EdgeInsets.zero,
           padding: const EdgeInsets.only(left: 8.0),
           height: widget.htmlToolbarOptions.toolbarItemHeight,
           decoration: !widget.htmlToolbarOptions.renderBorder
@@ -511,7 +512,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 CustomDropdownMenuItem(
                   value: 'p',
                   child: PointerInterceptor(
-                    child: Image.asset("assets/heading.png"),
+                    child: Text("Normal"),
                   ),
                 ),
                 CustomDropdownMenuItem(
@@ -544,21 +545,21 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   child: PointerInterceptor(
                       child: const Text('Header 1',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 32))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h2',
                   child: PointerInterceptor(
                       child: const Text('Header 2',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h3',
                   child: PointerInterceptor(
                       child: const Text('Header 3',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h4',
@@ -572,14 +573,14 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   child: PointerInterceptor(
                       child: const Text('Header 5',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 13))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h6',
                   child: PointerInterceptor(
                       child: const Text('Header 6',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 11))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
               ],
               value: _fontSelectedItem,
