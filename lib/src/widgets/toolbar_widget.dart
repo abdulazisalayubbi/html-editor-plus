@@ -511,7 +511,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 CustomDropdownMenuItem(
                   value: 'p',
                   child: PointerInterceptor(
-                    child: Image.asset("assets/images/heading.png"),
+                    child: Image.asset("assets/heading.png"),
                   ),
                 ),
                 CustomDropdownMenuItem(
