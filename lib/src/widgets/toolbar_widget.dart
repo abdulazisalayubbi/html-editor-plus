@@ -607,6 +607,14 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   }
                 }
               },
+              selectedItemBuilder: (BuildContext context) {
+                return List<Widget>.generate(9, (index) {
+                  return const Icon(
+                    Icons.title,
+                    size: 20,
+                  ); // <== tetap "H" icon
+                });
+              },
             ),
           ),
         ));
