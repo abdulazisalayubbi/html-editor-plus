@@ -618,9 +618,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 },
                 selectedItemBuilder: (BuildContext context) {
                   return List<Widget>.generate(9, (index) {
-                    return SizedBox(
+                    return Container(
                       height: 36, // sesuaikan dengan toolbarItemHeight
-                      width: 120,
+                      constraints: const BoxConstraints(
+                        minWidth: 20,
+                      ),
                       child: Center(
                         child: Image.asset(
                           'assets/heading.png',
