@@ -566,21 +566,21 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   child: PointerInterceptor(
                       child: const Text('Header 4',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14))),
+                              fontWeight: FontWeight.bold, fontSize: 21))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h5',
                   child: PointerInterceptor(
                       child: const Text('Header 5',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
                 CustomDropdownMenuItem(
                   value: 'h6',
                   child: PointerInterceptor(
                       child: const Text('Header 6',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10))),
+                              fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
               ],
               value: _fontSelectedItem,
@@ -606,14 +606,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     updateSelectedItem(changed);
                   }
                 }
-              },
-              selectedItemBuilder: (BuildContext context) {
-                return List<Widget>.generate(9, (index) {
-                  return const Icon(
-                    Icons.title,
-                    size: 20,
-                  ); // <== tetap "H" icon
-                });
               },
             ),
           ),
