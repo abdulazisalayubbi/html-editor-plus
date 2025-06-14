@@ -621,7 +621,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     return Container(
                       height: 36, // sesuaikan dengan toolbarItemHeight
                       constraints: const BoxConstraints(
-                        minWidth: 20,
+                        minWidth: 150,
                       ),
                       child: Center(
                         child: Image.asset(
