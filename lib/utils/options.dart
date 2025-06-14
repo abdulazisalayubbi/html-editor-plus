@@ -131,7 +131,7 @@ class HtmlEditorOptions {
 class HtmlToolbarOptions {
   const HtmlToolbarOptions({
     this.audioExtensions,
-    this.customToolbarButtons = const [],
+    this.customToolbarButtons,
     this.customToolbarInsertionIndices = const [],
     this.defaultToolbarButtons = const [
       StyleButtons(),
@@ -139,8 +139,14 @@ class HtmlToolbarOptions {
       FontButtons(clearAll: false),
       ColorButtons(),
       ListButtons(listStyles: false),
-      ParagraphButtons(textDirection: false, lineHeight: false, caseConverter: false),
-      InsertButtons(video: false, audio: false, table: false, hr: false, otherFile: false),
+      ParagraphButtons(
+          textDirection: false, lineHeight: false, caseConverter: false),
+      InsertButtons(
+          video: false,
+          audio: false,
+          table: false,
+          hr: false,
+          otherFile: false),
     ],
     this.otherFileExtensions,
     this.imageExtensions,
@@ -178,7 +184,8 @@ class HtmlToolbarOptions {
     this.buttonBorderWidth,
     this.renderBorder = false,
     this.textStyle,
-    this.separatorWidget = const VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
+    this.separatorWidget =
+        const VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
     this.renderSeparatorWidget = true,
     this.toolbarItemHeight = 36,
     this.gridViewHorizontalSpacing = 5,
@@ -193,7 +200,7 @@ class HtmlToolbarOptions {
 
   /// Allows you to create your own buttons that are added to the end of the
   /// default buttons list
-  final List<Widget> customToolbarButtons;
+  final List<Widget>? customToolbarButtons;
 
   /// Allows you to set where each custom toolbar button is inserted into the
   /// toolbar buttons.
@@ -244,7 +251,8 @@ class HtmlToolbarOptions {
   /// (true = continue with internal handler, false = do not use internal handler)
   ///
   /// If no interceptor is set, the plugin uses the internal handler.
-  final FutureOr<bool> Function(String, InsertFileType)? mediaLinkInsertInterceptor;
+  final FutureOr<bool> Function(String, InsertFileType)?
+      mediaLinkInsertInterceptor;
 
   /// Allows you to intercept any image/video/audio files being inserted into the editor.
   /// The function passes the PlatformFile class, which contains all the file data
@@ -255,7 +263,8 @@ class HtmlToolbarOptions {
   /// (true = continue with internal handler, false = do not use internal handler)
   ///
   /// If no interceptor is set, the plugin uses the internal handler.
-  final FutureOr<bool> Function(PlatformFile, InsertFileType)? mediaUploadInterceptor;
+  final FutureOr<bool> Function(PlatformFile, InsertFileType)?
+      mediaUploadInterceptor;
 
   /// Allows you to intercept any button press. The function passes the ButtonType
   /// enum, which tells you which button was pressed, the current selected status of
@@ -284,7 +293,8 @@ class HtmlToolbarOptions {
   /// (true = continue with internal handler, false = do not use internal handler)
   ///
   /// If no interceptor is set, the plugin uses the internal handler.
-  final FutureOr<bool> Function(DropdownType, dynamic, void Function(dynamic)?)? onDropdownChanged;
+  final FutureOr<bool> Function(DropdownType, dynamic, void Function(dynamic)?)?
+      onDropdownChanged;
 
   /// Called when a link is inserted for a file using the "other file" button.
   ///
@@ -406,7 +416,8 @@ class OtherOptions {
   const OtherOptions({
     this.decoration = const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(4)),
-      border: Border.fromBorderSide(BorderSide(color: Color(0xffececec), width: 1)),
+      border:
+          Border.fromBorderSide(BorderSide(color: Color(0xffececec), width: 1)),
     ),
     this.height = 400,
   });

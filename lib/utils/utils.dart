@@ -778,6 +778,7 @@ class CustomDropdownButton<T> extends StatefulWidget {
     this.value,
     this.hint,
     this.disabledHint,
+    this.menuWidth,
     this.onChanged,
     this.onTap,
     this.elevation = 8,
@@ -834,6 +835,7 @@ class CustomDropdownButton<T> extends StatefulWidget {
   final bool autofocus;
   final Color? dropdownColor;
   final double? menuMaxHeight;
+  final double? menuWidth;
 
   @override
   State<CustomDropdownButton<T>> createState() => _DropdownButtonState<T>();
