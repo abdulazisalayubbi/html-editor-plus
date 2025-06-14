@@ -475,35 +475,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
-    if (widget.htmlToolbarOptions.customToolbarInsertionIndices.isNotEmpty &&
-        widget.htmlToolbarOptions.customToolbarInsertionIndices.length ==
-            widget.htmlToolbarOptions.customToolbarButtons?.length) {
-      for (var i = 0;
-          i < widget.htmlToolbarOptions.customToolbarInsertionIndices.length;
-          i++) {
-        if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
-            toolbarChildren.length) {
-          toolbarChildren.insert(
-              toolbarChildren.length,
-              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                  SizedBox.shrink());
-        } else if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] <
-            0) {
-          toolbarChildren.insert(
-              0,
-              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                  SizedBox.shrink());
-        } else {
-          toolbarChildren.insert(
-              widget.htmlToolbarOptions.customToolbarInsertionIndices[i],
-              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                  SizedBox.shrink());
-        }
-      }
-    } else {
-      toolbarChildren
-          .addAll(widget.htmlToolbarOptions.customToolbarButtons ?? []);
-    }
     for (var t in widget.htmlToolbarOptions.defaultToolbarButtons) {
       if (t is StyleButtons && t.style) {
         toolbarChildren.add(Container(
@@ -3021,7 +2992,35 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
       }
     }
-
+    if (widget.htmlToolbarOptions.customToolbarInsertionIndices.isNotEmpty &&
+        widget.htmlToolbarOptions.customToolbarInsertionIndices.length ==
+            widget.htmlToolbarOptions.customToolbarButtons?.length) {
+      for (var i = 0;
+          i < widget.htmlToolbarOptions.customToolbarInsertionIndices.length;
+          i++) {
+        if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
+            toolbarChildren.length) {
+          toolbarChildren.insert(
+              toolbarChildren.length,
+              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                  SizedBox.shrink());
+        } else if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] <
+            0) {
+          toolbarChildren.insert(
+              0,
+              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                  SizedBox.shrink());
+        } else {
+          toolbarChildren.insert(
+              widget.htmlToolbarOptions.customToolbarInsertionIndices[i],
+              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                  SizedBox.shrink());
+        }
+      }
+    } else {
+      toolbarChildren
+          .addAll(widget.htmlToolbarOptions.customToolbarButtons ?? []);
+    }
     if (widget.htmlToolbarOptions.renderSeparatorWidget) {
       toolbarChildren = intersperse(
               widget.htmlToolbarOptions.separatorWidget, toolbarChildren)
