@@ -492,147 +492,125 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                               .withOpacity(0.12))),
           child: CustomDropdownButtonHideUnderline(
             child: CustomDropdownButton<String>(
-                elevation: widget.htmlToolbarOptions.dropdownElevation,
-                icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
-                iconSize: widget.htmlToolbarOptions.dropdownIconSize,
-                itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
-                focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
-                dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
-                menuDirection:
-                    widget.htmlToolbarOptions.dropdownMenuDirection ??
-                        (widget.htmlToolbarOptions.toolbarPosition ==
-                                ToolbarPosition.belowEditor
-                            ? DropdownMenuDirection.up
-                            : DropdownMenuDirection.down),
-                menuMaxHeight:
-                    widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
-                        MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
-                isDense: false,
-                isExpanded: true,
-                items: [
-                  CustomDropdownMenuItem(
-                    value: 'p',
-                    child: PointerInterceptor(
-                      child: Text("Normal"),
-                    ),
+              elevation: widget.htmlToolbarOptions.dropdownElevation,
+              icon: widget.htmlToolbarOptions.dropdownIcon,
+              iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+              iconSize: widget.htmlToolbarOptions.dropdownIconSize,
+              itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
+              focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
+              dropdownColor: widget.htmlToolbarOptions.dropdownBackgroundColor,
+              menuDirection: widget.htmlToolbarOptions.dropdownMenuDirection ??
+                  (widget.htmlToolbarOptions.toolbarPosition ==
+                          ToolbarPosition.belowEditor
+                      ? DropdownMenuDirection.up
+                      : DropdownMenuDirection.down),
+              menuMaxHeight: widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
+                  MediaQuery.of(context).size.height / 3,
+              style: widget.htmlToolbarOptions.textStyle,
+              isDense: false,
+              isExpanded: true,
+              items: [
+                CustomDropdownMenuItem(
+                  value: 'p',
+                  child: PointerInterceptor(
+                    child: Text("Normal"),
                   ),
-                  CustomDropdownMenuItem(
-                      value: 'blockquote',
-                      child: PointerInterceptor(
-                        child: Container(
-                            decoration: const BoxDecoration(
-                                border: Border(
-                                    left: BorderSide(
-                                        color: Colors.grey, width: 3.0))),
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: const Text('Qoutesss',
-                                style: TextStyle(
-                                    fontFamily: 'times', color: Colors.grey))),
-                      )),
-                  CustomDropdownMenuItem(
-                      value: 'pre',
-                      child: PointerInterceptor(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.grey),
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: const Text('Code',
-                                style: TextStyle(
-                                    fontFamily: 'courier',
-                                    color: Colors.white))),
-                      )),
-                  CustomDropdownMenuItem(
-                    value: 'h1',
+                ),
+                CustomDropdownMenuItem(
+                    value: 'blockquote',
                     child: PointerInterceptor(
-                        child: SizedBox(
-                      child: const Text('Header 1',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 32)),
+                      child: Container(
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  left: BorderSide(
+                                      color: Colors.grey, width: 3.0))),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: const Text('Qoutesss',
+                              style: TextStyle(
+                                  fontFamily: 'times', color: Colors.grey))),
                     )),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'h2',
+                CustomDropdownMenuItem(
+                    value: 'pre',
                     child: PointerInterceptor(
-                        child: const Text('Header 2',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 28))),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'h3',
-                    child: PointerInterceptor(
-                        child: const Text('Header 3',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24))),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'h4',
-                    child: PointerInterceptor(
-                        child: const Text('Header 4',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 21))),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'h5',
-                    child: PointerInterceptor(
-                        child: const Text('Header 5',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16))),
-                  ),
-                  CustomDropdownMenuItem(
-                    value: 'h6',
-                    child: PointerInterceptor(
-                        child: const Text('Header 6',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16))),
-                  ),
-                ],
-                value: _fontSelectedItem,
-                onChanged: (String? changed) async {
-                  void updateSelectedItem(dynamic changed) {
-                    if (changed is String) {
-                      setState(mounted, this.setState, () {
-                        _fontSelectedItem = changed;
-                      });
-                    }
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.grey),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: const Text('Code',
+                              style: TextStyle(
+                                  fontFamily: 'courier', color: Colors.white))),
+                    )),
+                CustomDropdownMenuItem(
+                  value: 'h1',
+                  child: PointerInterceptor(
+                      child: SizedBox(
+                    child: const Text('Header 1',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 32)),
+                  )),
+                ),
+                CustomDropdownMenuItem(
+                  value: 'h2',
+                  child: PointerInterceptor(
+                      child: const Text('Header 2',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 28))),
+                ),
+                CustomDropdownMenuItem(
+                  value: 'h3',
+                  child: PointerInterceptor(
+                      child: const Text('Header 3',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24))),
+                ),
+                CustomDropdownMenuItem(
+                  value: 'h4',
+                  child: PointerInterceptor(
+                      child: const Text('Header 4',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 21))),
+                ),
+                CustomDropdownMenuItem(
+                  value: 'h5',
+                  child: PointerInterceptor(
+                      child: const Text('Header 5',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16))),
+                ),
+                CustomDropdownMenuItem(
+                  value: 'h6',
+                  child: PointerInterceptor(
+                      child: const Text('Header 6',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16))),
+                ),
+              ],
+              value: _fontSelectedItem,
+              onChanged: (String? changed) async {
+                void updateSelectedItem(dynamic changed) {
+                  if (changed is String) {
+                    setState(mounted, this.setState, () {
+                      _fontSelectedItem = changed;
+                    });
                   }
+                }
 
-                  if (changed != null) {
-                    var proceed =
-                        await widget.htmlToolbarOptions.onDropdownChanged?.call(
-                                DropdownType.style,
-                                changed,
-                                updateSelectedItem) ??
-                            true;
-                    if (proceed) {
-                      widget.controller
-                          .execCommand('formatBlock', argument: changed);
-                      updateSelectedItem(changed);
-                    }
+                if (changed != null) {
+                  var proceed =
+                      await widget.htmlToolbarOptions.onDropdownChanged?.call(
+                              DropdownType.style,
+                              changed,
+                              updateSelectedItem) ??
+                          true;
+                  if (proceed) {
+                    widget.controller
+                        .execCommand('formatBlock', argument: changed);
+                    updateSelectedItem(changed);
                   }
-                },
-                selectedItemBuilder: (BuildContext context) {
-                  return List<Widget>.generate(9, (index) {
-                    return Container(
-                      height: 36, // sesuaikan dengan toolbarItemHeight
-                      constraints: const BoxConstraints(
-                        minWidth: 150,
-                      ),
-                      child: Center(
-                        child: Image.asset(
-                          'assets/heading.png',
-                          width: 20,
-                          height: 20,
-                        ),
-                      ),
-                    );
-                  });
-                }),
+                }
+              },
+            ),
           ),
         ));
       }
