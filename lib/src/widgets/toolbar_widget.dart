@@ -620,7 +620,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   return List<Widget>.generate(9, (index) {
                     return SizedBox(
                       height: 36, // sesuaikan dengan toolbarItemHeight
-                      width: 36,
+                      width: 120,
                       child: Center(
                         child: Image.asset(
                           'assets/heading.png',
