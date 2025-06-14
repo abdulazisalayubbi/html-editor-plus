@@ -14,7 +14,7 @@ class EditorControls extends StatelessWidget {
             alignment: WrapAlignment.center,
             runAlignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 10,
+            spacing: 16,
             runSpacing: 10,
             children: controls,
           ),
