@@ -1349,7 +1349,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             }
           },
           isSelected: _colorSelected,
-          children: t.getIcons(),
+          children: List<Widget>.generate(
+            2,
+            (index) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(child: t.getIcons()[index]),
+            ),
+          ),
         ));
       }
       if (t is ListButtons) {
