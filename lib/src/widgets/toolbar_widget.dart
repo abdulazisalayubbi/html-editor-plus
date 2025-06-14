@@ -512,7 +512,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 CustomDropdownMenuItem(
                   value: 'p',
                   child: PointerInterceptor(
-                    child: Text("Normal"),
+                    child: Image.asset('assets/heading.png'),
                   ),
                 ),
                 CustomDropdownMenuItem(
@@ -583,7 +583,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                               fontWeight: FontWeight.bold, fontSize: 16))),
                 ),
               ],
-              value: _fontSelectedItem,
+              value: 'p',
               onChanged: (String? changed) async {
                 void updateSelectedItem(dynamic changed) {
                   if (changed is String) {
