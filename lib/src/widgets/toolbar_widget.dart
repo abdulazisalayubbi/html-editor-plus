@@ -513,6 +513,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         MediaQuery.of(context).size.height / 3,
                 style: widget.htmlToolbarOptions.textStyle,
                 isDense: false,
+                isExpanded: true,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'p',
