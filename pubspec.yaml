@@ -33,6 +33,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
+    - assets/heading.png
     - assets/font/
     - assets/plugins/summernote-at-mention/
   # This section identifies this Flutter project as a plugin project.
