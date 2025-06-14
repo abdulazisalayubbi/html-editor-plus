@@ -1351,9 +1351,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           isSelected: _colorSelected,
           children: List<Widget>.generate(
             2,
-            (index) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(child: t.getIcons()[index]),
+            (index) => Container(
+              margin: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Column(
+                children: const [Icon(Icons.circle), Text('Cash')],
+              ),
             ),
           ),
         ));
