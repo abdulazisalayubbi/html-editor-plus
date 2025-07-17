@@ -582,11 +582,12 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
         """);
     }
     if (c.onEnter != null) {
-      widget.controller.editorController!.evaluateJavascript(source: """
-          // \$('#summernote-2').on('summernote.enter', function() {
-          //   window.flutter_inappwebview.callHandler('onEnter', 'fired');
-          // });
-        """);
+      // widget.controller.editorController!.evaluateJavascript(source: """
+      //     // \$('#summernote-2').on('summernote.enter', function() {
+      //     //   window.flutter_inappwebview.callHandler('onEnter', 'fired');
+      //     // });
+      //   """);
+      print("onEnter triggered");
     }
     if (c.onFocus != null) {
       widget.controller.editorController!.evaluateJavascript(source: """
