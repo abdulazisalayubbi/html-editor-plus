@@ -554,12 +554,17 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   : ToolbarWidget(
                       key: toolbarKey,
                       controller: widget.controller,
+
                       htmlToolbarOptions: const HtmlToolbarOptions(
                         defaultToolbarButtons: [],
                         toolbarItemHeight: 0,
                         customToolbarButtons: [],
                         dropdownIconSize: 0,
                         dropdownItemHeight: 0,
+                        dropdownElevation: 0,
+                        dropdownMenuMaxHeight: 0,
+                        gridViewHorizontalSpacing: 0,
+                        gridViewVerticalSpacing: 0,
                         
                         customToolbarInsertionIndices: [],
                       ),
