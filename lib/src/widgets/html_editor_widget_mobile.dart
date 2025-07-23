@@ -70,7 +70,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   @override
   void initState() {
     docHeight = widget.otherOptions.height;
-    widget.controller.disable();
+    
     _visibleStream = StreamController<double>.broadcast();
     key = getRandString(10);
     if (widget.htmlEditorOptions.filePath != null) {
