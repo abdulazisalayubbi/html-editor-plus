@@ -88,7 +88,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   double _lineHeightSelectedItem = 1;
 
   /// Masks the toolbar with a grey color if false
-  bool _enabled = true;
+  bool _enabled = false;
 
   /// Tracks the expanded status of the toolbar
   bool _isExpanded = false;
