@@ -544,37 +544,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   },
                 ),
               ),
-              (widget.htmlToolbarOptions.toolbarPosition ==
-                      ToolbarPosition.belowEditor  && !widget.htmlEditorOptions.disabled)
-                  ? ToolbarWidget(
-                      key: toolbarKey,
-                      controller: widget.controller,
-                      htmlToolbarOptions: widget.htmlToolbarOptions,
-                      callbacks: widget.callbacks)
-                  :
-                  //  PreferredSize(
-                  //   preferredSize: const Size.fromHeight(0),
-                  //   child: ToolbarWidget(
-                  //       key: toolbarKey,
-                  //       controller: widget.controller,
-                    
-                  //       htmlToolbarOptions: const HtmlToolbarOptions(
-                  //         defaultToolbarButtons: [],
-                  //         toolbarItemHeight: 0,
-                  //         customToolbarButtons: [],
-                  //         dropdownIconSize: 0,
-                  //         dropdownItemHeight: 0,
-                  //         dropdownElevation: 0,
-                  //         dropdownMenuMaxHeight: 0,
-                  //         gridViewHorizontalSpacing: 0,
-                  //         gridViewVerticalSpacing: 0,
-                    
-                          
-                  //         customToolbarInsertionIndices: [],
-                  //       ),
-                  //       callbacks: widget.callbacks),
-                  // ),
-              const SizedBox(height:0, width:0,),
+        (widget.htmlToolbarOptions.toolbarPosition == ToolbarPosition.belowEditor)
+    ? Opacity(
+        opacity: widget.htmlEditorOptions.disabled ? 0 : 1,
+        child: IgnorePointer(
+          ignoring: widget.htmlEditorOptions.disabled,
+          child: ToolbarWidget(
+            key: toolbarKey,
+            controller: widget.controller,
+            htmlToolbarOptions: widget.htmlToolbarOptions,
+            callbacks: widget.callbacks,
+          ),
+        ),
+      )
+    : const SizedBox.shrink(),
+
             ],
           ),
         ),
