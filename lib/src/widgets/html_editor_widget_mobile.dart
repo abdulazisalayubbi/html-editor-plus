@@ -24,6 +24,7 @@ class HtmlEditorWidget extends StatefulWidget {
     required this.htmlEditorOptions,
     required this.htmlToolbarOptions,
     required this.otherOptions,
+     this.disabled = true,
   });
 
   final HtmlEditorController controller;
@@ -32,7 +33,7 @@ class HtmlEditorWidget extends StatefulWidget {
   final HtmlEditorOptions htmlEditorOptions;
   final HtmlToolbarOptions htmlToolbarOptions;
   final OtherOptions otherOptions;
-
+final bool disabled;
   @override
   State<HtmlEditorWidget> createState() => _HtmlEditorWidgetMobileState();
 }
@@ -509,15 +510,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       //disable editor if necessary
                       if (widget.htmlEditorOptions.disabled &&
                           !callbacksInitialized) {
-                        // widget.controller.disable();
-                         await widget.controller.editorController?.evaluateJavascript(source: '''
-    try {
-      \$('#summernote-2').summernote('disable');
-      \$('.note-toolbar').hide();
-    } catch (e) {
-      console.error("Disable error", e);
-    }
-  ''');
+                        widget.controller.disable();
                       }
                       //initialize callbacks
                       if (widget.callbacks != null && !callbacksInitialized) {
@@ -552,21 +545,37 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   },
                 ),
               ),
-        (widget.htmlToolbarOptions.toolbarPosition == ToolbarPosition.belowEditor)
-    ? Opacity(
-        opacity: widget.htmlEditorOptions.disabled ? 0 : 1,
-        child: IgnorePointer(
-          ignoring: widget.htmlEditorOptions.disabled,
-          child: ToolbarWidget(
-            key: toolbarKey,
-            controller: widget.controller,
-            htmlToolbarOptions: widget.htmlToolbarOptions,
-            callbacks: widget.callbacks,
-          ),
-        ),
-      )
-    : const SizedBox.shrink(),
-
+              (widget.htmlToolbarOptions.toolbarPosition ==
+                      ToolbarPosition.belowEditor  && !widget.htmlEditorOptions.disabled)
+                  ? ToolbarWidget(
+                      key: toolbarKey,
+                      controller: widget.controller,
+                      htmlToolbarOptions: widget.htmlToolbarOptions,
+                      callbacks: widget.callbacks)
+                  :
+                  //  PreferredSize(
+                  //   preferredSize: const Size.fromHeight(0),
+                  //   child: ToolbarWidget(
+                  //       key: toolbarKey,
+                  //       controller: widget.controller,
+                    
+                  //       htmlToolbarOptions: const HtmlToolbarOptions(
+                  //         defaultToolbarButtons: [],
+                  //         toolbarItemHeight: 0,
+                  //         customToolbarButtons: [],
+                  //         dropdownIconSize: 0,
+                  //         dropdownItemHeight: 0,
+                  //         dropdownElevation: 0,
+                  //         dropdownMenuMaxHeight: 0,
+                  //         gridViewHorizontalSpacing: 0,
+                  //         gridViewVerticalSpacing: 0,
+                    
+                          
+                  //         customToolbarInsertionIndices: [],
+                  //       ),
+                  //       callbacks: widget.callbacks),
+                  // ),
+              const SizedBox(height:0, width:0,),
             ],
           ),
         ),
