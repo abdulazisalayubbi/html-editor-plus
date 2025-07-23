@@ -376,6 +376,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               disableGrammar: false,
                               spellCheck: ${widget.htmlEditorOptions.spellCheck},
                               maximumFileSize: $maximumFileSize,
+                               disabled: ${widget.htmlEditorOptions.disabled}, 
                               ${widget.htmlEditorOptions.customOptions}
                               $summernoteCallbacks
                           });
@@ -456,7 +457,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           widget.htmlEditorOptions.darkMode != false) {
                         //todo fix for iOS (https://github.com/pichillilorenzo/flutter_inappwebview/issues/695)
                         var darkCSS =
-                            '<link href=\"${(widget.htmlEditorOptions.filePath != null ? "file:///android_asset/flutter_assets/packages/html_editor_plus/assets/" : "") + "summernote-lite-dark.css"}\" rel=\"stylesheet\">';
+                            '<link href="${"${widget.htmlEditorOptions.filePath != null ? "file:///android_asset/flutter_assets/packages/html_editor_plus/assets/" : ""}summernote-lite-dark.css"}" rel="stylesheet">';
                         await controller.evaluateJavascript(
                             source: "\$('head').append('$darkCSS');");
                       }
@@ -520,7 +521,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       if (widget.callbacks != null &&
                           widget.callbacks!.onInit != null) {
                         widget.callbacks!.onInit!.call();
-                       widget.controller.disable();
                       }
                       //add onChange handler
                       controller.addJavaScriptHandler(
