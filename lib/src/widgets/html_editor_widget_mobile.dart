@@ -551,7 +551,14 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       controller: widget.controller,
                       htmlToolbarOptions: widget.htmlToolbarOptions,
                       callbacks: widget.callbacks)
-                  : const SizedBox(height: 0, width: 0),
+                  : ToolbarWidget(
+                      key: toolbarKey,
+                      controller: widget.controller,
+                      htmlToolbarOptions: const HtmlToolbarOptions(
+                        defaultToolbarButtons: [],
+                        customToolbarInsertionIndices: [],
+                      ),
+                      callbacks: widget.callbacks),
             ],
           ),
         ),
