@@ -520,6 +520,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       if (widget.callbacks != null &&
                           widget.callbacks!.onInit != null) {
                         widget.callbacks!.onInit!.call();
+                       widget.controller.disable();
                       }
                       //add onChange handler
                       controller.addJavaScriptHandler(
