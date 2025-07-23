@@ -558,6 +558,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         defaultToolbarButtons: [],
                         toolbarItemHeight: 0,
                         customToolbarButtons: [],
+                        dropdownIconSize: 0,
+                        dropdownItemHeight: 0,
                         
                         customToolbarInsertionIndices: [],
                       ),
