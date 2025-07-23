@@ -509,7 +509,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       //disable editor if necessary
                       if (widget.htmlEditorOptions.disabled &&
                           !callbacksInitialized) {
-                        widget.controller.disable();
+                        // widget.controller.disable();
+                         await widget.controller.editorController?.evaluateJavascript(source: '''
+    try {
+      \$('#summernote-2').summernote('disable');
+      \$('.note-toolbar').hide();
+    } catch (e) {
+      console.error("Disable error", e);
+    }
+  ''');
                       }
                       //initialize callbacks
                       if (widget.callbacks != null && !callbacksInitialized) {
