@@ -376,7 +376,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               disableGrammar: false,
                               spellCheck: ${widget.htmlEditorOptions.spellCheck},
                               maximumFileSize: $maximumFileSize,
-                               disabled: ${widget.htmlEditorOptions.disabled}, 
                               ${widget.htmlEditorOptions.customOptions}
                               $summernoteCallbacks
                           });
@@ -551,24 +550,28 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       controller: widget.controller,
                       htmlToolbarOptions: widget.htmlToolbarOptions,
                       callbacks: widget.callbacks)
-                  : ToolbarWidget(
-                      key: toolbarKey,
-                      controller: widget.controller,
-
-                      htmlToolbarOptions: const HtmlToolbarOptions(
-                        defaultToolbarButtons: [],
-                        toolbarItemHeight: 0,
-                        customToolbarButtons: [],
-                        dropdownIconSize: 0,
-                        dropdownItemHeight: 0,
-                        dropdownElevation: 0,
-                        dropdownMenuMaxHeight: 0,
-                        gridViewHorizontalSpacing: 0,
-                        gridViewVerticalSpacing: 0,
-                        
-                        customToolbarInsertionIndices: [],
-                      ),
-                      callbacks: widget.callbacks),
+                  : PreferredSize(
+                    preferredSize: const Size.fromHeight(0),
+                    child: ToolbarWidget(
+                        key: toolbarKey,
+                        controller: widget.controller,
+                    
+                        htmlToolbarOptions: const HtmlToolbarOptions(
+                          defaultToolbarButtons: [],
+                          toolbarItemHeight: 0,
+                          customToolbarButtons: [],
+                          dropdownIconSize: 0,
+                          dropdownItemHeight: 0,
+                          dropdownElevation: 0,
+                          dropdownMenuMaxHeight: 0,
+                          gridViewHorizontalSpacing: 0,
+                          gridViewVerticalSpacing: 0,
+                    
+                          
+                          customToolbarInsertionIndices: [],
+                        ),
+                        callbacks: widget.callbacks),
+                  ),
             ],
           ),
         ),
