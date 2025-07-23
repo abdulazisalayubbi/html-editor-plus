@@ -545,7 +545,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                 ),
               ),
               (widget.htmlToolbarOptions.toolbarPosition ==
-                      ToolbarPosition.belowEditor  && widget.htmlEditorOptions.disabled)
+                      ToolbarPosition.belowEditor  && !widget.htmlEditorOptions.disabled)
                   ? ToolbarWidget(
                       key: toolbarKey,
                       controller: widget.controller,
