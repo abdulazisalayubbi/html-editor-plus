@@ -56,7 +56,7 @@ class CssBuilder {
   static String editorDisabled({required ThemeData theme}) => elementCss(
         selector: '.note-editing-area .note-editable[contenteditable=false]',
         properties: {
-          'background-color': "#ffffff!important",
+          'background-color': "#ffffff !important",
         },
       );
 
