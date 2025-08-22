@@ -73,6 +73,15 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
   void initSummernote() async {
     var headString = '';
+    // Force disabled editor background to white (override Summernote's default grey)
+    const disabledEditorCss = '''
+<style>
+.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],
+.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false] {
+  background-color: #ffffff !important;
+}
+</style>
+''';
     var summernoteCallbacks = '''callbacks: {
         onKeydown: function(e) {
             var chars = \$(".note-editable").text();
@@ -128,6 +137,8 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
         }
       }
     }
+    // Append our CSS override at the end of headString so it loads after plugin assets
+    headString = '$headString$disabledEditorCss';
     if (widget.callbacks != null) {
       if (widget.callbacks!.onImageLinkInsert != null) {
         summernoteCallbacks = '''$summernoteCallbacks
@@ -453,8 +464,10 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
         .replaceFirst('<!--headString-->', headString)
         .replaceFirst('<!--summernoteScripts-->', summernoteScripts)
         .replaceFirst('"jquery.min.js"', '"assets/$_assetsPath/jquery.min.js"')
-        .replaceFirst('"summernote-lite.min.css"', '"assets/$_assetsPath/summernote-lite.min.css"')
-        .replaceFirst('"summernote-lite.min.js"', '"assets/$_assetsPath/summernote-lite.min.js"');
+        .replaceFirst('"summernote-lite.min.css"',
+            '"assets/$_assetsPath/summernote-lite.min.css"')
+        .replaceFirst('"summernote-lite.min.js"',
+            '"assets/$_assetsPath/summernote-lite.min.js"');
     if (widget.callbacks != null) addJSListener(widget.callbacks!);
     final iframe = html.IFrameElement()
       ..width = MediaQuery.of(widget.initBC).size.width.toString() //'800'
@@ -490,22 +503,28 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
               data['view'] == createdViewId &&
               widget.htmlEditorOptions.autoAdjustHeight) {
             final docHeight = data['height'] ?? actualHeight;
-            if ((docHeight != null && docHeight != actualHeight) && mounted && docHeight > 0) {
+            if ((docHeight != null && docHeight != actualHeight) &&
+                mounted &&
+                docHeight > 0) {
               setState(mounted, this.setState, () {
-                actualHeight = docHeight + (toolbarKey.currentContext?.size?.height ?? 0);
+                actualHeight =
+                    docHeight + (toolbarKey.currentContext?.size?.height ?? 0);
               });
             }
           }
           if (data['type'] != null &&
               data['type'].contains('toDart: onChangeContent') &&
               data['view'] == createdViewId) {
-            if (widget.callbacks != null && widget.callbacks!.onChangeContent != null) {
+            if (widget.callbacks != null &&
+                widget.callbacks!.onChangeContent != null) {
               widget.callbacks!.onChangeContent!.call(data['contents']);
             }
             if (widget.htmlEditorOptions.shouldEnsureVisible &&
                 Scrollable.maybeOf(context) != null) {
-              Scrollable.maybeOf(context)!.position.ensureVisible(context.findRenderObject()!,
-                  duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+              Scrollable.maybeOf(context)!.position.ensureVisible(
+                  context.findRenderObject()!,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.easeIn);
             }
           }
           if (data['type'] != null &&
@@ -519,7 +538,8 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
         html.window.postMessage(jsonStr, '*');
         html.window.postMessage(jsonStr2, '*');
       });
-    ui.platformViewRegistry.registerViewFactory(createdViewId, (int viewId) => iframe);
+    ui.platformViewRegistry
+        .registerViewFactory(createdViewId, (int viewId) => iframe);
     setState(mounted, this.setState, () {
       summernoteInit = Future.value(true);
     });
@@ -528,10 +548,13 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.htmlEditorOptions.autoAdjustHeight ? actualHeight : widget.otherOptions.height,
+      height: widget.htmlEditorOptions.autoAdjustHeight
+          ? actualHeight
+          : widget.otherOptions.height,
       child: Column(
         children: <Widget>[
-          widget.htmlToolbarOptions.toolbarPosition == ToolbarPosition.aboveEditor
+          widget.htmlToolbarOptions.toolbarPosition ==
+                  ToolbarPosition.aboveEditor
               ? ToolbarWidget(
                   key: toolbarKey,
                   controller: widget.controller,
@@ -555,7 +578,8 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
                                   : widget.otherOptions.height);
                         }
                       }))),
-          widget.htmlToolbarOptions.toolbarPosition == ToolbarPosition.belowEditor
+          widget.htmlToolbarOptions.toolbarPosition ==
+                  ToolbarPosition.belowEditor
               ? ToolbarWidget(
                   key: toolbarKey,
                   controller: widget.controller,
