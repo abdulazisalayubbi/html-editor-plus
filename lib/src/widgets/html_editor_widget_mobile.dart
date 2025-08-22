@@ -238,13 +238,26 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     var url = uri.toString();
                     var maximumFileSize = 10485760;
                     if (url.contains(filePath)) {
-                      // Ensure disabled editor background is white on mobile (override Summernote default grey)
+                      // Ensure editor background is white on mobile (enabled and disabled)
                       await controller.evaluateJavascript(
                         source: """
-                          \$('head').append('<style>\n'
-                            + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\n'
-                            + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{background-color:#ffffff !important;}\n'
-                            + '</style>');
+                          (function(){
+                            var css = '\n'
+                              + 'html, body { background-color: #ffffff !important; }\n'
+                              + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: #ffffff !important; }\n'
+                              + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\n'
+                              + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:#ffffff !important; }\n'
+                              + '.note-editor .note-editing-area .note-editable table,\n'
+                              + '.note-editor .note-editing-area .note-editable table td,\n'
+                              + '.note-editor .note-editing-area .note-editable table th,\n'
+                              + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n';
+                            var style = document.createElement('style');
+                            style.type = 'text/css';
+                            style.appendChild(document.createTextNode(css));
+                            document.head.appendChild(style);
+                            document.documentElement.style.backgroundColor = '#ffffff';
+                            document.body.style.backgroundColor = '#ffffff';
+                          })();
                         """,
                       );
                       var summernoteToolbar = '[\n';
