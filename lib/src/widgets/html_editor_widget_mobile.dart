@@ -238,6 +238,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     var url = uri.toString();
                     var maximumFileSize = 10485760;
                     if (url.contains(filePath)) {
+                      // Ensure disabled editor background is white on mobile (override Summernote default grey)
+                      await controller.evaluateJavascript(
+                        source: """
+                          \$('head').append('<style>\n'
+                            + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\n'
+                            + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{background-color:#ffffff !important;}\n'
+                            + '</style>');
+                        """,
+                      );
                       var summernoteToolbar = '[\n';
                       var summernoteCallbacks = '''callbacks: {
                           onKeydown: function(e) {
