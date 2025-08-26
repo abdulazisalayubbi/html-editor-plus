@@ -43,12 +43,14 @@ class CssBuilder {
     return css;
   }
 
-  /// Build the css for the Summernote editor, using [Theme.colorScheme] to adhere to Material 2.0.
+  /// Build the css for the Summernote editor, using a strong selector so it overrides defaults.
+  /// Force white background to satisfy app requirement.
   static String editor({required ColorScheme colorScheme}) => elementCss(
-        selector: '.note-editable',
+        selector:
+            '.note-editor.note-airframe .note-editing-area .note-editable, .note-editor.note-frame .note-editing-area .note-editable, .note-editable',
         properties: {
           'color': hexFromColor(color: colorScheme.onSurface),
-          'background-color': hexFromColor(color: colorScheme.surface),
+          'background-color': '#ffffff',
         },
       );
 

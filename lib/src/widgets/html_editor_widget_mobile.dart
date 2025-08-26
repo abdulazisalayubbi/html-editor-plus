@@ -475,6 +475,41 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       await controller.evaluateJavascript(
                           source:
                               "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
+                      // Force inline background to white and keep it white even if changed later
+                      await controller.evaluateJavascript(
+                        source: """
+                          (function(){
+                            function isWhite(v){
+                              if(!v) return false;
+                              v = v.toString().trim().toLowerCase();
+                              return v === '#ffffff' || v === 'white' || v === 'rgb(255, 255, 255)';
+                            }
+                            function forceWhite(){
+                              var editable = document.querySelector('.note-editable');
+                              if(!editable) return;
+                              editable.style.setProperty('background-color', '#ffffff', 'important');
+                            }
+                            forceWhite();
+                            var editable = document.querySelector('.note-editable');
+                            if(editable){
+                              var obs = new MutationObserver(function(muts){
+                                muts.forEach(function(m){
+                                  if(m.type === 'attributes' && m.attributeName === 'style'){
+                                    var bg = editable.style.getPropertyValue('background-color');
+                                    if(!isWhite(bg)) forceWhite();
+                                  }
+                                });
+                              });
+                              obs.observe(editable, { attributes: true, attributeFilter: ['style'] });
+                            }
+                            if (window.jQuery) {
+                              jQuery('#summernote-2').on('summernote.disable summernote.enable summernote.change', function(){
+                                forceWhite();
+                              });
+                            }
+                          })();
+                        """,
+                      );
                       if ((Theme.of(context).brightness == Brightness.dark ||
                               widget.htmlEditorOptions.darkMode == true) &&
                           widget.htmlEditorOptions.darkMode != false) {
