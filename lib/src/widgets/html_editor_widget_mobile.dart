@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -66,6 +65,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   /// the editor is focused much after its visibility changes
   double? cachedVisibleDecimal;
 
+  /// Timer to debounce visibility changes
+  Timer? _visibilityDebounceTimer;
+
   String get _assetsPath => "packages/html_editor_plus/assets";
 
   @override
@@ -86,6 +88,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   void dispose() {
+    _visibilityDebounceTimer?.cancel();
     _visibleStream.close();
     super.dispose();
   }
@@ -96,9 +99,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       this.setState(() {
         docHeight = widget.otherOptions.height;
       });
-      await widget.controller.editorController!.evaluateJavascript(
-          source:
-              "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
+      // Add a small delay to prevent conflicts with other height adjustments
+      await Future.delayed(const Duration(milliseconds: 50));
+      if (mounted && widget.controller.editorController != null) {
+        await widget.controller.editorController!.evaluateJavascript(
+            source:
+                "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
+      }
     }
   }
 
@@ -112,12 +119,18 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
         key: Key(key),
         onVisibilityChanged: (VisibilityInfo info) async {
           if (!_visibleStream.isClosed) {
-            cachedVisibleDecimal = info.visibleFraction == 1
-                ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
-                : info.visibleFraction;
-            _visibleStream.add(info.visibleFraction == 1
-                ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
-                : info.visibleFraction);
+            // Debounce visibility changes to prevent excessive height recalculations
+            _visibilityDebounceTimer?.cancel();
+            _visibilityDebounceTimer = Timer(const Duration(milliseconds: 100), () {
+              if (!_visibleStream.isClosed) {
+                cachedVisibleDecimal = info.visibleFraction == 1
+                    ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
+                    : info.visibleFraction;
+                _visibleStream.add(info.visibleFraction == 1
+                    ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
+                    : info.visibleFraction);
+              }
+            });
           }
         },
         child: Container(
@@ -182,55 +195,19 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     debugPrint(message.message);
                   },
                   onWindowFocus: (controller) async {
+                    // Only ensure visible on focus, not during typing to prevent scroll jumping
                     if (widget.htmlEditorOptions.shouldEnsureVisible &&
                         Scrollable.maybeOf(context) != null) {
-                      await Scrollable.maybeOf(context)!.position.ensureVisible(
+                      // Use a slight delay to prevent conflicts with keyboard animations
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        if (mounted && Scrollable.maybeOf(context) != null) {
+                          Scrollable.maybeOf(context)!.position.ensureVisible(
                             context.findRenderObject()!,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
                           );
-                    }
-                    if (widget.htmlEditorOptions.adjustHeightForKeyboard &&
-                        mounted &&
-                        !_visibleStream.isClosed) {
-                      Future<void> setHeightJS() async {
-                        await controller.evaluateJavascript(source: """
-                                \$('div.note-editable').outerHeight(${max(docHeight - (toolbarKey.currentContext?.size?.height ?? 0), 30)});
-                                // from https://stackoverflow.com/a/67152280
-                                var selection = window.getSelection();
-                                if (selection.rangeCount) {
-                                  var firstRange = selection.getRangeAt(0);
-                                  if (firstRange.commonAncestorContainer !== document) {
-                                    var tempAnchorEl = document.createElement('br');
-                                    firstRange.insertNode(tempAnchorEl);
-                                    tempAnchorEl.scrollIntoView({
-                                      block: 'end',
-                                    });
-                                    tempAnchorEl.remove();
-                                  }
-                                }
-                              """);
-                      }
-
-                      /// this is a workaround so jumping between focus on different
-                      /// editable elements still resizes the editor
-                      if ((cachedVisibleDecimal ?? 0) > 0.1) {
-                        this.setState(() {
-                          docHeight = widget.otherOptions.height *
-                              cachedVisibleDecimal!;
-                        });
-                        await setHeightJS();
-                      }
-                      final streamIsEmpty = await _visibleStream.stream.isEmpty;
-                      if (mounted && !streamIsEmpty) {
-                        var visibleDecimal = await _visibleStream.stream.first;
-                        var newHeight = widget.otherOptions.height;
-                        if (visibleDecimal > 0.1) {
-                          this.setState(() {
-                            docHeight = newHeight * visibleDecimal;
-                          });
-                          //todo add support for traditional summernote controls again?
-                          await setHeightJS();
                         }
-                      }
+                      });
                     }
                   },
                   onLoadStop:
@@ -553,8 +530,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         keyboardVisibilityController.onChange
                             .listen((bool visible) {
                           if (!visible && mounted) {
-                            controller.clearFocus();
-                            resetHeight();
+                            // Add a delay to prevent jarring transitions
+                            Future.delayed(const Duration(milliseconds: 200), () {
+                              if (mounted) {
+                                controller.clearFocus();
+                                resetHeight();
+                              }
+                            });
                           }
                         });
                       }
@@ -584,14 +566,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       controller.addJavaScriptHandler(
                           handlerName: 'onChangeContent',
                           callback: (contents) {
-                            if (widget.htmlEditorOptions.shouldEnsureVisible &&
-                                Scrollable.maybeOf(context) != null) {
-                              Scrollable.maybeOf(context)!
-                                  .position
-                                  .ensureVisible(
-                                    context.findRenderObject()!,
-                                  );
-                            }
+                            // Remove shouldEnsureVisible from onChange to prevent scroll jumping while typing
                             if (widget.callbacks != null &&
                                 widget.callbacks!.onChangeContent != null) {
                               widget.callbacks!.onChangeContent!
