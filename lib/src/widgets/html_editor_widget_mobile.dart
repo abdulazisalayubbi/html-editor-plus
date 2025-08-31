@@ -96,15 +96,23 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   /// resets the height of the editor to the original height
   void resetHeight() async {
     if (mounted) {
-      this.setState(() {
+      // Use animated state change for smoother transitions
+      setState(mounted, this.setState, () {
         docHeight = widget.otherOptions.height;
       });
       // Add a small delay to prevent conflicts with other height adjustments
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 100));
       if (mounted && widget.controller.editorController != null) {
-        await widget.controller.editorController!.evaluateJavascript(
-            source:
-                "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
+        try {
+          await widget.controller.editorController!.evaluateJavascript(
+              source:
+                  "\$('div.note-editable').animate({height: ${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)}}, 200);");
+        } catch (e) {
+          // Fallback to instant height change if animation fails
+          await widget.controller.editorController!.evaluateJavascript(
+              source:
+                  "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
+        }
       }
     }
   }
@@ -121,8 +129,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
           if (!_visibleStream.isClosed) {
             // Debounce visibility changes to prevent excessive height recalculations
             _visibilityDebounceTimer?.cancel();
-            _visibilityDebounceTimer = Timer(const Duration(milliseconds: 100), () {
-              if (!_visibleStream.isClosed) {
+            _visibilityDebounceTimer = Timer(const Duration(milliseconds: 150), () {
+              if (!_visibleStream.isClosed && mounted) {
                 cachedVisibleDecimal = info.visibleFraction == 1
                     ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
                     : info.visibleFraction;
@@ -136,6 +144,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
         child: Container(
           height: docHeight + 10,
           decoration: widget.otherOptions.decoration,
+          // Add clip behavior to prevent overflow and improve performance
+          clipBehavior: Clip.hardEdge,
           child: Column(
             children: [
               widget.htmlToolbarOptions.toolbarPosition ==
@@ -147,7 +157,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       callbacks: widget.callbacks)
                   : const SizedBox(height: 0, width: 0),
               Expanded(
-                child: InAppWebView(
+                // Use flex: 1 for consistent sizing and better performance
+                flex: 1,
+                child: RepaintBoundary(
+                  // Isolate webview repaints for better performance
+                  child: InAppWebView(
                   initialFile: filePath,
                   onWebViewCreated: (InAppWebViewController controller) {
                     widget.controller.editorController = controller;
@@ -168,6 +182,20 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     useHybridComposition:
                         widget.htmlEditorOptions.androidUseHybridComposition,
                     loadWithOverviewMode: true,
+                    // Improve smoothness and performance
+                    verticalScrollBarEnabled: false,
+                    horizontalScrollBarEnabled: false,
+                    disableVerticalScroll: false,
+                    disableHorizontalScroll: true,
+                    supportZoom: false,
+                    displayZoomControls: false,
+                    builtInZoomControls: false,
+                    // Enable hardware acceleration for smoother rendering
+                    hardwareAcceleration: true,
+                    // Improve scrolling performance
+                    overScrollMode: OverScrollMode.NEVER,
+                    // Reduce layout shifts
+                    layoutAlgorithm: LayoutAlgorithm.NORMAL,
                   ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
@@ -175,12 +203,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   contextMenu: widget.htmlEditorOptions.mobileContextMenu
                       as ContextMenu?,
                   gestureRecognizers: {
+                    // Only allow necessary gestures for better performance
                     Factory<VerticalDragGestureRecognizer>(
                         () => VerticalDragGestureRecognizer()),
                     Factory<LongPressGestureRecognizer>(() =>
                         LongPressGestureRecognizer(
                             duration: widget
                                 .htmlEditorOptions.mobileLongPressDuration)),
+                    // Add tap gesture for smoother interaction
+                    Factory<TapGestureRecognizer>(() => TapGestureRecognizer()),
                   },
                   shouldOverrideUrlLoading: (controller, action) async {
                     if (!action.request.url.toString().contains(filePath)) {
@@ -227,7 +258,12 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               + '.note-editor .note-editing-area .note-editable table,\n'
                               + '.note-editor .note-editing-area .note-editable table td,\n'
                               + '.note-editor .note-editing-area .note-editable table th,\n'
-                              + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n';
+                              + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
+                              + '/* Smooth scrolling and performance optimizations */\n'
+                              + 'html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }\n'
+                              + 'body { overscroll-behavior: none; }\n'
+                              + '.note-editable { transform: translateZ(0); will-change: contents; }\n'
+                              + '.note-editor { transition: height 0.2s ease-out; }\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
@@ -575,6 +611,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           });
                     }
                   },
+                ),
                 ),
               ),
               (widget.htmlToolbarOptions.toolbarPosition ==
