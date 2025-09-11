@@ -1165,7 +1165,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             Container(
               padding: const EdgeInsets.only(left: 5.5, right: 5.5),
               child: SizedBox(
-                width: widget.htmlToolbarOptions.toolbarItemHeight - 22,
+                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
                 child: InkWell(
                 onTap: () async {
