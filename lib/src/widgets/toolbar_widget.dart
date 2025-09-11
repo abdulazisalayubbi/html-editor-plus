@@ -338,7 +338,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           child: Opacity(
             opacity: _enabled ? 1 : 0.5,
             child: Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: EdgeInsets.zero,
               child: Wrap(
                 runSpacing: widget.htmlToolbarOptions.gridViewVerticalSpacing,
                 spacing: widget.htmlToolbarOptions.gridViewHorizontalSpacing,
@@ -360,7 +360,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               child: SizedBox(
                 height: widget.htmlToolbarOptions.toolbarItemHeight + 15,
                 child: Padding(
-                  padding: const EdgeInsets.all(5.0),
+                  padding: EdgeInsets.zero,
                   child: CustomScrollView(
                     scrollDirection: Axis.horizontal,
                     slivers: [
@@ -394,7 +394,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               ),
               child: _isExpanded
                   ? Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: EdgeInsets.zero,
                       child: Wrap(
                         runSpacing:
                             widget.htmlToolbarOptions.gridViewVerticalSpacing,
@@ -433,7 +433,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       ),
                     )
                   : Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: EdgeInsets.zero,
                       child: CustomScrollView(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
@@ -3122,7 +3122,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 const SizedBox.shrink(),
           ),
         );
-        
+
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
             toolbarChildren.length) {
           toolbarChildren.insert(toolbarChildren.length, wrappedButton);
@@ -3136,7 +3136,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
       }
     } else {
-      // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)  
+      // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
       // Use smaller padding to visually balance with default buttons (11px)
       toolbarChildren.addAll(
         (widget.htmlToolbarOptions.customToolbarButtons ?? []).map(
