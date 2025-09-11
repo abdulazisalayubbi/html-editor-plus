@@ -1028,7 +1028,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.bold || t.italic || t.underline || t.clearAll) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              width: 31,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1098,7 +1098,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.strikethrough || t.superscript || t.subscript) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              width: 31,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1165,8 +1165,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             Container(
               padding: const EdgeInsets.only(left: 5.5, right: 5.5),
               child: SizedBox(
-                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                width: 20,
+                height: 20,
                 child: InkWell(
                 onTap: () async {
                   void updateStatus(Color? color) {
@@ -1368,7 +1368,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.ul || t.ol) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              width: 31,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1527,7 +1527,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.alignLeft || t.alignCenter || t.alignRight || t.alignJustify) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              width: 31,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1600,7 +1600,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.increaseIndent || t.decreaseIndent) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              width: 31,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1738,7 +1738,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.textDirection) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              width: 31,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
