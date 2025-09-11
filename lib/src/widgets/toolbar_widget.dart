@@ -367,7 +367,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       SliverFillRemaining(
                         hasScrollBody: false,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: _buildChildren(),
                         ),
                       ),
@@ -1359,23 +1359,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                     }
                   },
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: _colorSelected[index]
-                          ? widget.htmlToolbarOptions.buttonFillColor
-                          : Colors.transparent,
-                      borderRadius:
-                          widget.htmlToolbarOptions.buttonBorderRadius,
-                    ),
-                    child: Icon(
-                      t.getIcons()[index].icon,
-                      size: 20,
-                      color: _colorSelected[index]
-                          ? widget.htmlToolbarOptions.buttonSelectedColor
-                          : widget.htmlToolbarOptions.buttonColor,
-                    ),
+                  child: Icon(
+                    t.getIcons()[index].icon,
+                    size: 20,
+                    color: _colorSelected[index]
+                        ? widget.htmlToolbarOptions.buttonSelectedColor
+                        : widget.htmlToolbarOptions.buttonColor,
                   ),
                 ),
               ),
@@ -3257,6 +3246,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       toolbarChildren = intersperse(
               widget.htmlToolbarOptions.separatorWidget, toolbarChildren)
           .toList();
+    } else {
+      // Add small spacing between toolbar items when no separator is used
+      List<Widget> spacedChildren = [];
+      for (int i = 0; i < toolbarChildren.length; i++) {
+        spacedChildren.add(toolbarChildren[i]);
+        if (i < toolbarChildren.length - 1) {
+          spacedChildren.add(const SizedBox(width: 2));
+        }
+      }
+      toolbarChildren = spacedChildren;
     }
     return toolbarChildren;
   }
