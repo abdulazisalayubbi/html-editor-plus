@@ -301,7 +301,7 @@ class _DropdownMenuItemButtonState<T>
         onTap: _handleOnTap,
         onFocusChange: _handleFocusChange,
         child: Container(
-          padding: EdgeInsets.only(left:11,),
+          padding: EdgeInsets.zero,
           child: widget.route.items[widget.itemIndex],
         ),
       ),
