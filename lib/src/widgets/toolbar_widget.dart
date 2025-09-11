@@ -1165,8 +1165,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             Container(
               padding: const EdgeInsets.only(left: 11.0, right: 11.0),
               child: SizedBox(
-                width: widget.htmlToolbarOptions.toolbarItemHeight - 22,
-                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                width: 36,
+                height: 36,
                 child: InkWell(
                 onTap: () async {
                   void updateStatus(Color? color) {
@@ -1342,8 +1342,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   }
                 },
                 child: Container(
-                  width: widget.htmlToolbarOptions.toolbarItemHeight - 22,
-                  height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     color: _colorSelected[index] 
                         ? widget.htmlToolbarOptions.buttonFillColor
