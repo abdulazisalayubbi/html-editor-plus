@@ -155,7 +155,7 @@ const double _kMenuItemHeight = kMinInteractiveDimension;
 const double _kDenseButtonHeight = 24.0;
 const EdgeInsets _kMenuItemPadding = EdgeInsets.symmetric(horizontal: 16.0);
 const EdgeInsetsGeometry _kAlignedButtonPadding =
-    EdgeInsetsDirectional.only(start: 16.0, end: 4.0);
+    EdgeInsetsDirectional.only(start: 11.0, end: 11.0);
 const EdgeInsets _kUnalignedButtonPadding = EdgeInsets.zero;
 const EdgeInsets _kAlignedMenuMargin = EdgeInsets.zero;
 const EdgeInsetsGeometry _kUnalignedMenuMargin =
