@@ -3112,14 +3112,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       for (var i = 0;
           i < widget.htmlToolbarOptions.customToolbarInsertionIndices.length;
           i++) {
-        // Wrap custom buttons with consistent spacing
-        final wrappedButton = Padding(
-          padding: const EdgeInsets.only(left: 11.0, right: 11.0),
-          child: SizedBox(
-            height: widget.htmlToolbarOptions.toolbarItemHeight,
-            child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                const SizedBox.shrink(),
-          ),
+        // Custom buttons typically have their own internal padding (PopupMenuButton, InkWell, etc.)
+        final wrappedButton = SizedBox(
+          height: widget.htmlToolbarOptions.toolbarItemHeight,
+          child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+              const SizedBox.shrink(),
         );
         
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
@@ -3135,15 +3132,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
       }
     } else {
-      // Wrap custom toolbar buttons with proper spacing to match default buttons
+      // Custom buttons typically have their own internal padding (PopupMenuButton, InkWell, etc.)
       toolbarChildren.addAll(
         (widget.htmlToolbarOptions.customToolbarButtons ?? []).map(
-          (button) => Padding(
-            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
-            child: SizedBox(
-              height: widget.htmlToolbarOptions.toolbarItemHeight,
-              child: button,
-            ),
+          (button) => SizedBox(
+            height: widget.htmlToolbarOptions.toolbarItemHeight,
+            child: button,
           ),
         ),
       );
