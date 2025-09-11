@@ -3112,11 +3112,15 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       for (var i = 0;
           i < widget.htmlToolbarOptions.customToolbarInsertionIndices.length;
           i++) {
-        // Custom buttons typically have their own internal padding (PopupMenuButton, InkWell, etc.)
-        final wrappedButton = SizedBox(
-          height: widget.htmlToolbarOptions.toolbarItemHeight,
-          child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-              const SizedBox.shrink(),
+        // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
+        // Use smaller padding to visually balance with default buttons (11px)
+        final wrappedButton = Padding(
+          padding: const EdgeInsets.only(left: 3.0, right: 3.0),
+          child: SizedBox(
+            height: widget.htmlToolbarOptions.toolbarItemHeight,
+            child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                const SizedBox.shrink(),
+          ),
         );
         
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
@@ -3132,12 +3136,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
       }
     } else {
-      // Custom buttons typically have their own internal padding (PopupMenuButton, InkWell, etc.)
+      // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)  
+      // Use smaller padding to visually balance with default buttons (11px)
       toolbarChildren.addAll(
         (widget.htmlToolbarOptions.customToolbarButtons ?? []).map(
-          (button) => SizedBox(
-            height: widget.htmlToolbarOptions.toolbarItemHeight,
-            child: button,
+          (button) => Padding(
+            padding: const EdgeInsets.only(left: 3.0, right: 3.0),
+            child: SizedBox(
+              height: widget.htmlToolbarOptions.toolbarItemHeight,
+              child: button,
+            ),
           ),
         ),
       );
