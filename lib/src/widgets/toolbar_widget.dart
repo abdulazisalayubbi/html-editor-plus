@@ -3158,7 +3158,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           (button) => Padding(
             padding: const EdgeInsets.only(left: 3.0, right: 3.0),
             child: SizedBox(
-              height: widget.htmlToolbarOptions.toolbarItemHeight,
+              height: 20,
               child: button,
             ),
           ),
