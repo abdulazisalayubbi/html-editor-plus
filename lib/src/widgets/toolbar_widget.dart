@@ -1162,10 +1162,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         // Create individual InkWell buttons for each color button
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(
-            SizedBox(
-              width: widget.htmlToolbarOptions.toolbarItemHeight,
-              height: widget.htmlToolbarOptions.toolbarItemHeight,
-              child: InkWell(
+            Container(
+              padding: const EdgeInsets.only(left: 11.0, right: 11.0),
+              child: SizedBox(
+                width: widget.htmlToolbarOptions.toolbarItemHeight - 22,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                child: InkWell(
                 onTap: () async {
                   void updateStatus(Color? color) {
                     setState(mounted, this.setState, () {
@@ -1340,8 +1342,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   }
                 },
                 child: Container(
-                  width: widget.htmlToolbarOptions.toolbarItemHeight,
-                  height: widget.htmlToolbarOptions.toolbarItemHeight,
+                  width: widget.htmlToolbarOptions.toolbarItemHeight - 22,
+                  height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
                   decoration: BoxDecoration(
                     color: _colorSelected[index] 
                         ? widget.htmlToolbarOptions.buttonFillColor
@@ -1357,6 +1359,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   ),
                 ),
               ),
+            ),
             ),
           );
         }
