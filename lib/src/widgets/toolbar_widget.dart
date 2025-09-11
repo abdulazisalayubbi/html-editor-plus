@@ -1165,8 +1165,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             Container(
               padding: const EdgeInsets.only(left: 11.0, right: 11.0),
               child: SizedBox(
-                width: 36,
-                height: 36,
+                width: 0,
+                height: 0,
                 child: InkWell(
                 onTap: () async {
                   void updateStatus(Color? color) {
@@ -1239,6 +1239,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                           builder: (BuildContext context) {
                             return PointerInterceptor(
                               child: AlertDialog(
+                                backgroundColor: Colors.white,
                                 scrollable: true,
                                 content: ColorPicker(
                                   color: newColor,
@@ -1342,8 +1343,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   }
                 },
                 child: Container(
-                  width: 36,
-                  height: 36,
+                  width: 20,
+                  height: 20,
                   decoration: BoxDecoration(
                     color: _colorSelected[index] 
                         ? widget.htmlToolbarOptions.buttonFillColor
