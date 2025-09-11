@@ -1641,14 +1641,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.lineHeight) {
           toolbarChildren.add(Container(
-            padding: EdgeInsets.zero,
-            height: widget.htmlToolbarOptions.toolbarItemHeight,
-            decoration: !widget.htmlToolbarOptions.renderBorder
-                ? null
-                : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+            padding: const EdgeInsets.only(left: 5.5, right: 5.5),
+            child: Container(
+              padding: EdgeInsets.zero,
+              height: widget.htmlToolbarOptions.toolbarItemHeight,
+              decoration: !widget.htmlToolbarOptions.renderBorder
+                  ? null
+                  : widget.htmlToolbarOptions.dropdownBoxDecoration ??
+                      BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<double>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
@@ -1733,7 +1735,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 },
               ),
             ),
-          ));
+          ),
+        ));
         }
         if (t.textDirection) {
           toolbarChildren.add(ToggleButtons(
