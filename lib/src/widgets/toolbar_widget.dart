@@ -1161,8 +1161,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
         toolbarChildren.add(ToggleButtons(
           constraints: BoxConstraints.tightFor(
-            width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+            width: widget.htmlToolbarOptions.toolbarItemHeight,
+            height: widget.htmlToolbarOptions.toolbarItemHeight,
           ),
           color: widget.htmlToolbarOptions.buttonColor,
           selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
@@ -1171,12 +1171,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
           hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
           splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-          selectedBorderColor:
-              widget.htmlToolbarOptions.buttonSelectedBorderColor,
-          borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+          selectedBorderColor: Colors.transparent,
+          borderColor: Colors.transparent,
           borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-          borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-          renderBorder: widget.htmlToolbarOptions.renderBorder,
+          borderWidth: 0,
+          renderBorder: false,
           textStyle: widget.htmlToolbarOptions.textStyle,
           onPressed: (int index) async {
             void updateStatus(Color? color) {
@@ -1893,8 +1892,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               t.table)) {
         toolbarChildren.add(ToggleButtons(
           constraints: BoxConstraints.tightFor(
-            width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+            width: widget.htmlToolbarOptions.toolbarItemHeight,
+            height: widget.htmlToolbarOptions.toolbarItemHeight,
           ),
           color: widget.htmlToolbarOptions.buttonColor,
           selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
@@ -1903,12 +1902,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
           hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
           splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-          selectedBorderColor:
-              widget.htmlToolbarOptions.buttonSelectedBorderColor,
-          borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+          selectedBorderColor: Colors.transparent,
+          borderColor: Colors.transparent,
           borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-          borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-          renderBorder: widget.htmlToolbarOptions.renderBorder,
+          borderWidth: 0,
+          renderBorder: false,
           textStyle: widget.htmlToolbarOptions.textStyle,
           onPressed: (int index) async {
             if (t.getIcons()[index].icon == Icons.link) {
