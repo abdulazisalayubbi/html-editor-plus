@@ -1028,7 +1028,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.bold || t.italic || t.underline || t.clearAll) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: 31,
+              width: 20,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1098,7 +1098,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.strikethrough || t.superscript || t.subscript) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: 31,
+              width: 20,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1368,7 +1368,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.ul || t.ol) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: 31,
+              width: 20,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1527,7 +1527,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.alignLeft || t.alignCenter || t.alignRight || t.alignJustify) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: 31,
+              width: 20,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1600,7 +1600,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.increaseIndent || t.decreaseIndent) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: 31,
+              width: 20,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
@@ -1741,7 +1741,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         if (t.textDirection) {
           toolbarChildren.add(ToggleButtons(
             constraints: BoxConstraints.tightFor(
-              width: 31,
+              width: 20,
               height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
             ),
             color: widget.htmlToolbarOptions.buttonColor,
