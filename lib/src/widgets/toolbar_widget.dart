@@ -482,7 +482,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (t is FontSettingButtons) {
         if (t.fontName) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -560,7 +560,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.fontSize) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -686,7 +686,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.fontSizeUnit) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -755,7 +755,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (t is FontSettingButtons) {
         if (t.fontName) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -833,7 +833,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.fontSize) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -959,7 +959,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.fontSizeUnit) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -1410,7 +1410,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.listStyles) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -1632,7 +1632,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.lineHeight) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -1786,7 +1786,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.caseConverter) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
             height: widget.htmlToolbarOptions.toolbarItemHeight,
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
@@ -3112,28 +3112,41 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       for (var i = 0;
           i < widget.htmlToolbarOptions.customToolbarInsertionIndices.length;
           i++) {
+        // Wrap custom buttons with consistent spacing
+        final wrappedButton = Padding(
+          padding: const EdgeInsets.only(left: 11.0, right: 11.0),
+          child: SizedBox(
+            height: widget.htmlToolbarOptions.toolbarItemHeight,
+            child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                const SizedBox.shrink(),
+          ),
+        );
+        
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
             toolbarChildren.length) {
-          toolbarChildren.insert(
-              toolbarChildren.length,
-              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                  const SizedBox.shrink());
+          toolbarChildren.insert(toolbarChildren.length, wrappedButton);
         } else if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] <
             0) {
-          toolbarChildren.insert(
-              0,
-              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                  const SizedBox.shrink());
+          toolbarChildren.insert(0, wrappedButton);
         } else {
           toolbarChildren.insert(
               widget.htmlToolbarOptions.customToolbarInsertionIndices[i],
-              widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                  const SizedBox.shrink());
+              wrappedButton);
         }
       }
     } else {
-      toolbarChildren
-          .addAll(widget.htmlToolbarOptions.customToolbarButtons ?? []);
+      // Wrap custom toolbar buttons with proper spacing to match default buttons
+      toolbarChildren.addAll(
+        (widget.htmlToolbarOptions.customToolbarButtons ?? []).map(
+          (button) => Padding(
+            padding: const EdgeInsets.only(left: 11.0, right: 11.0),
+            child: SizedBox(
+              height: widget.htmlToolbarOptions.toolbarItemHeight,
+              child: button,
+            ),
+          ),
+        ),
+      );
     }
     if (widget.htmlToolbarOptions.renderSeparatorWidget) {
       toolbarChildren = intersperse(
