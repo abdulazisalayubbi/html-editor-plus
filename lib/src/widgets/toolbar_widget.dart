@@ -1342,8 +1342,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   }
                 },
                 child: Container(
-                  width: widget.htmlToolbarOptions.toolbarItemHeight - 22,
-                  height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                  width: 20,
+                  height: 20,
                   decoration: BoxDecoration(
                     color: _colorSelected[index] 
                         ? widget.htmlToolbarOptions.buttonFillColor
@@ -1900,25 +1900,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               t.link ||
               t.hr ||
               t.table)) {
-        toolbarChildren.add(ToggleButtons(
-          constraints: BoxConstraints.tightFor(
-            width: widget.htmlToolbarOptions.toolbarItemHeight,
-            height: widget.htmlToolbarOptions.toolbarItemHeight,
-          ),
-          color: widget.htmlToolbarOptions.buttonColor,
-          selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-          fillColor: widget.htmlToolbarOptions.buttonFillColor,
-          focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-          highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-          hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-          splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-          selectedBorderColor: Colors.transparent,
-          borderColor: Colors.transparent,
-          borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-          borderWidth: 0,
-          renderBorder: false,
-          textStyle: widget.htmlToolbarOptions.textStyle,
-          onPressed: (int index) async {
+        // Create individual InkWell buttons for each insert button
+        for (int index = 0; index < t.getIcons().length; index++) {
+          toolbarChildren.add(
+            Container(
+              padding: const EdgeInsets.only(left: 5.5, right: 5.5),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: InkWell(
+                onTap: () async {
             if (t.getIcons()[index].icon == Icons.link) {
               var proceed = await widget.htmlToolbarOptions.onButtonPressed
                       ?.call(ButtonType.link, null, null) ??
@@ -2746,9 +2737,22 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               }
             }
           },
-          isSelected: List<bool>.filled(t.getIcons().length, false),
-          children: t.getIcons(),
-        ));
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+            ),
+            child: Icon(
+              t.getIcons()[index].icon,
+              size: 20,
+              color: widget.htmlToolbarOptions.buttonColor,
+            ),
+          ),
+        ),
+      )));
+        }
       }
       if (t is OtherButtons) {
         if (t.fullscreen || t.codeview || t.undo || t.redo || t.help) {
