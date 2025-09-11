@@ -3129,13 +3129,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           i++) {
         // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
         // Use smaller padding to visually balance with default buttons (11px)
-        final wrappedButton = Padding(
-          padding: const EdgeInsets.only(left: 3.0, right: 3.0),
-          child: SizedBox(
-            height: widget.htmlToolbarOptions.toolbarItemHeight,
-            child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-                const SizedBox.shrink(),
-          ),
+        final wrappedButton = SizedBox(
+          height: 20,
+          child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+              const SizedBox.shrink(),
         );
 
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
