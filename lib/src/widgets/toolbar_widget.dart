@@ -1163,7 +1163,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(
             Container(
-              padding: const EdgeInsets.only(left: 5.5, right: 5.5),
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -1661,7 +1660,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
         if (t.lineHeight) {
           toolbarChildren.add(Container(
-            padding: const EdgeInsets.only(left: 5.5, right: 5.5),
             child: Container(
               padding: EdgeInsets.zero,
               height: widget.htmlToolbarOptions.toolbarItemHeight,
@@ -1926,7 +1924,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         // Create individual InkWell buttons for each insert button
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(Container(
-              padding: const EdgeInsets.only(left: 5.5, right: 5.5),
               child: SizedBox(
                 width: 20,
                 height: 20,
