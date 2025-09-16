@@ -1,8 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
-
-import 'package:file_picker/file_picker.dart';
+// import 'dart:convert';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +61,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   List<bool> _textDirectionSelected = List<bool>.filled(2, false);
 
   /// Sets the selected item for the font style dropdown
+  // ignore: unused_field
   String _fontSelectedItem = 'p';
 
   String _fontNameSelectedItem = 'sans-serif';
@@ -1900,934 +1900,107 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               t.link ||
               t.hr ||
               t.table)) {
-        // Create individual InkWell buttons for each insert button
+        // Create individual InkWell buttons for each insert button (images for table/divider)
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(Container(
               child: SizedBox(
+            width: 20,
+            height: 20,
+            child: InkWell(
+              onTap: () async {
+                // Determine which image button this is (table or divider)
+                final hasTable = t.table;
+                final hasHr = t.hr;
+                bool isTable(int i) => hasTable && (!hasHr || i == 0);
+                bool isHr(int i) => hasHr && (hasTable ? i == 1 : i == 0);
+
+                if (isTable(index)) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.table, null, null) ??
+                      true;
+                  if (proceed) {
+                    var currentRows = 1;
+                    var currentCols = 1;
+                    await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return PointerInterceptor(
+                            child: StatefulBuilder(
+                                builder: (BuildContext context,
+                                    StateSetter setState) {
+                              return AlertDialog(
+                                title: const Text('Insert Table'),
+                                scrollable: true,
+                                content: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      NumberPicker(
+                                        value: currentRows,
+                                        minValue: 1,
+                                        maxValue: 10,
+                                        onChanged: (value) =>
+                                            setState(() => currentRows = value),
+                                      ),
+                                      const Text('x'),
+                                      NumberPicker(
+                                        value: currentCols,
+                                        minValue: 1,
+                                        maxValue: 10,
+                                        onChanged: (value) =>
+                                            setState(() => currentCols = value),
+                                      ),
+                                    ]),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      if (kIsWeb) {
+                                        widget.controller.insertTable(
+                                            '${currentRows}x$currentCols');
+                                      } else {
+                                        await widget.controller.editorController!
+                                            .evaluateJavascript(
+                                                source:
+                                                    "\$('#summernote-2').summernote('insertTable', '${currentRows}x$currentCols');");
+                                      }
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              );
+                            }),
+                          );
+                        });
+                  }
+                } else if (isHr(index)) {
+                  var proceed = await widget.htmlToolbarOptions
+                          .onButtonPressed
+                          ?.call(ButtonType.hr, null, null) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.insertHtml('<hr/>');
+                  }
+                }
+              },
+              child: Container(
                 width: 20,
                 height: 20,
-                child: InkWell(
-                  onTap: () async {
-                    if (t.getIcons()[index].icon == Icons.link) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.link, null, null) ??
-                          true;
-                      if (proceed) {
-                        final text = TextEditingController();
-                        final url = TextEditingController();
-                        final textFocus = FocusNode();
-                        final urlFocus = FocusNode();
-                        final formKey = GlobalKey<FormState>();
-                        var openNewTab = false;
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return PointerInterceptor(
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return AlertDialog(
-                                    title: const Text('Insert Link'),
-                                    scrollable: true,
-                                    content: Form(
-                                      key: formKey,
-                                      child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text('Text to display',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            const SizedBox(height: 10),
-                                            TextField(
-                                              controller: text,
-                                              focusNode: textFocus,
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                hintText: 'Text',
-                                              ),
-                                              onSubmitted: (_) {
-                                                urlFocus.requestFocus();
-                                              },
-                                            ),
-                                            const SizedBox(height: 20),
-                                            const Text('URL',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            const SizedBox(height: 10),
-                                            TextFormField(
-                                              controller: url,
-                                              focusNode: urlFocus,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                hintText: 'URL',
-                                              ),
-                                              validator: (String? value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Please enter a URL!';
-                                                }
-                                                return null;
-                                              },
-                                            ),
-                                            Row(
-                                              children: <Widget>[
-                                                SizedBox(
-                                                  height: 48.0,
-                                                  width: 24.0,
-                                                  child: Checkbox(
-                                                    value: openNewTab,
-                                                    activeColor:
-                                                        const Color(0xFF827250),
-                                                    onChanged: (bool? value) {
-                                                      setState(() {
-                                                        openNewTab = value!;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                                ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Theme.of(
-                                                              context)
-                                                          .dialogBackgroundColor,
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5,
-                                                              right: 5),
-                                                      elevation: 0.0),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      openNewTab = !openNewTab;
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                      'Open in new window',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyLarge
-                                                                  ?.color)),
-                                                ),
-                                              ],
-                                            ),
-                                          ]),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          if (formKey.currentState!
-                                              .validate()) {
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .linkInsertInterceptor
-                                                    ?.call(
-                                                        text.text.isEmpty
-                                                            ? url.text
-                                                            : text.text,
-                                                        url.text,
-                                                        openNewTab) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller.insertLink(
-                                                text.text.isEmpty
-                                                    ? url.text
-                                                    : text.text,
-                                                url.text,
-                                                openNewTab,
-                                              );
-                                            }
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      )
-                                    ],
-                                  );
-                                }),
-                              );
-                            });
-                      }
-                    }
-                    if (t.getIcons()[index].icon == Icons.image_outlined) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.picture, null, null) ??
-                          true;
-                      if (proceed) {
-                        final filename = TextEditingController();
-                        final url = TextEditingController();
-                        final urlFocus = FocusNode();
-                        FilePickerResult? result;
-                        String? validateFailed;
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return PointerInterceptor(
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return AlertDialog(
-                                    title: const Text('Insert Image'),
-                                    scrollable: true,
-                                    content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (widget.htmlToolbarOptions
-                                              .allowImagePicking)
-                                            const Text('Select from files',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          if (widget.htmlToolbarOptions
-                                              .allowImagePicking)
-                                            const SizedBox(height: 10),
-                                          if (widget.htmlToolbarOptions
-                                              .allowImagePicking)
-                                            TextFormField(
-                                                controller: filename,
-                                                readOnly: true,
-                                                decoration: InputDecoration(
-                                                  prefixIcon: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                        backgroundColor: Theme
-                                                                .of(context)
-                                                            .dialogBackgroundColor,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 5,
-                                                                right: 5),
-                                                        elevation: 0.0),
-                                                    onPressed: () async {
-                                                      result = await FilePicker
-                                                          .platform
-                                                          .pickFiles(
-                                                        type: FileType.image,
-                                                        withData: true,
-                                                        allowedExtensions: widget
-                                                            .htmlToolbarOptions
-                                                            .imageExtensions,
-                                                      );
-                                                      if (result?.files.single
-                                                              .name !=
-                                                          null) {
-                                                        setState(() {
-                                                          filename.text =
-                                                              result!.files
-                                                                  .single.name;
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Text('Choose image',
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyLarge
-                                                                ?.color)),
-                                                  ),
-                                                  suffixIcon: result != null
-                                                      ? IconButton(
-                                                          icon: const Icon(
-                                                              Icons.close),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              result = null;
-                                                              filename.text =
-                                                                  '';
-                                                            });
-                                                          })
-                                                      : const SizedBox(
-                                                          height: 0, width: 0),
-                                                  errorText: validateFailed,
-                                                  errorMaxLines: 2,
-                                                  border: InputBorder.none,
-                                                )),
-                                          if (widget.htmlToolbarOptions
-                                              .allowImagePicking)
-                                            const SizedBox(height: 20),
-                                          if (widget.htmlToolbarOptions
-                                              .allowImagePicking)
-                                            const Text('URL',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          if (widget.htmlToolbarOptions
-                                              .allowImagePicking)
-                                            const SizedBox(height: 10),
-                                          TextField(
-                                            controller: url,
-                                            focusNode: urlFocus,
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            decoration: InputDecoration(
-                                              border:
-                                                  const OutlineInputBorder(),
-                                              hintText: 'URL',
-                                              errorText: validateFailed,
-                                              errorMaxLines: 2,
-                                            ),
-                                          ),
-                                        ]),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          if (filename.text.isEmpty &&
-                                              url.text.isEmpty) {
-                                            setState(() {
-                                              validateFailed = widget
-                                                      .htmlToolbarOptions
-                                                      .allowImagePicking
-                                                  ? 'Please either choose an image or enter an image URL!'
-                                                  : 'Please enter an image URL!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              url.text.isNotEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please input either an image or an image URL, not both!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              result?.files.single.bytes !=
-                                                  null) {
-                                            var base64Data = base64.encode(
-                                                result!.files.single.bytes!);
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .mediaUploadInterceptor
-                                                    ?.call(result!.files.single,
-                                                        InsertFileType.image) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller.insertHtml(
-                                                  "<img src='data:image/${result!.files.single.extension};base64,$base64Data' data-filename='${result!.files.single.name}'/>");
-                                            }
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .mediaLinkInsertInterceptor
-                                                    ?.call(url.text,
-                                                        InsertFileType.image) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller
-                                                  .insertNetworkImage(url.text);
-                                            }
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      )
-                                    ],
-                                  );
-                                }),
-                              );
-                            });
-                      }
-                    }
-                    if (t.getIcons()[index].icon == Icons.audiotrack_outlined) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.audio, null, null) ??
-                          true;
-                      if (proceed) {
-                        final filename = TextEditingController();
-                        final url = TextEditingController();
-                        final urlFocus = FocusNode();
-                        FilePickerResult? result;
-                        String? validateFailed;
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return PointerInterceptor(
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return AlertDialog(
-                                    title: const Text('Insert Audio'),
-                                    scrollable: true,
-                                    content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text('Select from files',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          TextFormField(
-                                              controller: filename,
-                                              readOnly: true,
-                                              decoration: InputDecoration(
-                                                prefixIcon: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Theme.of(
-                                                              context)
-                                                          .dialogBackgroundColor,
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5,
-                                                              right: 5),
-                                                      elevation: 0.0),
-                                                  onPressed: () async {
-                                                    result = await FilePicker
-                                                        .platform
-                                                        .pickFiles(
-                                                      type: FileType.audio,
-                                                      withData: true,
-                                                      allowedExtensions: widget
-                                                          .htmlToolbarOptions
-                                                          .audioExtensions,
-                                                    );
-                                                    if (result?.files.single
-                                                            .name !=
-                                                        null) {
-                                                      setState(() {
-                                                        filename.text = result!
-                                                            .files.single.name;
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Text('Choose audio',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyLarge
-                                                                  ?.color)),
-                                                ),
-                                                suffixIcon: result != null
-                                                    ? IconButton(
-                                                        icon: const Icon(
-                                                            Icons.close),
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            result = null;
-                                                            filename.text = '';
-                                                          });
-                                                        })
-                                                    : const SizedBox(
-                                                        height: 0, width: 0),
-                                                errorText: validateFailed,
-                                                errorMaxLines: 2,
-                                                border: InputBorder.none,
-                                              )),
-                                          const SizedBox(height: 20),
-                                          const Text('URL',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          TextField(
-                                            controller: url,
-                                            focusNode: urlFocus,
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            decoration: InputDecoration(
-                                              border:
-                                                  const OutlineInputBorder(),
-                                              hintText: 'URL',
-                                              errorText: validateFailed,
-                                              errorMaxLines: 2,
-                                            ),
-                                          ),
-                                        ]),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          if (filename.text.isEmpty &&
-                                              url.text.isEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please either choose an audio file or enter an audio file URL!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              url.text.isNotEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please input either an audio file or an audio URL, not both!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              result?.files.single.bytes !=
-                                                  null) {
-                                            var base64Data = base64.encode(
-                                                result!.files.single.bytes!);
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .mediaUploadInterceptor
-                                                    ?.call(result!.files.single,
-                                                        InsertFileType.audio) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller.insertHtml(
-                                                  "<audio controls src='data:audio/${result!.files.single.extension};base64,$base64Data' data-filename='${result!.files.single.name}'></audio>");
-                                            }
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .mediaLinkInsertInterceptor
-                                                    ?.call(url.text,
-                                                        InsertFileType.audio) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller.insertHtml(
-                                                  "<audio controls src='${url.text}'></audio>");
-                                            }
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      )
-                                    ],
-                                  );
-                                }),
-                              );
-                            });
-                      }
-                    }
-                    if (t.getIcons()[index].icon == Icons.videocam_outlined) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.video, null, null) ??
-                          true;
-                      if (proceed) {
-                        final filename = TextEditingController();
-                        final url = TextEditingController();
-                        final urlFocus = FocusNode();
-                        FilePickerResult? result;
-                        String? validateFailed;
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return PointerInterceptor(
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return AlertDialog(
-                                    title: const Text('Insert Video'),
-                                    scrollable: true,
-                                    content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text('Select from files',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          TextFormField(
-                                              controller: filename,
-                                              readOnly: true,
-                                              decoration: InputDecoration(
-                                                prefixIcon: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Theme.of(
-                                                              context)
-                                                          .dialogBackgroundColor,
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5,
-                                                              right: 5),
-                                                      elevation: 0.0),
-                                                  onPressed: () async {
-                                                    result = await FilePicker
-                                                        .platform
-                                                        .pickFiles(
-                                                      type: FileType.video,
-                                                      withData: true,
-                                                      allowedExtensions: widget
-                                                          .htmlToolbarOptions
-                                                          .videoExtensions,
-                                                    );
-                                                    if (result?.files.single
-                                                            .name !=
-                                                        null) {
-                                                      setState(() {
-                                                        filename.text = result!
-                                                            .files.single.name;
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Text('Choose video',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyLarge
-                                                                  ?.color)),
-                                                ),
-                                                suffixIcon: result != null
-                                                    ? IconButton(
-                                                        icon: const Icon(
-                                                            Icons.close),
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            result = null;
-                                                            filename.text = '';
-                                                          });
-                                                        })
-                                                    : const SizedBox(
-                                                        height: 0, width: 0),
-                                                errorText: validateFailed,
-                                                errorMaxLines: 2,
-                                                border: InputBorder.none,
-                                              )),
-                                          const SizedBox(height: 20),
-                                          const Text('URL',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          TextField(
-                                            controller: url,
-                                            focusNode: urlFocus,
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            decoration: InputDecoration(
-                                              border:
-                                                  const OutlineInputBorder(),
-                                              hintText: 'URL',
-                                              errorText: validateFailed,
-                                              errorMaxLines: 2,
-                                            ),
-                                          ),
-                                        ]),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          if (filename.text.isEmpty &&
-                                              url.text.isEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please either choose a video or enter a video URL!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              url.text.isNotEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please input either a video or a video URL, not both!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              result?.files.single.bytes !=
-                                                  null) {
-                                            var base64Data = base64.encode(
-                                                result!.files.single.bytes!);
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .mediaUploadInterceptor
-                                                    ?.call(result!.files.single,
-                                                        InsertFileType.video) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller.insertHtml(
-                                                  "<video controls src='data:video/${result!.files.single.extension};base64,$base64Data' data-filename='${result!.files.single.name}'></video>");
-                                            }
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            var proceed = await widget
-                                                    .htmlToolbarOptions
-                                                    .mediaLinkInsertInterceptor
-                                                    ?.call(url.text,
-                                                        InsertFileType.video) ??
-                                                true;
-                                            if (proceed) {
-                                              widget.controller.insertHtml(
-                                                  "<video controls src='${url.text}'></video>");
-                                            }
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      )
-                                    ],
-                                  );
-                                }),
-                              );
-                            });
-                      }
-                    }
-                    if (t.getIcons()[index].icon == Icons.attach_file) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.otherFile, null, null) ??
-                          true;
-                      if (proceed) {
-                        final filename = TextEditingController();
-                        final url = TextEditingController();
-                        final urlFocus = FocusNode();
-                        FilePickerResult? result;
-                        String? validateFailed;
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return PointerInterceptor(
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return AlertDialog(
-                                    title: const Text('Insert File'),
-                                    scrollable: true,
-                                    content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text('Select from files',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          TextFormField(
-                                              controller: filename,
-                                              readOnly: true,
-                                              decoration: InputDecoration(
-                                                prefixIcon: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Theme.of(
-                                                              context)
-                                                          .dialogBackgroundColor,
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5,
-                                                              right: 5),
-                                                      elevation: 0.0),
-                                                  onPressed: () async {
-                                                    result = await FilePicker
-                                                        .platform
-                                                        .pickFiles(
-                                                      type: FileType.any,
-                                                      withData: true,
-                                                      allowedExtensions: widget
-                                                          .htmlToolbarOptions
-                                                          .otherFileExtensions,
-                                                    );
-                                                    if (result?.files.single
-                                                            .name !=
-                                                        null) {
-                                                      setState(() {
-                                                        filename.text = result!
-                                                            .files.single.name;
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Text('Choose file',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyLarge
-                                                                  ?.color)),
-                                                ),
-                                                suffixIcon: result != null
-                                                    ? IconButton(
-                                                        icon: const Icon(
-                                                            Icons.close),
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            result = null;
-                                                            filename.text = '';
-                                                          });
-                                                        })
-                                                    : const SizedBox(
-                                                        height: 0, width: 0),
-                                                errorText: validateFailed,
-                                                errorMaxLines: 2,
-                                                border: InputBorder.none,
-                                              )),
-                                          const SizedBox(height: 20),
-                                          const Text('URL',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          TextField(
-                                            controller: url,
-                                            focusNode: urlFocus,
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            decoration: InputDecoration(
-                                              border:
-                                                  const OutlineInputBorder(),
-                                              hintText: 'URL',
-                                              errorText: validateFailed,
-                                              errorMaxLines: 2,
-                                            ),
-                                          ),
-                                        ]),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          if (filename.text.isEmpty &&
-                                              url.text.isEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please either choose a file or enter a file URL!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              url.text.isNotEmpty) {
-                                            setState(() {
-                                              validateFailed =
-                                                  'Please input either a file or a file URL, not both!';
-                                            });
-                                          } else if (filename.text.isNotEmpty &&
-                                              result?.files.single.bytes !=
-                                                  null) {
-                                            widget.htmlToolbarOptions
-                                                .onOtherFileUpload
-                                                ?.call(result!.files.single);
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            widget.htmlToolbarOptions
-                                                .onOtherFileLinkInsert
-                                                ?.call(url.text);
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      )
-                                    ],
-                                  );
-                                }),
-                              );
-                            });
-                      }
-                    }
-                    if (t.getIcons()[index].icon ==
-                        Icons.table_chart_outlined) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.table, null, null) ??
-                          true;
-                      if (proceed) {
-                        var currentRows = 1;
-                        var currentCols = 1;
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return PointerInterceptor(
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setState) {
-                                  return AlertDialog(
-                                    title: const Text('Insert Table'),
-                                    scrollable: true,
-                                    content: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          NumberPicker(
-                                            value: currentRows,
-                                            minValue: 1,
-                                            maxValue: 10,
-                                            onChanged: (value) => setState(
-                                                () => currentRows = value),
-                                          ),
-                                          const Text('x'),
-                                          NumberPicker(
-                                            value: currentCols,
-                                            minValue: 1,
-                                            maxValue: 10,
-                                            onChanged: (value) => setState(
-                                                () => currentCols = value),
-                                          ),
-                                        ]),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          if (kIsWeb) {
-                                            widget.controller.insertTable(
-                                                '${currentRows}x$currentCols');
-                                          } else {
-                                            await widget
-                                                .controller.editorController!
-                                                .evaluateJavascript(
-                                                    source:
-                                                        "\$('#summernote-2').summernote('insertTable', '${currentRows}x$currentCols');");
-                                          }
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('OK'),
-                                      )
-                                    ],
-                                  );
-                                }),
-                              );
-                            });
-                      }
-                    }
-                    if (t.getIcons()[index].icon == Icons.horizontal_rule) {
-                      var proceed = await widget
-                              .htmlToolbarOptions.onButtonPressed
-                              ?.call(ButtonType.hr, null, null) ??
-                          true;
-                      if (proceed) {
-                        widget.controller.insertHtml('<hr/>');
-                      }
-                    }
-                  },
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius:
-                          widget.htmlToolbarOptions.buttonBorderRadius,
-                    ),
-                    child: Icon(
-                      t.getIcons()[index].icon,
-                      size: 20,
-                      color: widget.htmlToolbarOptions.buttonColor,
-                    ),
-                  ),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
                 ),
-              )));
+                child: t.getIcons()[index],
+              ),
+            ),
+          )));
         }
       }
       if (t is OtherButtons) {

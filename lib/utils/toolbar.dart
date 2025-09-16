@@ -178,15 +178,15 @@ class InsertButtons extends Toolbar {
     this.hr = true,
   });
 
-  List<Icon> getIcons() {
-    var icons = <Icon>[];
-    if (link) icons.add(const Icon(Icons.link));
-    if (picture) icons.add(const Icon(Icons.image_outlined));
-    if (audio) icons.add(const Icon(Icons.audiotrack_outlined));
-    if (video) icons.add(const Icon(Icons.videocam_outlined));
-    if (otherFile) icons.add(const Icon(Icons.attach_file));
-    if (table) icons.add(const Icon(Icons.table_chart_outlined));
-    if (hr) icons.add(const Icon(Icons.horizontal_rule));
+  List<Image> getIcons() {
+    var icons = <Image>[];
+    // if (link) icons.add(const Icon(Icons.link));
+    // if (picture) icons.add(const Icon(Icons.image_outlined));
+    // if (audio) icons.add(const Icon(Icons.audiotrack_outlined));
+    // if (video) icons.add(const Icon(Icons.videocam_outlined));
+    // if (otherFile) icons.add(const Icon(Icons.attach_file));
+    if (table) icons.add(Image.asset("assets/images/table.png", width: 20, height: 20,));
+    if (hr) icons.add(Image.asset("assets/images/divider.png", width: 20, height: 20,));
     return icons;
   }
 }
