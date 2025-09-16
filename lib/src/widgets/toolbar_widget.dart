@@ -478,14 +478,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
-    final separator = widget.htmlToolbarOptions.separatorWidget ?? 
+    final separator = widget.htmlToolbarOptions.separatorWidget ??
         Image.asset(
           "assets/images/seperated.png",
           width: 20,
           height: 20,
         );
-    
-    for (int sectionIndex = 0; sectionIndex < widget.htmlToolbarOptions.defaultToolbarButtons.length; sectionIndex++) {
+
+    for (int sectionIndex = 0;
+        sectionIndex < widget.htmlToolbarOptions.defaultToolbarButtons.length;
+        sectionIndex++) {
       var t = widget.htmlToolbarOptions.defaultToolbarButtons[sectionIndex];
       int childrenCountBeforeSection = toolbarChildren.length;
       if (t is FontSettingButtons) {
@@ -1181,7 +1183,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     final hasFore = t.foregroundColor;
                     final hasBack = t.highlightColor;
                     bool isFore(int i) => hasFore && (!hasBack || i == 0);
-                    bool isBack(int i) => hasBack && (hasFore ? i == 1 : i == 0);
+                    bool isBack(int i) =>
+                        hasBack && (hasFore ? i == 1 : i == 0);
                     void updateStatus(Color? color) {
                       setState(mounted, this.setState, () {
                         _colorSelected[index] = !_colorSelected[index];
@@ -1934,9 +1937,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         context: context,
                         builder: (BuildContext context) {
                           return PointerInterceptor(
-                            child: StatefulBuilder(
-                                builder: (BuildContext context,
-                                    StateSetter setState) {
+                            child: StatefulBuilder(builder:
+                                (BuildContext context, StateSetter setState) {
                               return AlertDialog(
                                 title: const Text('Insert Table'),
                                 scrollable: true,
@@ -1974,7 +1976,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                         widget.controller.insertTable(
                                             '${currentRows}x$currentCols');
                                       } else {
-                                        await widget.controller.editorController!
+                                        await widget
+                                            .controller.editorController!
                                             .evaluateJavascript(
                                                 source:
                                                     "\$('#summernote-2').summernote('insertTable', '${currentRows}x$currentCols');");
@@ -1990,8 +1993,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         });
                   }
                 } else if (isHr(index)) {
-                  var proceed = await widget.htmlToolbarOptions
-                          .onButtonPressed
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
                           ?.call(ButtonType.hr, null, null) ??
                       true;
                   if (proceed) {
@@ -2375,19 +2377,21 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           ));
         }
       }
-      
+
       // Add separator after each toolbar section if this section added any widgets
       // and it's not the last section and separator rendering is enabled
-      bool sectionAddedWidgets = toolbarChildren.length > childrenCountBeforeSection;
-      bool isLastSection = sectionIndex == widget.htmlToolbarOptions.defaultToolbarButtons.length - 1;
-      
-      if (widget.htmlToolbarOptions.renderSeparatorWidget && 
-          sectionAddedWidgets && 
+      bool sectionAddedWidgets =
+          toolbarChildren.length > childrenCountBeforeSection;
+      bool isLastSection = sectionIndex ==
+          widget.htmlToolbarOptions.defaultToolbarButtons.length - 1;
+
+      if (widget.htmlToolbarOptions.renderSeparatorWidget &&
+          sectionAddedWidgets &&
           !isLastSection) {
         toolbarChildren.add(separator);
       }
     }
-    
+
     if (widget.htmlToolbarOptions.customToolbarInsertionIndices.isNotEmpty &&
         widget.htmlToolbarOptions.customToolbarInsertionIndices.length ==
             widget.htmlToolbarOptions.customToolbarButtons?.length) {
@@ -2416,15 +2420,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       }
     } else {
       // Add separator before custom buttons if there are default buttons and separator is enabled
-      bool hasDefaultButtons = widget.htmlToolbarOptions.defaultToolbarButtons.isNotEmpty;
-      bool hasCustomButtons = (widget.htmlToolbarOptions.customToolbarButtons?.isNotEmpty ?? false);
-      
-      if (widget.htmlToolbarOptions.renderSeparatorWidget && 
-          hasDefaultButtons && 
+      bool hasDefaultButtons =
+          widget.htmlToolbarOptions.defaultToolbarButtons.isNotEmpty;
+      bool hasCustomButtons =
+          (widget.htmlToolbarOptions.customToolbarButtons?.isNotEmpty ?? false);
+
+      if (widget.htmlToolbarOptions.renderSeparatorWidget &&
+          hasDefaultButtons &&
           hasCustomButtons) {
         toolbarChildren.add(separator);
       }
-      
+
       // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
       // Use smaller padding to visually balance with default buttons (11px)
       toolbarChildren.addAll(
@@ -2436,17 +2442,15 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         ),
       );
     }
-    // Add small spacing between toolbar items when no separator is used
-    if (!widget.htmlToolbarOptions.renderSeparatorWidget) {
-      List<Widget> spacedChildren = [];
-      for (int i = 0; i < toolbarChildren.length; i++) {
-        spacedChildren.add(toolbarChildren[i]);
-        if (i < toolbarChildren.length - 1) {
-          spacedChildren.add(const SizedBox(width: 2));
-        }
+    // Add 11px spacing between individual toolbar icons/buttons
+    List<Widget> spacedChildren = [];
+    for (int i = 0; i < toolbarChildren.length; i++) {
+      spacedChildren.add(toolbarChildren[i]);
+      if (i < toolbarChildren.length - 1) {
+        spacedChildren.add(const SizedBox(width: 11));
       }
-      toolbarChildren = spacedChildren;
     }
+    toolbarChildren = spacedChildren;
     return toolbarChildren;
   }
 }
