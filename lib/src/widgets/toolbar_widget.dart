@@ -478,7 +478,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
-    for (var t in widget.htmlToolbarOptions.defaultToolbarButtons) {
+    final separator = widget.htmlToolbarOptions.separatorWidget ?? 
+        Image.asset(
+          "assets/images/seperated.png",
+          width: 20,
+          height: 20,
+        );
+    
+    for (int sectionIndex = 0; sectionIndex < widget.htmlToolbarOptions.defaultToolbarButtons.length; sectionIndex++) {
+      var t = widget.htmlToolbarOptions.defaultToolbarButtons[sectionIndex];
+      int childrenCountBeforeSection = toolbarChildren.length;
       if (t is FontSettingButtons) {
         if (t.fontName) {
           toolbarChildren.add(Container(
@@ -2366,6 +2375,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           ));
         }
       }
+      
+      // Add separator after each toolbar section if this section added any widgets
+      // and it's not the last section and separator rendering is enabled
+      bool sectionAddedWidgets = toolbarChildren.length > childrenCountBeforeSection;
+      bool isLastSection = sectionIndex == widget.htmlToolbarOptions.defaultToolbarButtons.length - 1;
+      
+      if (widget.htmlToolbarOptions.renderSeparatorWidget && 
+          sectionAddedWidgets && 
+          !isLastSection) {
+        toolbarChildren.add(separator);
+      }
     }
     if (widget.htmlToolbarOptions.customToolbarInsertionIndices.isNotEmpty &&
         widget.htmlToolbarOptions.customToolbarInsertionIndices.length ==
@@ -2405,17 +2425,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         ),
       );
     }
-    if (widget.htmlToolbarOptions.renderSeparatorWidget) {
-      final separator = widget.htmlToolbarOptions.separatorWidget ?? 
-          Image.asset(
-            "assets/images/seperated.png",
-            width: 20,
-            height: 20,
-          );
-      toolbarChildren = intersperse(separator, toolbarChildren)
-          .toList();
-    } else {
-      // Add small spacing between toolbar items when no separator is used
+    // Add small spacing between toolbar items when no separator is used
+    if (!widget.htmlToolbarOptions.renderSeparatorWidget) {
       List<Widget> spacedChildren = [];
       for (int i = 0; i < toolbarChildren.length; i++) {
         spacedChildren.add(toolbarChildren[i]);
