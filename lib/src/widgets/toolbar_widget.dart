@@ -2406,8 +2406,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       );
     }
     if (widget.htmlToolbarOptions.renderSeparatorWidget) {
-      toolbarChildren = intersperse(
-              widget.htmlToolbarOptions.separatorWidget, toolbarChildren)
+      final separator = widget.htmlToolbarOptions.separatorWidget ?? 
+          Image.asset(
+            "assets/images/seperated.png",
+            width: 20,
+            height: 20,
+          );
+      toolbarChildren = intersperse(separator, toolbarChildren)
           .toList();
     } else {
       // Add small spacing between toolbar items when no separator is used

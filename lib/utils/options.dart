@@ -184,8 +184,7 @@ class HtmlToolbarOptions {
     this.buttonBorderWidth,
     this.renderBorder = false,
     this.textStyle,
-    this.separatorWidget =
-        const VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
+    this.separatorWidget,
     this.renderSeparatorWidget = true,
     this.toolbarItemHeight = 36,
     this.gridViewHorizontalSpacing = 5,
@@ -347,8 +346,8 @@ class HtmlToolbarOptions {
   /// Sets the separator widget between toolbar sections. This widget is only
   /// used in [ToolbarType.nativeScrollable].
   ///
-  /// The default widget is [VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey)]
-  final Widget separatorWidget;
+  /// The default widget is [Image.asset("assets/images/seperated.png", width: 20, height: 20)]
+  final Widget? separatorWidget;
 
   /// Determines whether the separator widget is rendered
   ///
