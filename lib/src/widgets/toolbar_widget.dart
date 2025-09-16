@@ -2387,6 +2387,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         toolbarChildren.add(separator);
       }
     }
+    
     if (widget.htmlToolbarOptions.customToolbarInsertionIndices.isNotEmpty &&
         widget.htmlToolbarOptions.customToolbarInsertionIndices.length ==
             widget.htmlToolbarOptions.customToolbarButtons?.length) {
@@ -2414,6 +2415,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
       }
     } else {
+      // Add separator before custom buttons if there are default buttons and separator is enabled
+      bool hasDefaultButtons = widget.htmlToolbarOptions.defaultToolbarButtons.isNotEmpty;
+      bool hasCustomButtons = (widget.htmlToolbarOptions.customToolbarButtons?.isNotEmpty ?? false);
+      
+      if (widget.htmlToolbarOptions.renderSeparatorWidget && 
+          hasDefaultButtons && 
+          hasCustomButtons) {
+        toolbarChildren.add(separator);
+      }
+      
       // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
       // Use smaller padding to visually balance with default buttons (11px)
       toolbarChildren.addAll(
