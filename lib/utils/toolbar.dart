@@ -75,12 +75,24 @@ class ColorButtons extends Toolbar {
     this.highlightColor = true,
   });
 
-  List<Icon> getIcons() {
-    var icons = <Icon>[];
+  List<Image> getIcons() {
+    var icons = <Image>[];
     if (foregroundColor)
-      icons.add(const Icon(Icons.format_color_text, size: 20));
+      icons.add(
+        Image.asset(
+          "assets/images/pallete.png",
+          width: 20,
+          height: 20,
+        ),
+      );
     if (highlightColor)
-      icons.add(const Icon(Icons.format_color_fill, size: 20));
+      icons.add(
+        Image.asset(
+          "assets/images/pain-color.png",
+          width: 20,
+          height: 20,
+        ),
+      );
     return icons;
   }
 }

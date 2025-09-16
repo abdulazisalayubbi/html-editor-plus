@@ -1168,24 +1168,26 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 height: 20,
                 child: InkWell(
                   onTap: () async {
+                    // Determine which color button this is (foreground or highlight)
+                    final hasFore = t.foregroundColor;
+                    final hasBack = t.highlightColor;
+                    bool isFore(int i) => hasFore && (!hasBack || i == 0);
+                    bool isBack(int i) => hasBack && (hasFore ? i == 1 : i == 0);
                     void updateStatus(Color? color) {
                       setState(mounted, this.setState, () {
                         _colorSelected[index] = !_colorSelected[index];
-                        if (color != null &&
-                            t.getIcons()[index].icon ==
-                                Icons.format_color_text) {
-                          _foreColorSelected = color;
-                        }
-                        if (color != null &&
-                            t.getIcons()[index].icon ==
-                                Icons.format_color_fill) {
-                          _backColorSelected = color;
+                        if (color != null) {
+                          if (isFore(index)) {
+                            _foreColorSelected = color;
+                          } else if (isBack(index)) {
+                            _backColorSelected = color;
+                          }
                         }
                       });
                     }
 
                     if (_colorSelected[index]) {
-                      if (t.getIcons()[index].icon == Icons.format_color_text) {
+                      if (isFore(index)) {
                         var proceed = await widget
                                 .htmlToolbarOptions.onButtonPressed
                                 ?.call(ButtonType.foregroundColor,
@@ -1200,7 +1202,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                           updateStatus(null);
                         }
                       }
-                      if (t.getIcons()[index].icon == Icons.format_color_fill) {
+                      if (isBack(index)) {
                         var proceed = await widget
                                 .htmlToolbarOptions.onButtonPressed
                                 ?.call(ButtonType.highlightColor,
@@ -1217,14 +1219,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                     } else {
                       var proceed = true;
-                      if (t.getIcons()[index].icon == Icons.format_color_text) {
+                      if (isFore(index)) {
                         proceed = await widget
                                 .htmlToolbarOptions.onButtonPressed
                                 ?.call(ButtonType.foregroundColor,
                                     _colorSelected[index], updateStatus) ??
                             true;
-                      } else if (t.getIcons()[index].icon ==
-                          Icons.format_color_fill) {
+                      } else if (isBack(index)) {
                         proceed = await widget
                                 .htmlToolbarOptions.onButtonPressed
                                 ?.call(ButtonType.highlightColor,
@@ -1233,8 +1234,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                       if (proceed) {
                         late Color newColor;
-                        if (t.getIcons()[index].icon ==
-                            Icons.format_color_text) {
+                        if (isFore(index)) {
                           newColor = _foreColorSelected;
                         } else {
                           newColor = _backColorSelected;
@@ -1285,8 +1285,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     ),
                                     TextButton(
                                         onPressed: () {
-                                          if (t.getIcons()[index].icon ==
-                                              Icons.format_color_text) {
+                                          if (isFore(index)) {
                                             setState(mounted, this.setState,
                                                 () {
                                               _foreColorSelected = Colors.black;
@@ -1298,8 +1297,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                 'foreColor',
                                                 argument: 'initial');
                                           }
-                                          if (t.getIcons()[index].icon ==
-                                              Icons.format_color_fill) {
+                                          if (isBack(index)) {
                                             setState(mounted, this.setState,
                                                 () {
                                               _backColorSelected =
@@ -1318,8 +1316,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                             'Reset to default color')),
                                     TextButton(
                                       onPressed: () {
-                                        if (t.getIcons()[index].icon ==
-                                            Icons.format_color_text) {
+                                        if (isFore(index)) {
                                           widget.controller.execCommand(
                                               'foreColor',
                                               argument:
@@ -1331,8 +1328,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                             _foreColorSelected = newColor;
                                           });
                                         }
-                                        if (t.getIcons()[index].icon ==
-                                            Icons.format_color_fill) {
+                                        if (isBack(index)) {
                                           widget.controller.execCommand(
                                               'hiliteColor',
                                               argument:
@@ -1359,13 +1355,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                     }
                   },
-                  child: Icon(
-                    t.getIcons()[index].icon,
-                    size: 20,
-                    color: _colorSelected[index]
-                        ? widget.htmlToolbarOptions.buttonSelectedColor
-                        : widget.htmlToolbarOptions.buttonColor,
-                  ),
+                  child: t.getIcons()[index],
                 ),
               ),
             ),
