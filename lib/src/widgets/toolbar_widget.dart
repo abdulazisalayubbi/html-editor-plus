@@ -478,12 +478,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
-    final separator = widget.htmlToolbarOptions.separatorWidget ??
-        Image.asset(
-          "assets/images/seperated.png",
-          width: 20,
-          height: 20,
-        );
 
     for (int sectionIndex = 0;
         sectionIndex < widget.htmlToolbarOptions.defaultToolbarButtons.length;
@@ -1182,7 +1176,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(
             Container(
-              margin: const EdgeInsets.only(right: 4),
+              margin: const EdgeInsets.only(right: 11),
               child: SizedBox(
                 width: 20,
                 height: 20,
