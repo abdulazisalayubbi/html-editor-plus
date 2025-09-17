@@ -1184,6 +1184,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         // Add separator after FontButtons section
       }
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
+        // Add separator before ColorButtons section
+        if (widget.htmlToolbarOptions.renderSeparatorWidget) {
+          toolbarChildren.add(separator);
+        }
         // Create individual InkWell buttons for each color button
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(
