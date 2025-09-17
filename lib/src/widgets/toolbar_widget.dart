@@ -1175,10 +1175,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           ));
         }
         // Add separator after FontButtons section
-        toolbarChildren.add(Container(
-          margin: const EdgeInsets.only(left: 4, right: 4),
-          child: Image.asset("assets/images/seperated.png", width: 20, height: 20),
-        ));
+      
       }
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
         // Create individual InkWell buttons for each color button
@@ -1386,11 +1383,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           );
         }
         
-        // Add separator after color buttons
-        toolbarChildren.add(Container(
-          margin: const EdgeInsets.only(left: 4, right: 4),
-          child: Image.asset("assets/images/seperated.png", width: 20, height: 20),
-        ));
+     
       }
       if (t is ListButtons) {
         if (t.ul || t.ol) {
@@ -2043,11 +2036,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             ),
           )));
         }
-        // Add separator after ParagraphButtons section
-        toolbarChildren.add(Container(
-          margin: const EdgeInsets.only(left: 4, right: 4),
-          child: Image.asset("assets/images/seperated.png", width: 20, height: 20),
-        ));
+       
       }
       if (t is OtherButtons) {
         if (t.fullscreen || t.codeview || t.undo || t.redo || t.help) {
@@ -2418,10 +2407,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           ));
         }
         // Add separator after OtherButtons section
-        toolbarChildren.add(Container(
-          margin: const EdgeInsets.only(left: 4, right: 4),
-          child: Image.asset("assets/images/seperated.png", width: 20, height: 20),
-        ));
+        
       }
 
       // Add separator after each toolbar section if this section added any widgets
