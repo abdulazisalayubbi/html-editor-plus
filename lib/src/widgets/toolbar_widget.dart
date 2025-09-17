@@ -2420,7 +2420,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (widget.htmlToolbarOptions.renderSeparatorWidget &&
           sectionAddedWidgets &&
           !isLastSection) {
-        toolbarChildren.add(separator);
+        // toolbarChildren.add(separator);
       }
     }
 
