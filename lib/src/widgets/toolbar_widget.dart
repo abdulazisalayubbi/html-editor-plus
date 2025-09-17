@@ -2401,7 +2401,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (widget.htmlToolbarOptions.renderSeparatorWidget &&
           sectionAddedWidgets &&
           !isLastSection) {
-        toolbarChildren.add(separator);
+        toolbarChildren.add(Container(
+          margin: const EdgeInsets.only(right: 11),
+          child: separator,
+        ));
       }
     }
 
@@ -2444,7 +2447,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (widget.htmlToolbarOptions.renderSeparatorWidget &&
           hasDefaultButtons &&
           hasCustomButtons) {
-        toolbarChildren.add(separator);
+        toolbarChildren.add(Container(
+          margin: const EdgeInsets.only(right: 11),
+          child: separator,
+        ));
       }
 
       // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
