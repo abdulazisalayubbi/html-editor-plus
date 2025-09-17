@@ -478,6 +478,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
+    
+    // Define separator widget - use custom separator or default vertical divider
+    final Widget separator = widget.htmlToolbarOptions.separatorWidget ??
+        Container(
+          margin: const EdgeInsets.only(right: 11),
+          child: SizedBox(
+            width: 1,
+            height: 20,
+            child: Container(
+              color: Colors.grey.withOpacity(0.4),
+            ),
+          ),
+        );
 
     for (int sectionIndex = 0;
         sectionIndex < widget.htmlToolbarOptions.defaultToolbarButtons.length;
@@ -1375,6 +1388,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             ),
           );
         }
+        // Add separator after ColorButtons section
+        if (widget.htmlToolbarOptions.renderSeparatorWidget) {
+          toolbarChildren.add(separator);
+        }
       }
       if (t is ListButtons) {
         if (t.ul || t.ol) {
@@ -2035,6 +2052,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 ),
               )));
         }
+        // Add separator after InsertButtons section
+        if (widget.htmlToolbarOptions.renderSeparatorWidget) {
+          toolbarChildren.add(separator);
+        }
       }
       if (t is OtherButtons) {
         if (t.fullscreen || t.codeview || t.undo || t.redo || t.help) {
@@ -2476,7 +2497,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (widget.htmlToolbarOptions.renderSeparatorWidget &&
           hasDefaultButtons &&
           hasCustomButtons) {
-        // toolbarChildren.add(separator);
+        toolbarChildren.add(separator);
       }
 
       // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
