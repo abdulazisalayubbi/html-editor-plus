@@ -2463,7 +2463,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       if (widget.htmlToolbarOptions.renderSeparatorWidget &&
           hasDefaultButtons &&
           hasCustomButtons) {
-        toolbarChildren.add(separator);
+        // toolbarChildren.add(separator);
       }
 
       // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
