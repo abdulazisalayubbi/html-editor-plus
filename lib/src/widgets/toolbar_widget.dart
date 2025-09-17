@@ -1037,11 +1037,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       }
       if (t is FontButtons) {
         if (t.bold || t.italic || t.underline || t.clearAll) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: 20,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: 20,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -1104,14 +1106,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             },
             isSelected: _fontSelected,
             children: t.getIcons1(),
+            ),
           ));
         }
         if (t.strikethrough || t.superscript || t.subscript) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: 20,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: 20,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -1166,6 +1171,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             },
             isSelected: _miscFontSelected,
             children: t.getIcons2(),
+            ),
           ));
         }
       }
@@ -1174,6 +1180,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(
             Container(
+              margin: const EdgeInsets.only(right: 11),
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -2016,11 +2023,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       }
       if (t is OtherButtons) {
         if (t.fullscreen || t.codeview || t.undo || t.redo || t.help) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -2327,14 +2336,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             },
             isSelected: _miscSelected,
             children: t.getIcons1(),
+            ),
           ));
         }
         if (t.copy || t.paste) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -2374,6 +2386,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             },
             isSelected: List<bool>.filled(t.getIcons2().length, false),
             children: t.getIcons2(),
+            ),
           ));
         }
       }
@@ -2400,10 +2413,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           i++) {
         // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
         // Use smaller padding to visually balance with default buttons (11px)
-        final wrappedButton = SizedBox(
-          height: 20,
-          child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-              const SizedBox.shrink(),
+        final wrappedButton = Container(
+          margin: const EdgeInsets.only(right: 11),
+          child: SizedBox(
+            height: 20,
+            child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                const SizedBox.shrink(),
+          ),
         );
 
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
@@ -2435,9 +2451,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       // Use smaller padding to visually balance with default buttons (11px)
       toolbarChildren.addAll(
         (widget.htmlToolbarOptions.customToolbarButtons ?? []).map(
-          (button) => SizedBox(
-            height: 20,
-            child: button,
+          (button) => Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: SizedBox(
+              height: 20,
+              child: button,
+            ),
           ),
         ),
       );
