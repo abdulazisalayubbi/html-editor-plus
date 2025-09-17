@@ -2442,12 +2442,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         ),
       );
     }
-    // Add 4px spacing between individual toolbar icons/buttons
+    // Add 2px spacing between individual toolbar icons/buttons
     List<Widget> spacedChildren = [];
     for (int i = 0; i < toolbarChildren.length; i++) {
       spacedChildren.add(toolbarChildren[i]);
       if (i < toolbarChildren.length - 1) {
-        spacedChildren.add(const SizedBox(width: 5.5));
+        spacedChildren.add(const SizedBox(width: 2));
       }
     }
     toolbarChildren = spacedChildren;
