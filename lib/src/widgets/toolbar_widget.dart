@@ -2034,33 +2034,20 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       }
       if (t is OtherButtons) {
         if (t.fullscreen || t.codeview || t.undo || t.redo || t.help) {
-          toolbarChildren.add(Container(
-            margin: const EdgeInsets.only(right: 11),
-            child: ToggleButtons(
-              constraints: BoxConstraints.tightFor(
-                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-              ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              void updateStatus() {
-                setState(mounted, this.setState, () {
-                  _miscSelected[index] = !_miscSelected[index];
-                });
-              }
+          // Create individual InkWell buttons for each other button
+          for (int index = 0; index < t.getIcons1().length; index++) {
+            toolbarChildren.add(Container(
+              margin: const EdgeInsets.only(right: 11),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: InkWell(
+                  onTap: () async {
+                    void updateStatus() {
+                      setState(mounted, this.setState, () {
+                        _miscSelected[index] = !_miscSelected[index];
+                      });
+                    }
 
               if (t.getIcons1()[index].icon == Icons.fullscreen) {
                 var proceed = await widget.htmlToolbarOptions.onButtonPressed
@@ -2344,61 +2331,58 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       });
                 }
               }
-            },
-              isSelected: _miscSelected,
-              children: t.getIcons1(),
-            ),
-          ));
+                  },
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: _miscSelected[index] ? widget.htmlToolbarOptions.buttonFillColor : Colors.transparent,
+                      borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+                    ),
+                    child: t.getIcons1()[index],
+                  ),
+                ),
+              ),
+            ));
+          }
         }
         if (t.copy || t.paste) {
-          toolbarChildren.add(Container(
-            margin: const EdgeInsets.only(right: 11),
-            child: ToggleButtons(
-              constraints: BoxConstraints.tightFor(
-                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+          // Create individual InkWell buttons for each copy/paste button
+          for (int index = 0; index < t.getIcons2().length; index++) {
+            toolbarChildren.add(Container(
+              margin: const EdgeInsets.only(right: 11),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: InkWell(
+                  onTap: () async {
+                    if (t.getIcons2()[index].icon == Icons.copy) {
+                      var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.copy, null, null) ??
+                          true;
+                      if (proceed) {
+                        var data = await widget.controller.getText();
+                        await Clipboard.setData(ClipboardData(text: data));
+                      }
+                    }
+                    if (t.getIcons2()[index].icon == Icons.paste) {
+                      var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.paste, null, null) ??
+                          true;
+                      if (proceed) {
+                        var data = await Clipboard.getData(Clipboard.kTextPlain);
+                        if (data != null) {
+                          var text = data.text!;
+                          widget.controller.insertHtml(text);
+                        }
+                      }
+                    }
+                  },
+                  child: t.getIcons2()[index],
+                ),
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              if (t.getIcons2()[index].icon == Icons.copy) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.copy, null, null) ??
-                    true;
-                if (proceed) {
-                  var data = await widget.controller.getText();
-                  await Clipboard.setData(ClipboardData(text: data));
-                }
-              }
-              if (t.getIcons2()[index].icon == Icons.paste) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.paste, null, null) ??
-                    true;
-                if (proceed) {
-                  var data = await Clipboard.getData(Clipboard.kTextPlain);
-                  if (data != null) {
-                    var text = data.text!;
-                    widget.controller.insertHtml(text);
-                  }
-                }
-              }
-            },
-              isSelected: List<bool>.filled(t.getIcons2().length, false),
-              children: t.getIcons2(),
-            ),
-          ));
+            ));
+          }
         }
         // Add separator after OtherButtons section
         
