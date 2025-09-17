@@ -1038,68 +1038,68 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              void updateStatus() {
-                setState(mounted, this.setState, () {
-                  _fontSelected[index] = !_fontSelected[index];
-                });
-              }
+              color: widget.htmlToolbarOptions.buttonColor,
+              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              fillColor: widget.htmlToolbarOptions.buttonFillColor,
+              focusColor: widget.htmlToolbarOptions.buttonFocusColor,
+              highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
+              hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
+              splashColor: widget.htmlToolbarOptions.buttonSplashColor,
+              selectedBorderColor:
+                  widget.htmlToolbarOptions.buttonSelectedBorderColor,
+              borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+              borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
+              renderBorder: widget.htmlToolbarOptions.renderBorder,
+              textStyle: widget.htmlToolbarOptions.textStyle,
+              onPressed: (int index) async {
+                void updateStatus() {
+                  setState(mounted, this.setState, () {
+                    _fontSelected[index] = !_fontSelected[index];
+                  });
+                }
 
-              if (t.getIcons1()[index].icon == Icons.format_bold) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.bold, _fontSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('bold');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_bold) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.bold, _fontSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('bold');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons1()[index].icon == Icons.format_italic) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.italic, _fontSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('italic');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_italic) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.italic, _fontSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('italic');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons1()[index].icon == Icons.format_underline) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.underline, _fontSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('underline');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_underline) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.underline, _fontSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('underline');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons1()[index].icon == Icons.format_clear) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.clearFormatting, null, null) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('removeFormat');
+                if (t.getIcons1()[index].icon == Icons.format_clear) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.clearFormatting, null, null) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('removeFormat');
+                  }
                 }
-              }
-            },
-            isSelected: _fontSelected,
-            children: t.getIcons1(),
+              },
+              isSelected: _fontSelected,
+              children: t.getIcons1(),
             ),
           ));
         }
@@ -1111,65 +1111,64 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              void updateStatus() {
-                setState(mounted, this.setState, () {
-                  _miscFontSelected[index] = !_miscFontSelected[index];
-                });
-              }
+              color: widget.htmlToolbarOptions.buttonColor,
+              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              fillColor: widget.htmlToolbarOptions.buttonFillColor,
+              focusColor: widget.htmlToolbarOptions.buttonFocusColor,
+              highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
+              hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
+              splashColor: widget.htmlToolbarOptions.buttonSplashColor,
+              selectedBorderColor:
+                  widget.htmlToolbarOptions.buttonSelectedBorderColor,
+              borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+              borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
+              renderBorder: widget.htmlToolbarOptions.renderBorder,
+              textStyle: widget.htmlToolbarOptions.textStyle,
+              onPressed: (int index) async {
+                void updateStatus() {
+                  setState(mounted, this.setState, () {
+                    _miscFontSelected[index] = !_miscFontSelected[index];
+                  });
+                }
 
-              if (t.getIcons2()[index].icon == Icons.format_strikethrough) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.strikethrough,
-                            _miscFontSelected[index], updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('strikeThrough');
-                  updateStatus();
+                if (t.getIcons2()[index].icon == Icons.format_strikethrough) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.strikethrough,
+                              _miscFontSelected[index], updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('strikeThrough');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons2()[index].icon == Icons.superscript) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.superscript, _miscFontSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('superscript');
-                  updateStatus();
+                if (t.getIcons2()[index].icon == Icons.superscript) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.superscript,
+                              _miscFontSelected[index], updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('superscript');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons2()[index].icon == Icons.subscript) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.subscript, _miscFontSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('subscript');
-                  updateStatus();
+                if (t.getIcons2()[index].icon == Icons.subscript) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.subscript, _miscFontSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('subscript');
+                    updateStatus();
+                  }
                 }
-              }
-            },
-            isSelected: _miscFontSelected,
-            children: t.getIcons2(),
+              },
+              isSelected: _miscFontSelected,
+              children: t.getIcons2(),
             ),
           ));
         }
         // Add separator after FontButtons section
-      
       }
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
         // Create individual InkWell buttons for each color button
@@ -1376,8 +1375,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             ),
           );
         }
-        
-     
       }
       if (t is ListButtons) {
         if (t.ul || t.ol) {
@@ -1388,50 +1385,50 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              void updateStatus() {
-                setState(mounted, this.setState, () {
-                  _listSelected[index] = !_listSelected[index];
-                });
-              }
+              color: widget.htmlToolbarOptions.buttonColor,
+              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              fillColor: widget.htmlToolbarOptions.buttonFillColor,
+              focusColor: widget.htmlToolbarOptions.buttonFocusColor,
+              highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
+              hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
+              splashColor: widget.htmlToolbarOptions.buttonSplashColor,
+              selectedBorderColor:
+                  widget.htmlToolbarOptions.buttonSelectedBorderColor,
+              borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+              borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
+              renderBorder: widget.htmlToolbarOptions.renderBorder,
+              textStyle: widget.htmlToolbarOptions.textStyle,
+              onPressed: (int index) async {
+                void updateStatus() {
+                  setState(mounted, this.setState, () {
+                    _listSelected[index] = !_listSelected[index];
+                  });
+                }
 
-              if (t.getIcons()[index].icon == Icons.format_list_bulleted) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.ul, _listSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('insertUnorderedList');
-                  updateStatus();
+                if (t.getIcons()[index].icon == Icons.format_list_bulleted) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.ul, _listSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('insertUnorderedList');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons()[index].icon == Icons.format_list_numbered) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.ol, _listSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('insertOrderedList');
-                  updateStatus();
+                if (t.getIcons()[index].icon == Icons.format_list_numbered) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.ol, _listSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('insertOrderedList');
+                    updateStatus();
+                  }
                 }
-              }
-            },
-            isSelected: _listSelected,
-            children: t.getIcons(),
+              },
+              isSelected: _listSelected,
+              children: t.getIcons(),
             ),
           ));
         }
@@ -1550,71 +1547,72 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              void updateStatus() {
-                _alignSelected = List<bool>.filled(t.getIcons1().length, false);
-                setState(mounted, this.setState, () {
-                  _alignSelected[index] = !_alignSelected[index];
-                });
-              }
+              color: widget.htmlToolbarOptions.buttonColor,
+              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              fillColor: widget.htmlToolbarOptions.buttonFillColor,
+              focusColor: widget.htmlToolbarOptions.buttonFocusColor,
+              highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
+              hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
+              splashColor: widget.htmlToolbarOptions.buttonSplashColor,
+              selectedBorderColor:
+                  widget.htmlToolbarOptions.buttonSelectedBorderColor,
+              borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+              borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
+              renderBorder: widget.htmlToolbarOptions.renderBorder,
+              textStyle: widget.htmlToolbarOptions.textStyle,
+              onPressed: (int index) async {
+                void updateStatus() {
+                  _alignSelected =
+                      List<bool>.filled(t.getIcons1().length, false);
+                  setState(mounted, this.setState, () {
+                    _alignSelected[index] = !_alignSelected[index];
+                  });
+                }
 
-              if (t.getIcons1()[index].icon == Icons.format_align_left) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.alignLeft, _alignSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('justifyLeft');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_align_left) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.alignLeft, _alignSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('justifyLeft');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons1()[index].icon == Icons.format_align_center) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.alignCenter, _alignSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('justifyCenter');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_align_center) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.alignCenter, _alignSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('justifyCenter');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons1()[index].icon == Icons.format_align_right) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.alignRight, _alignSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('justifyRight');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_align_right) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.alignRight, _alignSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('justifyRight');
+                    updateStatus();
+                  }
                 }
-              }
-              if (t.getIcons1()[index].icon == Icons.format_align_justify) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.alignJustify, _alignSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('justifyFull');
-                  updateStatus();
+                if (t.getIcons1()[index].icon == Icons.format_align_justify) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.alignJustify, _alignSelected[index],
+                              updateStatus) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('justifyFull');
+                    updateStatus();
+                  }
                 }
-              }
-            },
-            isSelected: _alignSelected,
-            children: t.getIcons1(),
+              },
+              isSelected: _alignSelected,
+              children: t.getIcons1(),
             ),
           ));
         }
@@ -1626,38 +1624,38 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              if (t.getIcons2()[index].icon == Icons.format_indent_increase) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.increaseIndent, null, null) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('indent');
+              color: widget.htmlToolbarOptions.buttonColor,
+              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              fillColor: widget.htmlToolbarOptions.buttonFillColor,
+              focusColor: widget.htmlToolbarOptions.buttonFocusColor,
+              highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
+              hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
+              splashColor: widget.htmlToolbarOptions.buttonSplashColor,
+              selectedBorderColor:
+                  widget.htmlToolbarOptions.buttonSelectedBorderColor,
+              borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+              borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
+              renderBorder: widget.htmlToolbarOptions.renderBorder,
+              textStyle: widget.htmlToolbarOptions.textStyle,
+              onPressed: (int index) async {
+                if (t.getIcons2()[index].icon == Icons.format_indent_increase) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.increaseIndent, null, null) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('indent');
+                  }
                 }
-              }
-              if (t.getIcons2()[index].icon == Icons.format_indent_decrease) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.decreaseIndent, null, null) ??
-                    true;
-                if (proceed) {
-                  widget.controller.execCommand('outdent');
+                if (t.getIcons2()[index].icon == Icons.format_indent_decrease) {
+                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                          ?.call(ButtonType.decreaseIndent, null, null) ??
+                      true;
+                  if (proceed) {
+                    widget.controller.execCommand('outdent');
+                  }
                 }
-              }
-            },
+              },
               isSelected: List<bool>.filled(t.getIcons2().length, false),
               children: t.getIcons2(),
             ),
@@ -1769,40 +1767,40 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-            color: widget.htmlToolbarOptions.buttonColor,
-            selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
-            fillColor: widget.htmlToolbarOptions.buttonFillColor,
-            focusColor: widget.htmlToolbarOptions.buttonFocusColor,
-            highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
-            hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
-            splashColor: widget.htmlToolbarOptions.buttonSplashColor,
-            selectedBorderColor:
-                widget.htmlToolbarOptions.buttonSelectedBorderColor,
-            borderColor: widget.htmlToolbarOptions.buttonBorderColor,
-            borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
-            borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
-            renderBorder: widget.htmlToolbarOptions.renderBorder,
-            textStyle: widget.htmlToolbarOptions.textStyle,
-            onPressed: (int index) async {
-              void updateStatus() {
-                _textDirectionSelected = List<bool>.filled(2, false);
-                setState(mounted, this.setState, () {
-                  _textDirectionSelected[index] =
-                      !_textDirectionSelected[index];
-                });
-              }
+              color: widget.htmlToolbarOptions.buttonColor,
+              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              fillColor: widget.htmlToolbarOptions.buttonFillColor,
+              focusColor: widget.htmlToolbarOptions.buttonFocusColor,
+              highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
+              hoverColor: widget.htmlToolbarOptions.buttonHoverColor,
+              splashColor: widget.htmlToolbarOptions.buttonSplashColor,
+              selectedBorderColor:
+                  widget.htmlToolbarOptions.buttonSelectedBorderColor,
+              borderColor: widget.htmlToolbarOptions.buttonBorderColor,
+              borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+              borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
+              renderBorder: widget.htmlToolbarOptions.renderBorder,
+              textStyle: widget.htmlToolbarOptions.textStyle,
+              onPressed: (int index) async {
+                void updateStatus() {
+                  _textDirectionSelected = List<bool>.filled(2, false);
+                  setState(mounted, this.setState, () {
+                    _textDirectionSelected[index] =
+                        !_textDirectionSelected[index];
+                  });
+                }
 
-              var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                      ?.call(index == 0 ? ButtonType.ltr : ButtonType.rtl,
-                          _alignSelected[index], updateStatus) ??
-                  true;
-              if (proceed) {
-                if (kIsWeb) {
-                  widget.controller
-                      .changeTextDirection(index == 0 ? 'ltr' : 'rtl');
-                } else {
-                  await widget.controller.editorController!
-                      .evaluateJavascript(source: """
+                var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                        ?.call(index == 0 ? ButtonType.ltr : ButtonType.rtl,
+                            _alignSelected[index], updateStatus) ??
+                    true;
+                if (proceed) {
+                  if (kIsWeb) {
+                    widget.controller
+                        .changeTextDirection(index == 0 ? 'ltr' : 'rtl');
+                  } else {
+                    await widget.controller.editorController!
+                        .evaluateJavascript(source: """
                   var s=document.getSelection();
                   if(s==''){
                       document.execCommand("insertHTML", false, "<p dir='${index == 0 ? "ltr" : "rtl"}'></p>");
@@ -1810,10 +1808,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       document.execCommand("insertHTML", false, "<div dir='${index == 0 ? "ltr" : "rtl"}'>"+ document.getSelection()+"</div>");
                   }
                 """);
+                  }
+                  updateStatus();
                 }
-                updateStatus();
-              }
-            },
+              },
               isSelected: _textDirectionSelected,
               children: const [
                 Icon(Icons.format_textdirection_l_to_r),
@@ -1932,105 +1930,111 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         // Create individual InkWell buttons for each insert button (images for table/divider)
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(Container(
+              margin: EdgeInsets.only(
+                right: 11,
+              ),
               child: SizedBox(
-            width: 20,
-            height: 20,
-            child: InkWell(
-              onTap: () async {
-                // Determine which image button this is (table or divider)
-                final hasTable = t.table;
-                final hasHr = t.hr;
-                bool isTable(int i) => hasTable && (!hasHr || i == 0);
-                bool isHr(int i) => hasHr && (hasTable ? i == 1 : i == 0);
-
-                if (isTable(index)) {
-                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                          ?.call(ButtonType.table, null, null) ??
-                      true;
-                  if (proceed) {
-                    var currentRows = 1;
-                    var currentCols = 1;
-                    await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return PointerInterceptor(
-                            child: StatefulBuilder(builder:
-                                (BuildContext context, StateSetter setState) {
-                              return AlertDialog(
-                                title: const Text('Insert Table'),
-                                scrollable: true,
-                                content: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      NumberPicker(
-                                        value: currentRows,
-                                        minValue: 1,
-                                        maxValue: 10,
-                                        onChanged: (value) =>
-                                            setState(() => currentRows = value),
-                                      ),
-                                      const Text('x'),
-                                      NumberPicker(
-                                        value: currentCols,
-                                        minValue: 1,
-                                        maxValue: 10,
-                                        onChanged: (value) =>
-                                            setState(() => currentCols = value),
-                                      ),
-                                    ]),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      if (kIsWeb) {
-                                        widget.controller.insertTable(
-                                            '${currentRows}x$currentCols');
-                                      } else {
-                                        await widget
-                                            .controller.editorController!
-                                            .evaluateJavascript(
-                                                source:
-                                                    "\$('#summernote-2').summernote('insertTable', '${currentRows}x$currentCols');");
-                                      }
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('OK'),
-                                  )
-                                ],
-                              );
-                            }),
-                          );
-                        });
-                  }
-                } else if (isHr(index)) {
-                  var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                          ?.call(ButtonType.hr, null, null) ??
-                      true;
-                  if (proceed) {
-                    widget.controller.insertHtml('<hr/>');
-                  }
-                }
-              },
-              child: Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+                child: InkWell(
+                  onTap: () async {
+                    // Determine which image button this is (table or divider)
+                    final hasTable = t.table;
+                    final hasHr = t.hr;
+                    bool isTable(int i) => hasTable && (!hasHr || i == 0);
+                    bool isHr(int i) => hasHr && (hasTable ? i == 1 : i == 0);
+
+                    if (isTable(index)) {
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.table, null, null) ??
+                          true;
+                      if (proceed) {
+                        var currentRows = 1;
+                        var currentCols = 1;
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PointerInterceptor(
+                                child: StatefulBuilder(builder:
+                                    (BuildContext context,
+                                        StateSetter setState) {
+                                  return AlertDialog(
+                                    title: const Text('Insert Table'),
+                                    scrollable: true,
+                                    content: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          NumberPicker(
+                                            value: currentRows,
+                                            minValue: 1,
+                                            maxValue: 10,
+                                            onChanged: (value) => setState(
+                                                () => currentRows = value),
+                                          ),
+                                          const Text('x'),
+                                          NumberPicker(
+                                            value: currentCols,
+                                            minValue: 1,
+                                            maxValue: 10,
+                                            onChanged: (value) => setState(
+                                                () => currentCols = value),
+                                          ),
+                                        ]),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          if (kIsWeb) {
+                                            widget.controller.insertTable(
+                                                '${currentRows}x$currentCols');
+                                          } else {
+                                            await widget
+                                                .controller.editorController!
+                                                .evaluateJavascript(
+                                                    source:
+                                                        "\$('#summernote-2').summernote('insertTable', '${currentRows}x$currentCols');");
+                                          }
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('OK'),
+                                      )
+                                    ],
+                                  );
+                                }),
+                              );
+                            });
+                      }
+                    } else if (isHr(index)) {
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.hr, null, null) ??
+                          true;
+                      if (proceed) {
+                        widget.controller.insertHtml('<hr/>');
+                      }
+                    }
+                  },
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius:
+                          widget.htmlToolbarOptions.buttonBorderRadius,
+                    ),
+                    child: t.getIcons()[index],
+                  ),
                 ),
-                child: t.getIcons()[index],
-              ),
-            ),
-          )));
+              )));
         }
-       
       }
       if (t is OtherButtons) {
         if (t.fullscreen || t.codeview || t.undo || t.redo || t.help) {
@@ -2049,295 +2053,324 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       });
                     }
 
-              if (t.getIcons1()[index].icon == Icons.fullscreen) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.fullscreen, _miscSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.setFullScreen();
-                  updateStatus();
-                }
-              }
-              if (t.getIcons1()[index].icon == Icons.code) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.codeview, _miscSelected[index],
-                            updateStatus) ??
-                    true;
-                if (proceed) {
-                  widget.controller.toggleCodeView();
-                  updateStatus();
-                }
-              }
-              if (t.getIcons1()[index].icon == Icons.undo) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.undo, null, null) ??
-                    true;
-                if (proceed) {
-                  widget.controller.undo();
-                }
-              }
-              if (t.getIcons1()[index].icon == Icons.redo) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.redo, null, null) ??
-                    true;
-                if (proceed) {
-                  widget.controller.redo();
-                }
-              }
-              if (t.getIcons1()[index].icon == Icons.help_outline) {
-                var proceed = await widget.htmlToolbarOptions.onButtonPressed
-                        ?.call(ButtonType.help, null, null) ??
-                    true;
-                if (proceed) {
-                  await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return PointerInterceptor(
-                          child: StatefulBuilder(builder:
-                              (BuildContext context, StateSetter setState) {
-                            return AlertDialog(
-                              title: const Text('Help'),
-                              scrollable: true,
-                              content: SizedBox(
-                                height: MediaQuery.of(context).size.height / 2,
-                                child: SingleChildScrollView(
-                                  child: DataTable(
-                                    columnSpacing: 5,
-                                    dataRowMinHeight: 75,
-                                    dataRowMaxHeight: 75,
-                                    columns: const <DataColumn>[
-                                      DataColumn(
-                                        label: Text(
-                                          'Key Combination',
-                                          style: TextStyle(
-                                              fontStyle: FontStyle.italic),
+                    if (t.getIcons1()[index].icon == Icons.fullscreen) {
+                      var proceed =
+                          await widget.htmlToolbarOptions.onButtonPressed?.call(
+                                  ButtonType.fullscreen,
+                                  _miscSelected[index],
+                                  updateStatus) ??
+                              true;
+                      if (proceed) {
+                        widget.controller.setFullScreen();
+                        updateStatus();
+                      }
+                    }
+                    if (t.getIcons1()[index].icon == Icons.code) {
+                      var proceed =
+                          await widget.htmlToolbarOptions.onButtonPressed?.call(
+                                  ButtonType.codeview,
+                                  _miscSelected[index],
+                                  updateStatus) ??
+                              true;
+                      if (proceed) {
+                        widget.controller.toggleCodeView();
+                        updateStatus();
+                      }
+                    }
+                    if (t.getIcons1()[index].icon == Icons.undo) {
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.undo, null, null) ??
+                          true;
+                      if (proceed) {
+                        widget.controller.undo();
+                      }
+                    }
+                    if (t.getIcons1()[index].icon == Icons.redo) {
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.redo, null, null) ??
+                          true;
+                      if (proceed) {
+                        widget.controller.redo();
+                      }
+                    }
+                    if (t.getIcons1()[index].icon == Icons.help_outline) {
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
+                              ?.call(ButtonType.help, null, null) ??
+                          true;
+                      if (proceed) {
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PointerInterceptor(
+                                child: StatefulBuilder(builder:
+                                    (BuildContext context,
+                                        StateSetter setState) {
+                                  return AlertDialog(
+                                    title: const Text('Help'),
+                                    scrollable: true,
+                                    content: SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              2,
+                                      child: SingleChildScrollView(
+                                        child: DataTable(
+                                          columnSpacing: 5,
+                                          dataRowMinHeight: 75,
+                                          dataRowMaxHeight: 75,
+                                          columns: const <DataColumn>[
+                                            DataColumn(
+                                              label: Text(
+                                                'Key Combination',
+                                                style: TextStyle(
+                                                    fontStyle:
+                                                        FontStyle.italic),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                'Action',
+                                                style: TextStyle(
+                                                    fontStyle:
+                                                        FontStyle.italic),
+                                              ),
+                                            ),
+                                          ],
+                                          rows: const <DataRow>[
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('ESC')),
+                                                DataCell(Text('Escape')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('ENTER')),
+                                                DataCell(
+                                                    Text('Insert Paragraph')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+Z')),
+                                                DataCell(Text(
+                                                    'Undo the last command')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+Z')),
+                                                DataCell(Text(
+                                                    'Undo the last command')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+Y')),
+                                                DataCell(Text(
+                                                    'Redo the last command')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('TAB')),
+                                                DataCell(Text('Tab')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('SHIFT+TAB')),
+                                                DataCell(Text('Untab')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+B')),
+                                                DataCell(
+                                                    Text('Set a bold style')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+I')),
+                                                DataCell(Text(
+                                                    'Set an italic style')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+U')),
+                                                DataCell(Text(
+                                                    'Set an underline style')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+SHIFT+S')),
+                                                DataCell(Text(
+                                                    'Set a strikethrough style')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(
+                                                    Text('CTRL+BACKSLASH')),
+                                                DataCell(Text('Clean a style')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+SHIFT+L')),
+                                                DataCell(
+                                                    Text('Set left align')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+SHIFT+E')),
+                                                DataCell(
+                                                    Text('Set center align')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+SHIFT+R')),
+                                                DataCell(
+                                                    Text('Set right align')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+SHIFT+J')),
+                                                DataCell(
+                                                    Text('Set full align')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(
+                                                    Text('CTRL+SHIFT+NUM7')),
+                                                DataCell(Text(
+                                                    'Toggle unordered list')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(
+                                                    Text('CTRL+SHIFT+NUM8')),
+                                                DataCell(Text(
+                                                    'Toggle ordered list')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(
+                                                    Text('CTRL+LEFTBRACKET')),
+                                                DataCell(Text(
+                                                    'Outdent on current paragraph')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(
+                                                    Text('CTRL+RIGHTBRACKET')),
+                                                DataCell(Text(
+                                                    'Indent on current paragraph')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM0')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as a paragraph (<p> tag)')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM1')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as H1')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM2')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as H2')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM3')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as H3')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM4')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as H4')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM5')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as H5')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+NUM6')),
+                                                DataCell(Text(
+                                                    'Change current block\'s format as H6')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+ENTER')),
+                                                DataCell(Text(
+                                                    'Insert horizontal rule')),
+                                              ],
+                                            ),
+                                            DataRow(
+                                              cells: <DataCell>[
+                                                DataCell(Text('CTRL+K')),
+                                                DataCell(
+                                                    Text('Show link dialog')),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      DataColumn(
-                                        label: Text(
-                                          'Action',
-                                          style: TextStyle(
-                                              fontStyle: FontStyle.italic),
-                                        ),
-                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Close'),
+                                      )
                                     ],
-                                    rows: const <DataRow>[
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('ESC')),
-                                          DataCell(Text('Escape')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('ENTER')),
-                                          DataCell(Text('Insert Paragraph')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+Z')),
-                                          DataCell(
-                                              Text('Undo the last command')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+Z')),
-                                          DataCell(
-                                              Text('Undo the last command')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+Y')),
-                                          DataCell(
-                                              Text('Redo the last command')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('TAB')),
-                                          DataCell(Text('Tab')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('SHIFT+TAB')),
-                                          DataCell(Text('Untab')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+B')),
-                                          DataCell(Text('Set a bold style')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+I')),
-                                          DataCell(Text('Set an italic style')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+U')),
-                                          DataCell(
-                                              Text('Set an underline style')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+S')),
-                                          DataCell(Text(
-                                              'Set a strikethrough style')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+BACKSLASH')),
-                                          DataCell(Text('Clean a style')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+L')),
-                                          DataCell(Text('Set left align')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+E')),
-                                          DataCell(Text('Set center align')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+R')),
-                                          DataCell(Text('Set right align')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+J')),
-                                          DataCell(Text('Set full align')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+NUM7')),
-                                          DataCell(
-                                              Text('Toggle unordered list')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+SHIFT+NUM8')),
-                                          DataCell(Text('Toggle ordered list')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+LEFTBRACKET')),
-                                          DataCell(Text(
-                                              'Outdent on current paragraph')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+RIGHTBRACKET')),
-                                          DataCell(Text(
-                                              'Indent on current paragraph')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM0')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as a paragraph (<p> tag)')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM1')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as H1')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM2')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as H2')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM3')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as H3')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM4')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as H4')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM5')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as H5')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+NUM6')),
-                                          DataCell(Text(
-                                              'Change current block\'s format as H6')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+ENTER')),
-                                          DataCell(
-                                              Text('Insert horizontal rule')),
-                                        ],
-                                      ),
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('CTRL+K')),
-                                          DataCell(Text('Show link dialog')),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Close'),
-                                )
-                              ],
-                            );
-                          }),
-                        );
-                      });
-                }
-              }
+                                  );
+                                }),
+                              );
+                            });
+                      }
+                    }
                   },
                   child: Container(
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: _miscSelected[index] ? widget.htmlToolbarOptions.buttonFillColor : Colors.transparent,
-                      borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
+                      color: _miscSelected[index]
+                          ? widget.htmlToolbarOptions.buttonFillColor
+                          : Colors.transparent,
+                      borderRadius:
+                          widget.htmlToolbarOptions.buttonBorderRadius,
                     ),
                     child: t.getIcons1()[index],
                   ),
@@ -2357,7 +2390,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 child: InkWell(
                   onTap: () async {
                     if (t.getIcons2()[index].icon == Icons.copy) {
-                      var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
                               ?.call(ButtonType.copy, null, null) ??
                           true;
                       if (proceed) {
@@ -2366,11 +2400,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                     }
                     if (t.getIcons2()[index].icon == Icons.paste) {
-                      var proceed = await widget.htmlToolbarOptions.onButtonPressed
+                      var proceed = await widget
+                              .htmlToolbarOptions.onButtonPressed
                               ?.call(ButtonType.paste, null, null) ??
                           true;
                       if (proceed) {
-                        var data = await Clipboard.getData(Clipboard.kTextPlain);
+                        var data =
+                            await Clipboard.getData(Clipboard.kTextPlain);
                         if (data != null) {
                           var text = data.text!;
                           widget.controller.insertHtml(text);
@@ -2385,7 +2421,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           }
         }
         // Add separator after OtherButtons section
-        
       }
 
       // Add separator after each toolbar section if this section added any widgets
