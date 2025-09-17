@@ -1176,6 +1176,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         }
       }
       if (t is ColorButtons && (t.foregroundColor || t.highlightColor)) {
+        // Add separator before color buttons
+        toolbarChildren.add(Image.asset("assets/images/seperated.png", width: 20, height: 20));
+        
         // Create individual InkWell buttons for each color button
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(
@@ -1380,14 +1383,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             ),
           );
         }
+        
+        // Add separator after color buttons
+        toolbarChildren.add(Image.asset("assets/images/seperated.png", width: 20, height: 20));
       }
       if (t is ListButtons) {
         if (t.ul || t.ol) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: 20,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: 20,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -1432,6 +1440,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             },
             isSelected: _listSelected,
             children: t.getIcons(),
+            ),
           ));
         }
         if (t.listStyles) {
@@ -1542,11 +1551,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       }
       if (t is ParagraphButtons) {
         if (t.alignLeft || t.alignCenter || t.alignRight || t.alignJustify) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: 20,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: 20,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -1612,14 +1623,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             },
             isSelected: _alignSelected,
             children: t.getIcons1(),
+            ),
           ));
         }
         if (t.increaseIndent || t.decreaseIndent) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: 20,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: 20,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -1652,8 +1666,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 }
               }
             },
-            isSelected: List<bool>.filled(t.getIcons2().length, false),
-            children: t.getIcons2(),
+              isSelected: List<bool>.filled(t.getIcons2().length, false),
+              children: t.getIcons2(),
+            ),
           ));
         }
         if (t.lineHeight) {
@@ -1755,11 +1770,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           ));
         }
         if (t.textDirection) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: 20,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: 20,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -1805,11 +1822,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 updateStatus();
               }
             },
-            isSelected: _textDirectionSelected,
-            children: const [
-              Icon(Icons.format_textdirection_l_to_r),
-              Icon(Icons.format_textdirection_r_to_l),
-            ],
+              isSelected: _textDirectionSelected,
+              children: const [
+                Icon(Icons.format_textdirection_l_to_r),
+                Icon(Icons.format_textdirection_r_to_l),
+              ],
+            ),
           ));
         }
         if (t.caseConverter) {
@@ -2334,17 +2352,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 }
               }
             },
-            isSelected: _miscSelected,
-            children: t.getIcons1(),
+              isSelected: _miscSelected,
+              children: t.getIcons1(),
             ),
           ));
         }
         if (t.copy || t.paste) {
-          toolbarChildren.add(ToggleButtons(
-            constraints: BoxConstraints.tightFor(
-              width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-              height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
-            ),
+          toolbarChildren.add(Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: ToggleButtons(
+              constraints: BoxConstraints.tightFor(
+                width: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+                height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
+              ),
             color: widget.htmlToolbarOptions.buttonColor,
             selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
             fillColor: widget.htmlToolbarOptions.buttonFillColor,
@@ -2382,8 +2402,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 }
               }
             },
-            isSelected: List<bool>.filled(t.getIcons2().length, false),
-            children: t.getIcons2(),
+              isSelected: List<bool>.filled(t.getIcons2().length, false),
+              children: t.getIcons2(),
+            ),
           ));
         }
       }
@@ -2410,10 +2431,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           i++) {
         // Custom buttons have internal padding (PopupMenuButton ~8px, InkWell touch area)
         // Use smaller padding to visually balance with default buttons (11px)
-        final wrappedButton = SizedBox(
-          height: 20,
-          child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
-              const SizedBox.shrink(),
+        final wrappedButton = Container(
+          margin: const EdgeInsets.only(right: 11),
+          child: SizedBox(
+            height: 20,
+            child: widget.htmlToolbarOptions.customToolbarButtons?[i] ??
+                const SizedBox.shrink(),
+          ),
         );
 
         if (widget.htmlToolbarOptions.customToolbarInsertionIndices[i] >
@@ -2445,23 +2469,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       // Use smaller padding to visually balance with default buttons (11px)
       toolbarChildren.addAll(
         (widget.htmlToolbarOptions.customToolbarButtons ?? []).map(
-          (button) => SizedBox(
-            height: 20,
-            child: button,
+          (button) => Container(
+            margin: const EdgeInsets.only(right: 11),
+            child: SizedBox(
+              height: 20,
+              child: button,
+            ),
           ),
         ),
       );
     }
-
-    // Add separator after custom buttons if there are custom buttons and separator is enabled
-    bool hasCustomButtons = (widget.htmlToolbarOptions.customToolbarButtons?.isNotEmpty ?? false);
-    if (widget.htmlToolbarOptions.renderSeparatorWidget && hasCustomButtons) {
-      toolbarChildren.add(Container(
-        margin: const EdgeInsets.only(right: 11),
-        child: separator,
-      ));
-    }
-
     // Add 2px spacing between individual toolbar icons/buttons
     List<Widget> spacedChildren = [];
     for (int i = 0; i < toolbarChildren.length; i++) {
