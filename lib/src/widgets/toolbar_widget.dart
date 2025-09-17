@@ -2447,7 +2447,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
     for (int i = 0; i < toolbarChildren.length; i++) {
       spacedChildren.add(toolbarChildren[i]);
       if (i < toolbarChildren.length - 1) {
-        spacedChildren.add(const SizedBox(width: 2));
+        spacedChildren.add(const SizedBox(width: 0));
       }
     }
     toolbarChildren = spacedChildren;
