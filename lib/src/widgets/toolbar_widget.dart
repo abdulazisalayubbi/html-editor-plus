@@ -1281,7 +1281,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     onColorChanged: (color) {
                                       newColor = color;
                                     },
-                                    title: Text('Choose a Color',
+                                    title: Text('Choose a colour',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headlineLarge),
@@ -1344,7 +1344,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           Navigator.of(context).pop();
                                         },
                                         child: const Text(
-                                            'Reset to default color')),
+                                            'Reset to default colour')),
                                     TextButton(
                                       onPressed: () {
                                         if (isFore(index)) {
@@ -1377,7 +1377,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                         });
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text('Set color'),
+                                      child: const Text('Set colour'),
                                     )
                                   ],
                                 ),
@@ -1951,7 +1951,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
         // Create individual InkWell buttons for each insert button (images for table/divider)
         for (int index = 0; index < t.getIcons().length; index++) {
           toolbarChildren.add(Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 right: 11,
               ),
               child: SizedBox(
