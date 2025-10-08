@@ -183,19 +183,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         widget.htmlEditorOptions.androidUseHybridComposition,
                     loadWithOverviewMode: true,
                     // Improve smoothness and performance
-                    verticalScrollBarEnabled: false,
-                    horizontalScrollBarEnabled: false,
-                    disableVerticalScroll: false,
-                    disableHorizontalScroll: true,
-                    supportZoom: false,
-                    displayZoomControls: false,
-                    builtInZoomControls: false,
-                    // Enable hardware acceleration for smoother rendering
-                    hardwareAcceleration: true,
-                    // Improve scrolling performance
-                    overScrollMode: OverScrollMode.NEVER,
-                    // Reduce layout shifts
-                    layoutAlgorithm: LayoutAlgorithm.NORMAL,
+                  
                   ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
