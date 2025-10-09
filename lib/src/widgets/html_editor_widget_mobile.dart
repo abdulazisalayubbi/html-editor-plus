@@ -232,11 +232,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       if (widget.htmlEditorOptions.shouldEnsureVisible &&
                           Scrollable.maybeOf(context) != null) {
                         // Use a slight delay to prevent conflicts with keyboard animations
-                        Future.delayed(const Duration(milliseconds: 20), () {
+                        Future.delayed(const Duration(milliseconds: 150), () {
                           if (mounted && Scrollable.maybeOf(context) != null) {
                             Scrollable.maybeOf(context)!.position.ensureVisible(
                                   context.findRenderObject()!,
-                                  duration: const Duration(milliseconds: 200),
+                                  duration: const Duration(milliseconds: 10),
                                   curve: Curves.easeInOut,
                                 );
                           }
