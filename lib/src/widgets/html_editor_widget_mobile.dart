@@ -126,23 +126,23 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       child: VisibilityDetector(
         key: Key(key),
         onVisibilityChanged: (VisibilityInfo info) async {
-          if (!_visibleStream.isClosed) {
-            // Debounce visibility changes to prevent excessive height recalculations
-            _visibilityDebounceTimer?.cancel();
-            _visibilityDebounceTimer =
-                Timer(const Duration(milliseconds: 150), () {
-              if (!_visibleStream.isClosed && mounted) {
-                cachedVisibleDecimal = info.visibleFraction == 1
-                    ? (info.size.height / widget.otherOptions.height)
-                        .clamp(0, 1)
-                    : info.visibleFraction;
-                _visibleStream.add(info.visibleFraction == 1
-                    ? (info.size.height / widget.otherOptions.height)
-                        .clamp(0, 1)
-                    : info.visibleFraction);
-              }
-            });
-          }
+          // if (!_visibleStream.isClosed) {
+          //   // Debounce visibility changes to prevent excessive height recalculations
+          //   _visibilityDebounceTimer?.cancel();
+          //   _visibilityDebounceTimer =
+          //       Timer(const Duration(milliseconds: 150), () {
+          //     if (!_visibleStream.isClosed && mounted) {
+          //       cachedVisibleDecimal = info.visibleFraction == 1
+          //           ? (info.size.height / widget.otherOptions.height)
+          //               .clamp(0, 1)
+          //           : info.visibleFraction;
+          //       _visibleStream.add(info.visibleFraction == 1
+          //           ? (info.size.height / widget.otherOptions.height)
+          //               .clamp(0, 1)
+          //           : info.visibleFraction);
+          //     }
+          //   });
+          // }
         },
         child: Container(
           height: docHeight + 10,
