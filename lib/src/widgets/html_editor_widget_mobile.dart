@@ -184,19 +184,30 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       useShouldOverrideUrlLoading: true,
                       useHybridComposition:
                           widget.htmlEditorOptions.androidUseHybridComposition,
+                      
+                      // ✅ KUNCI: Prevent auto-scroll saat keyboard muncul
                       loadWithOverviewMode: false,
+                      
+                      // ✅ PENTING: Prevent content inset adjustment
                       contentInsetAdjustmentBehavior:
-                          ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
+                          ScrollViewContentInsetAdjustmentBehavior.NEVER,
 
-                      // You can also try setting this to true to prevent general "bouncing"
-                      // when scrolling reaches the end, which might contribute to the "shaking."
-
-                      // Ensure the viewport meta tag is respected
-                      enableViewportScale: true,
+                      // ✅ Viewport settings untuk stabilitas
+                      useWideViewPort: true,
+                      supportZoom: true,
+                      builtInZoomControls: true,
+                      displayZoomControls: false,
+                      
+                      // ✅ Prevent horizontal scroll
+                      disableHorizontalScroll: true,
+                      
+                      // ✅ Performance & stability
                       hardwareAcceleration: true,
-
-                      // Reduce layout shifts
                       layoutAlgorithm: LayoutAlgorithm.NORMAL,
+                      
+                      // ✅ Scroll bar settings
+                      verticalScrollBarEnabled: true,
+                      horizontalScrollBarEnabled: false,
                     ),
                     initialUserScripts:
                         widget.htmlEditorOptions.mobileInitialScripts
@@ -262,15 +273,54 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               + '.note-editor .note-editing-area .note-editable table td,\n'
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
-                              + '/* Smooth scrolling and performance optimizations */\n'
-                              + 'html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }\n'
-                              + 'body { overscroll-behavior: none; }\n'
-                              + '.note-editable { transform: translateZ(0); will-change: contents; }\n'
-                              + '.note-editor { transition: height 0.2s ease-out; }\n';
+                              
+                              // ✅ PREVENT LAYOUT SHIFT SAAT KEYBOARD (Gmail Style)
+                              + 'html { \n'
+                              + '  scroll-behavior: auto !important;\n'
+                              + '  -webkit-overflow-scrolling: touch;\n'
+                              + '  overflow: hidden;\n'
+                              + '  height: 100vh;\n'
+                              + '  position: fixed;\n'
+                              + '  width: 100%;\n'
+                              + '}\n'
+                              + 'body { \n'
+                              + '  overscroll-behavior: none;\n'
+                              + '  overflow-y: auto;\n'
+                              + '  overflow-x: hidden;\n'
+                              + '  height: 100vh;\n'
+                              + '  position: relative;\n'
+                              + '  -webkit-overflow-scrolling: touch;\n'
+                              + '}\n'
+                              + '.note-editable { \n'
+                              + '  transform: translateZ(0);\n'
+                              + '  will-change: contents;\n'
+                              + '  -webkit-overflow-scrolling: touch;\n'
+                              + '  backface-visibility: hidden;\n'
+                              + '}\n'
+                              + '.note-editor { \n'
+                              + '  transition: none !important;\n'
+                              + '  transform: translateZ(0);\n'
+                              + '}\n'
+                              
+                              // ✅ iOS specific fix
+                              + '@supports (-webkit-touch-callout: none) {\n'
+                              + '  body { position: fixed; }\n'
+                              + '}\n';
+                            
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
                             document.head.appendChild(style);
+                            
+                            // ✅ Set viewport meta tag
+                            var viewport = document.querySelector('meta[name=viewport]');
+                            if (!viewport) {
+                              viewport = document.createElement('meta');
+                              viewport.name = 'viewport';
+                              document.head.appendChild(viewport);
+                            }
+                            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover';
+                            
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
                           })();
@@ -488,6 +538,58 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         await controller.evaluateJavascript(
                             source:
                                 "document.onselectionchange = onSelectionChange; console.log('done');");
+                        
+                        // ✅ PREVENT AUTO-SCROLL ON FOCUS (Gmail Style)
+                        await controller.evaluateJavascript(source: """
+                          (function(){
+                            var preventScroll = false;
+                            var lastScrollPos = 0;
+                            
+                            // Save scroll position before focus
+                            \$('#summernote-2').on('summernote.focus', function(e) {
+                              lastScrollPos = window.pageYOffset || document.documentElement.scrollTop;
+                              preventScroll = true;
+                              
+                              // Restore scroll position immediately
+                              setTimeout(function() {
+                                if (preventScroll) {
+                                  window.scrollTo(0, lastScrollPos);
+                                  document.documentElement.scrollTop = lastScrollPos;
+                                  document.body.scrollTop = lastScrollPos;
+                                }
+                              }, 0);
+                              
+                              // Keep restoring for 300ms (during keyboard animation)
+                              var attempts = 0;
+                              var intervalId = setInterval(function() {
+                                if (attempts++ < 10) {
+                                  window.scrollTo(0, lastScrollPos);
+                                } else {
+                                  clearInterval(intervalId);
+                                  preventScroll = false;
+                                }
+                              }, 30);
+                            });
+                            
+                            \$('#summernote-2').on('summernote.blur', function(e) {
+                              preventScroll = false;
+                            });
+                            
+                            // Prevent scroll on editable focus
+                            var editable = document.querySelector('.note-editable');
+                            if (editable) {
+                              editable.addEventListener('focus', function(e) {
+                                var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                                setTimeout(function() {
+                                  window.scrollTo(0, currentScroll);
+                                  document.documentElement.scrollTop = currentScroll;
+                                  document.body.scrollTop = currentScroll;
+                                }, 0);
+                              }, { capture: true, passive: true });
+                            }
+                          })();
+                        """);
+                        
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
