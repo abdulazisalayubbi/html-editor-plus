@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-// import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart'; // ❌ Not used
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:html_editor_plus/html_editor.dart'
     hide NavigationActionPolicy, UserScript, ContextMenu;
 import 'package:html_editor_plus/utils/utils.dart';
@@ -126,23 +126,23 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       child: VisibilityDetector(
         key: Key(key),
         onVisibilityChanged: (VisibilityInfo info) async {
-          // if (!_visibleStream.isClosed) {
-          //   // Debounce visibility changes to prevent excessive height recalculations
-          //   _visibilityDebounceTimer?.cancel();
-          //   _visibilityDebounceTimer =
-          //       Timer(const Duration(milliseconds: 150), () {
-          //     if (!_visibleStream.isClosed && mounted) {
-          //       cachedVisibleDecimal = info.visibleFraction == 1
-          //           ? (info.size.height / widget.otherOptions.height)
-          //               .clamp(0, 1)
-          //           : info.visibleFraction;
-          //       _visibleStream.add(info.visibleFraction == 1
-          //           ? (info.size.height / widget.otherOptions.height)
-          //               .clamp(0, 1)
-          //           : info.visibleFraction);
-          //     }
-          //   });
-          // }
+          if (!_visibleStream.isClosed) {
+            // Debounce visibility changes to prevent excessive height recalculations
+            _visibilityDebounceTimer?.cancel();
+            _visibilityDebounceTimer =
+                Timer(const Duration(milliseconds: 20), () {
+              if (!_visibleStream.isClosed && mounted) {
+                cachedVisibleDecimal = info.visibleFraction == 1
+                    ? (info.size.height / widget.otherOptions.height)
+                        .clamp(0, 1)
+                    : info.visibleFraction;
+                _visibleStream.add(info.visibleFraction == 1
+                    ? (info.size.height / widget.otherOptions.height)
+                        .clamp(0, 1)
+                    : info.visibleFraction);
+              }
+            });
+          }
         },
         child: Container(
           height: docHeight + 10,
@@ -184,30 +184,19 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       useShouldOverrideUrlLoading: true,
                       useHybridComposition:
                           widget.htmlEditorOptions.androidUseHybridComposition,
-                      
-                      // ✅ KUNCI: Prevent auto-scroll saat keyboard muncul
                       loadWithOverviewMode: false,
-                      
-                      // ✅ PENTING: Prevent content inset adjustment
                       contentInsetAdjustmentBehavior:
-                          ScrollViewContentInsetAdjustmentBehavior.NEVER,
+                          ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
 
-                      // ✅ Viewport settings untuk stabilitas
-                      useWideViewPort: true,
-                      supportZoom: true,
-                      builtInZoomControls: true,
-                      displayZoomControls: false,
-                      
-                      // ✅ Prevent horizontal scroll
-                      disableHorizontalScroll: true,
-                      
-                      // ✅ Performance & stability
+                      // You can also try setting this to true to prevent general "bouncing"
+                      // when scrolling reaches the end, which might contribute to the "shaking."
+
+                      // Ensure the viewport meta tag is respected
+                      enableViewportScale: true,
                       hardwareAcceleration: true,
+
+                      // Reduce layout shifts
                       layoutAlgorithm: LayoutAlgorithm.NORMAL,
-                      
-                      // ✅ Scroll bar settings
-                      verticalScrollBarEnabled: true,
-                      horizontalScrollBarEnabled: false,
                     ),
                     initialUserScripts:
                         widget.htmlEditorOptions.mobileInitialScripts
@@ -240,8 +229,19 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       debugPrint(message.message);
                     },
                     onWindowFocus: (controller) async {
-                      // ❌ DISABLED: Prevent ANY auto-scroll on focus
-                      // This was causing the page to jump when keyboard appears
+                      if (widget.htmlEditorOptions.shouldEnsureVisible &&
+                          Scrollable.maybeOf(context) != null) {
+                        // Use a slight delay to prevent conflicts with keyboard animations
+                        Future.delayed(const Duration(milliseconds: 20), () {
+                          if (mounted && Scrollable.maybeOf(context) != null) {
+                            Scrollable.maybeOf(context)!.position.ensureVisible(
+                                  context.findRenderObject()!,
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                );
+                          }
+                        });
+                      }
                     },
                     onLoadStop:
                         (InAppWebViewController controller, Uri? uri) async {
@@ -261,29 +261,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               + '.note-editor .note-editing-area .note-editable table td,\n'
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
-                              
-                              // ✅ SIMPLE FIX: Just lock html/body position
-                              + 'html, body { \n'
-                              + '  position: fixed !important;\n'
-                              + '  overflow: hidden !important;\n'
-                              + '  width: 100% !important;\n'
-                              + '  height: 100% !important;\n'
-                              + '}\n'
-                              + '.note-editor { \n'
-                              + '  position: absolute !important;\n'
-                              + '  top: 0 !important;\n'
-                              + '  left: 0 !important;\n'
-                              + '  right: 0 !important;\n'
-                              + '  bottom: 0 !important;\n'
-                              + '  overflow-y: auto !important;\n'
-                              + '  -webkit-overflow-scrolling: touch !important;\n'
-                              + '}\n';
-                            
+                              + '/* Smooth scrolling and performance optimizations */\n'
+                              + 'html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }\n'
+                              + 'body { overscroll-behavior: none; }\n'
+                              + '.note-editable { transform: translateZ(0); will-change: contents; }\n'
+                              + '.note-editor { transition: height 0.2s ease-out; }\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
                             document.head.appendChild(style);
-                            
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
                           })();
@@ -501,7 +487,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         await controller.evaluateJavascript(
                             source:
                                 "document.onselectionchange = onSelectionChange; console.log('done');");
-                        
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
@@ -554,48 +539,46 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           widget.controller
                               .setText(widget.htmlEditorOptions.initialText!);
                         }
-                        
-                        // ❌ DISABLED: Auto height adjustment - causes scroll jumping
-                        // if (widget.htmlEditorOptions.autoAdjustHeight) {
-                        //   controller.addJavaScriptHandler(
-                        //       handlerName: 'setHeight',
-                        //       callback: (height) {
-                        //         if (height.first == 'reset') {
-                        //           resetHeight();
-                        //         } else {
-                        //           setState(mounted, this.setState, () {
-                        //             docHeight = (double.tryParse(
-                        //                         height.first.toString()) ??
-                        //                     widget.otherOptions.height) +
-                        //                 (toolbarKey
-                        //                         .currentContext?.size?.height ??
-                        //                     0);
-                        //           });
-                        //         }
-                        //       });
-                        //   await controller.evaluateJavascript(
-                        //       source:
-                        //           "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
-                        // }
-                        
-                        // ❌ DISABLED: Keyboard height adjustment - causes layout shift
-                        // if (widget.htmlEditorOptions.adjustHeightForKeyboard) {
-                        //   var keyboardVisibilityController =
-                        //       KeyboardVisibilityController();
-                        //   keyboardVisibilityController.onChange
-                        //       .listen((bool visible) {
-                        //     if (!visible && mounted) {
-                        //       // Add a delay to prevent jarring transitions
-                        //       Future.delayed(const Duration(milliseconds: 200),
-                        //           () {
-                        //         if (mounted) {
-                        //           controller.clearFocus();
-                        //           resetHeight();
-                        //         }
-                        //       });
-                        //     }
-                        //   });
-                        // }
+                        //adjusts the height of the editor when it is loaded
+                        if (widget.htmlEditorOptions.autoAdjustHeight) {
+                          controller.addJavaScriptHandler(
+                              handlerName: 'setHeight',
+                              callback: (height) {
+                                if (height.first == 'reset') {
+                                  resetHeight();
+                                } else {
+                                  setState(mounted, this.setState, () {
+                                    docHeight = (double.tryParse(
+                                                height.first.toString()) ??
+                                            widget.otherOptions.height) +
+                                        (toolbarKey
+                                                .currentContext?.size?.height ??
+                                            0);
+                                  });
+                                }
+                              });
+                          await controller.evaluateJavascript(
+                              source:
+                                  "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
+                        }
+                        //reset the editor's height if the keyboard disappears at any point
+                        if (widget.htmlEditorOptions.adjustHeightForKeyboard) {
+                          var keyboardVisibilityController =
+                              KeyboardVisibilityController();
+                          keyboardVisibilityController.onChange
+                              .listen((bool visible) {
+                            if (!visible && mounted) {
+                              // Add a delay to prevent jarring transitions
+                              Future.delayed(const Duration(milliseconds: 200),
+                                  () {
+                                if (mounted) {
+                                  controller.clearFocus();
+                                  resetHeight();
+                                }
+                              });
+                            }
+                          });
+                        }
                         widget.controller.editorController!
                             .addJavaScriptHandler(
                                 handlerName: 'totalChars',
