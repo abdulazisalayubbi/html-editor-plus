@@ -240,20 +240,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       debugPrint(message.message);
                     },
                     onWindowFocus: (controller) async {
-                      // Only ensure visible on focus, not during typing to prevent scroll jumping
-                      // if (widget.htmlEditorOptions.shouldEnsureVisible &&
-                      //     Scrollable.maybeOf(context) != null) {
-                      //   // Use a slight delay to prevent conflicts with keyboard animations
-                      //   Future.delayed(const Duration(milliseconds: 100), () {
-                      //     if (mounted && Scrollable.maybeOf(context) != null) {
-                      //       Scrollable.maybeOf(context)!.position.ensureVisible(
-                      //             context.findRenderObject()!,
-                      //             duration: const Duration(milliseconds: 200),
-                      //             curve: Curves.easeInOut,
-                      //           );
-                      //     }
-                      //   });
-                      // }
+                      // ❌ DISABLED: Prevent ANY auto-scroll on focus
+                      // This was causing the page to jump when keyboard appears
                     },
                     onLoadStop:
                         (InAppWebViewController controller, Uri? uri) async {
@@ -274,37 +262,37 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
                               
-                              // ✅ PREVENT LAYOUT SHIFT SAAT KEYBOARD (Gmail Style)
+                              // ✅ SUPER AGGRESSIVE: Lock EVERYTHING
+                              + '* { \n'
+                              + '  -webkit-overflow-scrolling: touch !important;\n'
+                              + '  overscroll-behavior: none !important;\n'
+                              + '}\n'
                               + 'html { \n'
-                              + '  scroll-behavior: auto !important;\n'
-                              + '  -webkit-overflow-scrolling: touch;\n'
-                              + '  overflow: hidden;\n'
-                              + '  height: 100vh;\n'
-                              + '  position: fixed;\n'
-                              + '  width: 100%;\n'
+                              + '  position: fixed !important;\n'
+                              + '  overflow: hidden !important;\n'
+                              + '  width: 100% !important;\n'
+                              + '  height: 100% !important;\n'
+                              + '  top: 0 !important;\n'
+                              + '  left: 0 !important;\n'
                               + '}\n'
                               + 'body { \n'
-                              + '  overscroll-behavior: none;\n'
-                              + '  overflow-y: auto;\n'
-                              + '  overflow-x: hidden;\n'
-                              + '  height: 100vh;\n'
-                              + '  position: relative;\n'
-                              + '  -webkit-overflow-scrolling: touch;\n'
-                              + '}\n'
-                              + '.note-editable { \n'
-                              + '  transform: translateZ(0);\n'
-                              + '  will-change: contents;\n'
-                              + '  -webkit-overflow-scrolling: touch;\n'
-                              + '  backface-visibility: hidden;\n'
+                              + '  position: fixed !important;\n'
+                              + '  overflow: hidden !important;\n'
+                              + '  width: 100% !important;\n'
+                              + '  height: 100% !important;\n'
+                              + '  top: 0 !important;\n'
+                              + '  left: 0 !important;\n'
                               + '}\n'
                               + '.note-editor { \n'
-                              + '  transition: none !important;\n'
-                              + '  transform: translateZ(0);\n'
+                              + '  position: relative !important;\n'
+                              + '  overflow-y: auto !important;\n'
+                              + '  overflow-x: hidden !important;\n'
+                              + '  height: 100% !important;\n'
+                              + '  -webkit-overflow-scrolling: touch !important;\n'
                               + '}\n'
-                              
-                              // ✅ iOS specific fix
-                              + '@supports (-webkit-touch-callout: none) {\n'
-                              + '  body { position: fixed; }\n'
+                              + '.note-editable { \n'
+                              + '  transform: translateZ(0) !important;\n'
+                              + '  backface-visibility: hidden !important;\n'
                               + '}\n';
                             
                             var style = document.createElement('style');
@@ -312,17 +300,40 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             style.appendChild(document.createTextNode(css));
                             document.head.appendChild(style);
                             
-                            // ✅ Set viewport meta tag
+                            // ✅ LOCK viewport
                             var viewport = document.querySelector('meta[name=viewport]');
                             if (!viewport) {
                               viewport = document.createElement('meta');
                               viewport.name = 'viewport';
                               document.head.appendChild(viewport);
                             }
-                            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover';
+                            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
                             
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
+                            
+                            // ✅ PREVENT SCROLL pada window level
+                            var scrollTop = 0;
+                            var isKeyboardOpen = false;
+                            
+                            window.addEventListener('resize', function() {
+                              // Detect keyboard open (height decrease)
+                              isKeyboardOpen = window.innerHeight < document.documentElement.clientHeight;
+                            });
+                            
+                            // Lock scroll when keyboard opens
+                            window.addEventListener('scroll', function(e) {
+                              if (isKeyboardOpen) {
+                                window.scrollTo(0, scrollTop);
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }
+                            }, { passive: false });
+                            
+                            // Save scroll position before any scroll
+                            window.addEventListener('touchstart', function() {
+                              scrollTop = window.pageYOffset;
+                            });
                           })();
                         """,
                         );
@@ -539,54 +550,72 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             source:
                                 "document.onselectionchange = onSelectionChange; console.log('done');");
                         
-                        // ✅ PREVENT AUTO-SCROLL ON FOCUS (Gmail Style)
+                        // ✅ SUPER AGGRESSIVE PREVENT SCROLL
                         await controller.evaluateJavascript(source: """
                           (function(){
-                            var preventScroll = false;
-                            var lastScrollPos = 0;
+                            var locked = false;
+                            var savedScroll = 0;
                             
-                            // Save scroll position before focus
+                            // Lock scroll on ANY focus event
+                            document.addEventListener('focusin', function(e) {
+                              savedScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
+                              locked = true;
+                              
+                              // Force lock position
+                              document.body.style.position = 'fixed';
+                              document.body.style.top = '-' + savedScroll + 'px';
+                              document.body.style.width = '100%';
+                              
+                              console.log('LOCKED at position:', savedScroll);
+                            }, true);
+                            
+                            document.addEventListener('focusout', function(e) {
+                              if (locked) {
+                                locked = false;
+                                document.body.style.position = '';
+                                document.body.style.top = '';
+                                window.scrollTo(0, savedScroll);
+                                console.log('UNLOCKED');
+                              }
+                            }, true);
+                            
+                            // Override window.scrollTo when locked
+                            var originalScrollTo = window.scrollTo;
+                            window.scrollTo = function(x, y) {
+                              if (!locked) {
+                                originalScrollTo.call(window, x, y);
+                              } else {
+                                console.log('Scroll prevented - locked!');
+                              }
+                            };
+                            
+                            // Prevent scroll events
+                            window.addEventListener('scroll', function(e) {
+                              if (locked) {
+                                e.preventDefault();
+                                e.stopImmediatePropagation();
+                                window.scrollTo(0, savedScroll);
+                              }
+                            }, { passive: false, capture: true });
+                            
+                            // Summernote specific
                             \$('#summernote-2').on('summernote.focus', function(e) {
-                              lastScrollPos = window.pageYOffset || document.documentElement.scrollTop;
-                              preventScroll = true;
-                              
-                              // Restore scroll position immediately
-                              setTimeout(function() {
-                                if (preventScroll) {
-                                  window.scrollTo(0, lastScrollPos);
-                                  document.documentElement.scrollTop = lastScrollPos;
-                                  document.body.scrollTop = lastScrollPos;
-                                }
-                              }, 0);
-                              
-                              // Keep restoring for 300ms (during keyboard animation)
-                              var attempts = 0;
-                              var intervalId = setInterval(function() {
-                                if (attempts++ < 10) {
-                                  window.scrollTo(0, lastScrollPos);
-                                } else {
-                                  clearInterval(intervalId);
-                                  preventScroll = false;
-                                }
-                              }, 30);
+                              savedScroll = window.pageYOffset || 0;
+                              locked = true;
+                              document.body.style.position = 'fixed';
+                              document.body.style.top = '-' + savedScroll + 'px';
+                              console.log('Summernote focused, locked at:', savedScroll);
                             });
                             
                             \$('#summernote-2').on('summernote.blur', function(e) {
-                              preventScroll = false;
+                              if (locked) {
+                                locked = false;
+                                document.body.style.position = '';
+                                document.body.style.top = '';
+                                window.scrollTo(0, savedScroll);
+                                console.log('Summernote blurred, unlocked');
+                              }
                             });
-                            
-                            // Prevent scroll on editable focus
-                            var editable = document.querySelector('.note-editable');
-                            if (editable) {
-                              editable.addEventListener('focus', function(e) {
-                                var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-                                setTimeout(function() {
-                                  window.scrollTo(0, currentScroll);
-                                  document.documentElement.scrollTop = currentScroll;
-                                  document.body.scrollTop = currentScroll;
-                                }, 0);
-                              }, { capture: true, passive: true });
-                            }
                           })();
                         """);
                         
