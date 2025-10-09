@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+// import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart'; // ❌ Not used
 import 'package:html_editor_plus/html_editor.dart'
     hide NavigationActionPolicy, UserScript, ContextMenu;
 import 'package:html_editor_plus/utils/utils.dart';
@@ -262,37 +262,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
                               
-                              // ✅ SUPER AGGRESSIVE: Lock EVERYTHING
-                              + '* { \n'
-                              + '  -webkit-overflow-scrolling: touch !important;\n'
-                              + '  overscroll-behavior: none !important;\n'
-                              + '}\n'
-                              + 'html { \n'
+                              // ✅ SIMPLE FIX: Just lock html/body position
+                              + 'html, body { \n'
                               + '  position: fixed !important;\n'
                               + '  overflow: hidden !important;\n'
                               + '  width: 100% !important;\n'
                               + '  height: 100% !important;\n'
-                              + '  top: 0 !important;\n'
-                              + '  left: 0 !important;\n'
-                              + '}\n'
-                              + 'body { \n'
-                              + '  position: fixed !important;\n'
-                              + '  overflow: hidden !important;\n'
-                              + '  width: 100% !important;\n'
-                              + '  height: 100% !important;\n'
-                              + '  top: 0 !important;\n'
-                              + '  left: 0 !important;\n'
                               + '}\n'
                               + '.note-editor { \n'
-                              + '  position: relative !important;\n'
+                              + '  position: absolute !important;\n'
+                              + '  top: 0 !important;\n'
+                              + '  left: 0 !important;\n'
+                              + '  right: 0 !important;\n'
+                              + '  bottom: 0 !important;\n'
                               + '  overflow-y: auto !important;\n'
-                              + '  overflow-x: hidden !important;\n'
-                              + '  height: 100% !important;\n'
                               + '  -webkit-overflow-scrolling: touch !important;\n'
-                              + '}\n'
-                              + '.note-editable { \n'
-                              + '  transform: translateZ(0) !important;\n'
-                              + '  backface-visibility: hidden !important;\n'
                               + '}\n';
                             
                             var style = document.createElement('style');
@@ -300,40 +284,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             style.appendChild(document.createTextNode(css));
                             document.head.appendChild(style);
                             
-                            // ✅ LOCK viewport
-                            var viewport = document.querySelector('meta[name=viewport]');
-                            if (!viewport) {
-                              viewport = document.createElement('meta');
-                              viewport.name = 'viewport';
-                              document.head.appendChild(viewport);
-                            }
-                            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
-                            
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
-                            
-                            // ✅ PREVENT SCROLL pada window level
-                            var scrollTop = 0;
-                            var isKeyboardOpen = false;
-                            
-                            window.addEventListener('resize', function() {
-                              // Detect keyboard open (height decrease)
-                              isKeyboardOpen = window.innerHeight < document.documentElement.clientHeight;
-                            });
-                            
-                            // Lock scroll when keyboard opens
-                            window.addEventListener('scroll', function(e) {
-                              if (isKeyboardOpen) {
-                                window.scrollTo(0, scrollTop);
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }
-                            }, { passive: false });
-                            
-                            // Save scroll position before any scroll
-                            window.addEventListener('touchstart', function() {
-                              scrollTop = window.pageYOffset;
-                            });
                           })();
                         """,
                         );
@@ -550,75 +502,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             source:
                                 "document.onselectionchange = onSelectionChange; console.log('done');");
                         
-                        // ✅ SUPER AGGRESSIVE PREVENT SCROLL
-                        await controller.evaluateJavascript(source: """
-                          (function(){
-                            var locked = false;
-                            var savedScroll = 0;
-                            
-                            // Lock scroll on ANY focus event
-                            document.addEventListener('focusin', function(e) {
-                              savedScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
-                              locked = true;
-                              
-                              // Force lock position
-                              document.body.style.position = 'fixed';
-                              document.body.style.top = '-' + savedScroll + 'px';
-                              document.body.style.width = '100%';
-                              
-                              console.log('LOCKED at position:', savedScroll);
-                            }, true);
-                            
-                            document.addEventListener('focusout', function(e) {
-                              if (locked) {
-                                locked = false;
-                                document.body.style.position = '';
-                                document.body.style.top = '';
-                                window.scrollTo(0, savedScroll);
-                                console.log('UNLOCKED');
-                              }
-                            }, true);
-                            
-                            // Override window.scrollTo when locked
-                            var originalScrollTo = window.scrollTo;
-                            window.scrollTo = function(x, y) {
-                              if (!locked) {
-                                originalScrollTo.call(window, x, y);
-                              } else {
-                                console.log('Scroll prevented - locked!');
-                              }
-                            };
-                            
-                            // Prevent scroll events
-                            window.addEventListener('scroll', function(e) {
-                              if (locked) {
-                                e.preventDefault();
-                                e.stopImmediatePropagation();
-                                window.scrollTo(0, savedScroll);
-                              }
-                            }, { passive: false, capture: true });
-                            
-                            // Summernote specific
-                            \$('#summernote-2').on('summernote.focus', function(e) {
-                              savedScroll = window.pageYOffset || 0;
-                              locked = true;
-                              document.body.style.position = 'fixed';
-                              document.body.style.top = '-' + savedScroll + 'px';
-                              console.log('Summernote focused, locked at:', savedScroll);
-                            });
-                            
-                            \$('#summernote-2').on('summernote.blur', function(e) {
-                              if (locked) {
-                                locked = false;
-                                document.body.style.position = '';
-                                document.body.style.top = '';
-                                window.scrollTo(0, savedScroll);
-                                console.log('Summernote blurred, unlocked');
-                              }
-                            });
-                          })();
-                        """);
-                        
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
@@ -671,46 +554,48 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           widget.controller
                               .setText(widget.htmlEditorOptions.initialText!);
                         }
-                        //adjusts the height of the editor when it is loaded
-                        if (widget.htmlEditorOptions.autoAdjustHeight) {
-                          controller.addJavaScriptHandler(
-                              handlerName: 'setHeight',
-                              callback: (height) {
-                                if (height.first == 'reset') {
-                                  resetHeight();
-                                } else {
-                                  setState(mounted, this.setState, () {
-                                    docHeight = (double.tryParse(
-                                                height.first.toString()) ??
-                                            widget.otherOptions.height) +
-                                        (toolbarKey
-                                                .currentContext?.size?.height ??
-                                            0);
-                                  });
-                                }
-                              });
-                          await controller.evaluateJavascript(
-                              source:
-                                  "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
-                        }
-                        //reset the editor's height if the keyboard disappears at any point
-                        if (widget.htmlEditorOptions.adjustHeightForKeyboard) {
-                          var keyboardVisibilityController =
-                              KeyboardVisibilityController();
-                          keyboardVisibilityController.onChange
-                              .listen((bool visible) {
-                            if (!visible && mounted) {
-                              // Add a delay to prevent jarring transitions
-                              Future.delayed(const Duration(milliseconds: 200),
-                                  () {
-                                if (mounted) {
-                                  controller.clearFocus();
-                                  resetHeight();
-                                }
-                              });
-                            }
-                          });
-                        }
+                        
+                        // ❌ DISABLED: Auto height adjustment - causes scroll jumping
+                        // if (widget.htmlEditorOptions.autoAdjustHeight) {
+                        //   controller.addJavaScriptHandler(
+                        //       handlerName: 'setHeight',
+                        //       callback: (height) {
+                        //         if (height.first == 'reset') {
+                        //           resetHeight();
+                        //         } else {
+                        //           setState(mounted, this.setState, () {
+                        //             docHeight = (double.tryParse(
+                        //                         height.first.toString()) ??
+                        //                     widget.otherOptions.height) +
+                        //                 (toolbarKey
+                        //                         .currentContext?.size?.height ??
+                        //                     0);
+                        //           });
+                        //         }
+                        //       });
+                        //   await controller.evaluateJavascript(
+                        //       source:
+                        //           "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
+                        // }
+                        
+                        // ❌ DISABLED: Keyboard height adjustment - causes layout shift
+                        // if (widget.htmlEditorOptions.adjustHeightForKeyboard) {
+                        //   var keyboardVisibilityController =
+                        //       KeyboardVisibilityController();
+                        //   keyboardVisibilityController.onChange
+                        //       .listen((bool visible) {
+                        //     if (!visible && mounted) {
+                        //       // Add a delay to prevent jarring transitions
+                        //       Future.delayed(const Duration(milliseconds: 200),
+                        //           () {
+                        //         if (mounted) {
+                        //           controller.clearFocus();
+                        //           resetHeight();
+                        //         }
+                        //       });
+                        //     }
+                        //   });
+                        // }
                         widget.controller.editorController!
                             .addJavaScriptHandler(
                                 handlerName: 'totalChars',
