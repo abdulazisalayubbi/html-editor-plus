@@ -129,13 +129,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
           if (!_visibleStream.isClosed) {
             // Debounce visibility changes to prevent excessive height recalculations
             _visibilityDebounceTimer?.cancel();
-            _visibilityDebounceTimer = Timer(const Duration(milliseconds: 1), () {
+            _visibilityDebounceTimer =
+                Timer(const Duration(milliseconds: 150), () {
               if (!_visibleStream.isClosed && mounted) {
                 cachedVisibleDecimal = info.visibleFraction == 1
-                    ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
+                    ? (info.size.height / widget.otherOptions.height)
+                        .clamp(0, 1)
                     : info.visibleFraction;
                 _visibleStream.add(info.visibleFraction == 1
-                    ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
+                    ? (info.size.height / widget.otherOptions.height)
+                        .clamp(0, 1)
                     : info.visibleFraction);
               }
             });
@@ -183,16 +186,14 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           widget.htmlEditorOptions.androidUseHybridComposition,
                       loadWithOverviewMode: false,
                       contentInsetAdjustmentBehavior:
-                          ScrollViewContentInsetAdjustmentBehavior.NEVER,
+                          ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
 
                       // You can also try setting this to true to prevent general "bouncing"
                       // when scrolling reaches the end, which might contribute to the "shaking."
-                      disallowOverScroll: true,
 
                       // Ensure the viewport meta tag is respected
                       enableViewportScale: true,
                       hardwareAcceleration: true,
-                        disableInputAccessoryView: true, 
 
                       // Reduce layout shifts
                       layoutAlgorithm: LayoutAlgorithm.NORMAL,
@@ -211,7 +212,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               duration: widget
                                   .htmlEditorOptions.mobileLongPressDuration)),
                       // Add tap gesture for smoother interaction
-                    Factory<TapGestureRecognizer>(() => TapGestureRecognizer()),
+                      Factory<TapGestureRecognizer>(
+                          () => TapGestureRecognizer()),
                     },
                     shouldOverrideUrlLoading: (controller, action) async {
                       if (!action.request.url.toString().contains(filePath)) {
