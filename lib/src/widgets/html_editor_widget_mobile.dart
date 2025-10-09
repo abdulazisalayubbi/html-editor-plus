@@ -192,6 +192,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       // Ensure the viewport meta tag is respected
                       enableViewportScale: true,
                       hardwareAcceleration: true,
+                        disableInputAccessoryView: true, 
 
                       // Reduce layout shifts
                       layoutAlgorithm: LayoutAlgorithm.NORMAL,
