@@ -230,19 +230,19 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     },
                     onWindowFocus: (controller) async {
                       // Only ensure visible on focus, not during typing to prevent scroll jumping
-                      if (widget.htmlEditorOptions.shouldEnsureVisible &&
-                          Scrollable.maybeOf(context) != null) {
-                        // Use a slight delay to prevent conflicts with keyboard animations
-                        Future.delayed(const Duration(milliseconds: 100), () {
-                          if (mounted && Scrollable.maybeOf(context) != null) {
-                            Scrollable.maybeOf(context)!.position.ensureVisible(
-                                  context.findRenderObject()!,
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                );
-                          }
-                        });
-                      }
+                      // if (widget.htmlEditorOptions.shouldEnsureVisible &&
+                      //     Scrollable.maybeOf(context) != null) {
+                      //   // Use a slight delay to prevent conflicts with keyboard animations
+                      //   Future.delayed(const Duration(milliseconds: 100), () {
+                      //     if (mounted && Scrollable.maybeOf(context) != null) {
+                      //       Scrollable.maybeOf(context)!.position.ensureVisible(
+                      //             context.findRenderObject()!,
+                      //             duration: const Duration(milliseconds: 200),
+                      //             curve: Curves.easeInOut,
+                      //           );
+                      //     }
+                      //   });
+                      // }
                     },
                     onLoadStop:
                         (InAppWebViewController controller, Uri? uri) async {
