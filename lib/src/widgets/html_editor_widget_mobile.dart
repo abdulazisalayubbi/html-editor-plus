@@ -1,11 +1,9 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:html_editor_plus/html_editor.dart'
     hide NavigationActionPolicy, UserScript, ContextMenu;
 import 'package:html_editor_plus/utils/utils.dart';
@@ -135,36 +133,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       useHybridComposition:
                           widget.htmlEditorOptions.androidUseHybridComposition,
                       loadWithOverviewMode: false,
-                      contentInsetAdjustmentBehavior:
-                          ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
-
-                      // You can also try setting this to true to prevent general "bouncing"
-                      // when scrolling reaches the end, which might contribute to the "shaking."
-
-                      // Ensure the viewport meta tag is respected
-                      enableViewportScale: true,
+                      enableViewportScale: false,
                       hardwareAcceleration: true,
-
-                      // Reduce layout shifts
                       layoutAlgorithm: LayoutAlgorithm.NORMAL,
+                      disableVerticalScroll: false,
+                      disableHorizontalScroll: true,
+                      supportZoom: false,
+                      builtInZoomControls: false,
+                      displayZoomControls: false,
+                      cacheEnabled: true,
                     ),
                     initialUserScripts:
                         widget.htmlEditorOptions.mobileInitialScripts
                             as UnmodifiableListView<UserScript>?,
                     contextMenu: widget.htmlEditorOptions.mobileContextMenu
                         as ContextMenu?,
-                    gestureRecognizers: {
-                      // Only allow necessary gestures for better performance
-                      Factory<VerticalDragGestureRecognizer>(
-                          () => VerticalDragGestureRecognizer()),
-                      Factory<LongPressGestureRecognizer>(() =>
-                          LongPressGestureRecognizer(
-                              duration: widget
-                                  .htmlEditorOptions.mobileLongPressDuration)),
-                      // Add tap gesture for smoother interaction
-                      Factory<TapGestureRecognizer>(
-                          () => TapGestureRecognizer()),
-                    },
                     shouldOverrideUrlLoading: (controller, action) async {
                       if (!action.request.url.toString().contains(filePath)) {
                         return (await widget
@@ -356,12 +339,18 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           });
 
                           var selectionChangeTimeout;
+                          var isProcessingSelection = false;
                           function onSelectionChange() {
+                            if (isProcessingSelection) return;
                             clearTimeout(selectionChangeTimeout);
                             selectionChangeTimeout = setTimeout(function() {
                               try {
+                                isProcessingSelection = true;
                                 let selection = document.getSelection();
-                                if (!selection || !selection.focusNode) return;
+                                if (!selection || !selection.focusNode) {
+                                  isProcessingSelection = false;
+                                  return;
+                                }
                                 
                                 var focusNode = selection.focusNode;
                                 var isBold = false;
@@ -421,8 +410,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                                   'direction': direction,
                                 };
                                 window.flutter_inappwebview.callHandler('FormatSettings', message);
-                              } catch(e) {}
-                            }, 100);
+                                isProcessingSelection = false;
+                              } catch(e) {
+                                isProcessingSelection = false;
+                              }
+                            }, 200);
                           }
                       """);
                         await controller.evaluateJavascript(
@@ -431,37 +423,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
-                        // Force inline background to white and keep it white even if changed later
+                        // Set background white once without observer to improve performance
                         await controller.evaluateJavascript(
                           source: """
                           (function(){
-                            function isWhite(v){
-                              if(!v) return false;
-                              v = v.toString().trim().toLowerCase();
-                              return v === '#ffffff' || v === 'white' || v === 'rgb(255, 255, 255)';
-                            }
-                            function forceWhite(){
-                              var editable = document.querySelector('.note-editable');
-                              if(!editable) return;
-                              editable.style.setProperty('background-color', '#ffffff', 'important');
-                            }
-                            forceWhite();
                             var editable = document.querySelector('.note-editable');
                             if(editable){
-                              var obs = new MutationObserver(function(muts){
-                                muts.forEach(function(m){
-                                  if(m.type === 'attributes' && m.attributeName === 'style'){
-                                    var bg = editable.style.getPropertyValue('background-color');
-                                    if(!isWhite(bg)) forceWhite();
-                                  }
-                                });
-                              });
-                              obs.observe(editable, { attributes: true, attributeFilter: ['style'] });
-                            }
-                            if (window.jQuery) {
-                              jQuery('#summernote-2').on('summernote.disable summernote.enable summernote.change', function(){
-                                forceWhite();
-                              });
+                              editable.style.setProperty('background-color', '#ffffff', 'important');
                             }
                           })();
                         """,
@@ -501,18 +469,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           await controller.evaluateJavascript(
                               source:
                                   "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
-                        }
-                        //reset the editor's height if the keyboard disappears at any point
-                        if (widget.htmlEditorOptions.adjustHeightForKeyboard) {
-                          var keyboardVisibilityController =
-                              KeyboardVisibilityController();
-                          keyboardVisibilityController.onChange
-                              .listen((bool visible) {
-                            if (!visible && mounted) {
-                              controller.clearFocus();
-                              resetHeight();
-                            }
-                          });
                         }
                         widget.controller.editorController!
                             .addJavaScriptHandler(
