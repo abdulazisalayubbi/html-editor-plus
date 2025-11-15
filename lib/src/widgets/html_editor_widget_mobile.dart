@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
@@ -11,7 +10,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:html_editor_plus/html_editor.dart'
     hide NavigationActionPolicy, UserScript, ContextMenu;
 import 'package:html_editor_plus/utils/utils.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 /// The HTML Editor widget itself, for mobile (uses InAppWebView)
 class HtmlEditorWidget extends StatefulWidget {
@@ -53,17 +51,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   /// String to use when creating the key for the widget
   late String key;
 
-  /// Stream to transfer the [VisibilityInfo.visibleFraction] to the [onWindowFocus]
-  /// function of the webview
-  late final StreamController<double> _visibleStream;
-
   /// Helps get the height of the toolbar to accurately adjust the height of
   /// the editor when the keyboard is visible.
   GlobalKey toolbarKey = GlobalKey();
-
-  /// Variable to cache the viewable size of the editor to update it in case
-  /// the editor is focused much after its visibility changes
-  double? cachedVisibleDecimal;
 
   String get _assetsPath => "packages/html_editor_plus/assets";
 
@@ -71,7 +61,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   void initState() {
     docHeight = widget.otherOptions.height;
 
-    _visibleStream = StreamController<double>.broadcast();
     key = getRandString(10);
     if (widget.htmlEditorOptions.filePath != null) {
       filePath = widget.htmlEditorOptions.filePath!;
@@ -85,7 +74,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   void dispose() {
-    _visibleStream.close();
     super.dispose();
   }
 
@@ -117,25 +105,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       onTap: () {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
       },
-      child: VisibilityDetector(
-        key: Key(key),
-        onVisibilityChanged: (VisibilityInfo info) async {
-          if (!_visibleStream.isClosed && mounted) {
-            cachedVisibleDecimal = info.visibleFraction == 1
-                ? (info.size.height / widget.otherOptions.height)
-                    .clamp(0, 1)
-                : info.visibleFraction;
-            _visibleStream.add(info.visibleFraction == 1
-                ? (info.size.height / widget.otherOptions.height)
-                    .clamp(0, 1)
-                : info.visibleFraction);
-          }
-        },
-        child: Container(
-          height: docHeight + 10,
-          decoration: widget.otherOptions.decoration,
-          // Add clip behavior to prevent overflow and improve performance
-          clipBehavior: Clip.hardEdge,
+      child: Container(
+        height: docHeight + 10,
+        decoration: widget.otherOptions.decoration,
+        clipBehavior: Clip.hardEdge,
           child: Column(
             children: [
               widget.htmlToolbarOptions.toolbarPosition ==
@@ -623,7 +596,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     ),
             ],
           ),
-        ),
       ),
     );
   }
