@@ -170,7 +170,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                               + '.note-editor .note-editing-area .note-editable table td,\\n'
                               + '.note-editor .note-editing-area .note-editable table th,\\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\\n'
-                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; font-size: 16px !important; }\\n'
+                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; }\\n'
                               + '.note-editor { overflow: visible !important; }\\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
