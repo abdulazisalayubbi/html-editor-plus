@@ -35,7 +35,10 @@ class HtmlEditorWidget extends StatefulWidget {
 /// State for the mobile Html editor widget
 ///
 /// A stateful widget is necessary here to allow the height to dynamically adjust.
-class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
+class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   /// Tracks whether the callbacks were initialized or not to prevent re-initializing them
   bool callbacksInitialized = false;
 
@@ -75,8 +78,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Must call super for AutomaticKeepAliveClientMixin
     // Return cached widget to prevent rebuild on keyboard show/hide
-    _cachedWidget ??= SizedBox(
+    _cachedWidget ??= RepaintBoundary(
+      child: SizedBox(
       height: widget.otherOptions.height,
       child: DecoratedBox(
         decoration: widget.otherOptions.decoration,
@@ -476,6 +481,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   callbacks: widget.callbacks),
             ],
         ),
+      ),
       ),
     );
     return _cachedWidget!;
