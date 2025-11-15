@@ -126,6 +126,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       cacheEnabled: true,
                       useOnDownloadStart: false,
                       useShouldInterceptRequest: false,
+                      // iOS specific: Smooth keyboard behavior like Safari
+                      contentInsetAdjustmentBehavior:
+                          ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
+                      automaticallyAdjustsScrollIndicatorInsets: true,
                     ),
                     initialUserScripts:
                         widget.htmlEditorOptions.mobileInitialScripts
@@ -144,7 +148,24 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     },
                     onConsoleMessage: null,
                     onWindowFocus: (controller) async {
-                      // Removed ensureVisible to prevent keyboard lag
+                      // iOS: Smooth scroll to cursor position when keyboard appears
+                      if (defaultTargetPlatform == TargetPlatform.iOS) {
+                        controller.evaluateJavascript(source: """
+                          (function() {
+                            var editable = document.querySelector('.note-editable');
+                            if (editable && document.activeElement === editable) {
+                              var selection = window.getSelection();
+                              if (selection.rangeCount > 0) {
+                                var range = selection.getRangeAt(0);
+                                var rect = range.getBoundingClientRect();
+                                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                                var targetY = rect.top + scrollTop - 100;
+                                window.scrollTo({ top: targetY, behavior: 'smooth' });
+                              }
+                            }
+                          })();
+                        """);
+                      }
                     },
                     onLoadStop:
                         (InAppWebViewController controller, Uri? uri) async {
