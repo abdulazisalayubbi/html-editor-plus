@@ -100,8 +100,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       setState(mounted, this.setState, () {
         docHeight = widget.otherOptions.height;
       });
-      // Add a small delay to prevent conflicts with other height adjustments
-      await Future.delayed(const Duration(milliseconds: 100));
       if (mounted && widget.controller.editorController != null) {
         try {
           await widget.controller.editorController!.evaluateJavascript(
@@ -130,7 +128,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
             // Debounce visibility changes to prevent excessive height recalculations
             _visibilityDebounceTimer?.cancel();
             _visibilityDebounceTimer =
-                Timer(const Duration(milliseconds: 20), () {
+                Timer(const Duration(milliseconds: 10), () {
               if (!_visibleStream.isClosed && mounted) {
                 cachedVisibleDecimal = info.visibleFraction == 1
                     ? (info.size.height / widget.otherOptions.height)
@@ -230,17 +228,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     },
                     onWindowFocus: (controller) async {
                       if (widget.htmlEditorOptions.shouldEnsureVisible &&
-                          Scrollable.maybeOf(context) != null) {
-                        // Use a slight delay to prevent conflicts with keyboard animations
-                        Future.delayed(const Duration(milliseconds: 150), () {
-                          if (mounted && Scrollable.maybeOf(context) != null) {
-                            Scrollable.maybeOf(context)!.position.ensureVisible(
-                                  context.findRenderObject()!,
-                                  duration: const Duration(milliseconds: 10),
-                                  curve: Curves.easeInOut,
-                                );
-                          }
-                        });
+                          Scrollable.maybeOf(context) != null &&
+                          mounted) {
+                        Scrollable.maybeOf(context)!.position.ensureVisible(
+                              context.findRenderObject()!,
+                              duration: const Duration(milliseconds: 10),
+                              curve: Curves.easeInOut,
+                            );
                       }
                     },
                     onLoadStop:
@@ -568,8 +562,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           keyboardVisibilityController.onChange
                               .listen((bool visible) {
                             if (!visible && mounted) {
-                              // Add a delay to prevent jarring transitions
-                              Future.delayed(const Duration(milliseconds: 200),
+                              Future.delayed(const Duration(milliseconds: 50),
                                   () {
                                 if (mounted) {
                                   controller.clearFocus();
