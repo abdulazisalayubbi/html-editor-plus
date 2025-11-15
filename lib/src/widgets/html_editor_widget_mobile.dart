@@ -118,11 +118,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     contentInsetAdjustmentBehavior:
                         ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
 
-                    // You can also try setting this to true to prevent general "bouncing"
-                    // when scrolling reaches the end, which might contribute to the "shaking."
-
-                    // Ensure the viewport meta tag is respected
-                    enableViewportScale: true,
+                    // Allow manual zoom but prevent auto-zoom on small text
+                    supportZoom: true,
+                    minimumFontSize: 16,
                     hardwareAcceleration: true,
 
                     // Reduce layout shifts
@@ -154,7 +152,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   var meta = document.querySelector('meta[name=viewport]');
   if (meta) {
       meta.setAttribute('content',
-        'width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes'
+        'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes'
       );
   }
 """);
@@ -164,15 +162,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                         source: """
                           (function(){
                             var css = '\n'
-                              + 'html, body { background-color: #ffffff !important; }\n'
-                              + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: #ffffff !important; }\n'
-                              + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\n'
-                              + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:#ffffff !important; }\n'
-                              + '.note-editor .note-editing-area .note-editable table,\n'
-                              + '.note-editor .note-editing-area .note-editable table td,\n'
-                              + '.note-editor .note-editing-area .note-editable table th,\n'
-                              + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
-                              + '.note-editable { -webkit-user-select: text; user-select: text; }\n';
+                              + 'html, body { background-color: #ffffff !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: #ffffff !important; }\\n'
+                              + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\\n'
+                              + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:#ffffff !important; }\\n'
+                              + '.note-editor .note-editing-area .note-editable table,\\n'
+                              + '.note-editor .note-editing-area .note-editable table td,\\n'
+                              + '.note-editor .note-editing-area .note-editable table th,\\n'
+                              + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\\n'
+                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; font-size: 16px !important; }\\n'
+                              + '.note-editor { overflow: visible !important; }\\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
