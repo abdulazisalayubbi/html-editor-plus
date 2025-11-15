@@ -65,9 +65,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   /// the editor is focused much after its visibility changes
   double? cachedVisibleDecimal;
 
-  /// Timer to debounce visibility changes
-  Timer? _visibilityDebounceTimer;
-
   String get _assetsPath => "packages/html_editor_plus/assets";
 
   @override
@@ -88,7 +85,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   void dispose() {
-    _visibilityDebounceTimer?.cancel();
     _visibleStream.close();
     super.dispose();
   }
@@ -124,22 +120,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       child: VisibilityDetector(
         key: Key(key),
         onVisibilityChanged: (VisibilityInfo info) async {
-          if (!_visibleStream.isClosed) {
-            // Debounce visibility changes to prevent excessive height recalculations
-            _visibilityDebounceTimer?.cancel();
-            _visibilityDebounceTimer =
-                Timer(const Duration(milliseconds: 10), () {
-              if (!_visibleStream.isClosed && mounted) {
-                cachedVisibleDecimal = info.visibleFraction == 1
-                    ? (info.size.height / widget.otherOptions.height)
-                        .clamp(0, 1)
-                    : info.visibleFraction;
-                _visibleStream.add(info.visibleFraction == 1
-                    ? (info.size.height / widget.otherOptions.height)
-                        .clamp(0, 1)
-                    : info.visibleFraction);
-              }
-            });
+          if (!_visibleStream.isClosed && mounted) {
+            cachedVisibleDecimal = info.visibleFraction == 1
+                ? (info.size.height / widget.otherOptions.height)
+                    .clamp(0, 1)
+                : info.visibleFraction;
+            _visibleStream.add(info.visibleFraction == 1
+                ? (info.size.height / widget.otherOptions.height)
+                    .clamp(0, 1)
+                : info.visibleFraction);
           }
         },
         child: Container(
@@ -227,15 +216,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       debugPrint(message.message);
                     },
                     onWindowFocus: (controller) async {
-                      if (widget.htmlEditorOptions.shouldEnsureVisible &&
-                          Scrollable.maybeOf(context) != null &&
-                          mounted) {
-                        Scrollable.maybeOf(context)!.position.ensureVisible(
-                              context.findRenderObject()!,
-                              duration: const Duration(milliseconds: 10),
-                              curve: Curves.easeInOut,
-                            );
-                      }
+                      // Removed ensureVisible to prevent keyboard lag
                     },
                     onLoadStop:
                         (InAppWebViewController controller, Uri? uri) async {
@@ -562,13 +543,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           keyboardVisibilityController.onChange
                               .listen((bool visible) {
                             if (!visible && mounted) {
-                              Future.delayed(const Duration(milliseconds: 50),
-                                  () {
-                                if (mounted) {
-                                  controller.clearFocus();
-                                  resetHeight();
-                                }
-                              });
+                              controller.clearFocus();
+                              resetHeight();
                             }
                           });
                         }
