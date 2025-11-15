@@ -49,6 +49,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   /// the editor when the keyboard is visible.
   GlobalKey toolbarKey = GlobalKey();
 
+  /// Cached widget to prevent rebuild
+  Widget? _cachedWidget;
+
   String get _assetsPath => "packages/html_editor_plus/assets";
 
   @override
@@ -72,7 +75,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    // Return cached widget to prevent rebuild on keyboard show/hide
+    _cachedWidget ??= SizedBox(
       height: widget.otherOptions.height,
       child: DecoratedBox(
         decoration: widget.otherOptions.decoration,
@@ -474,6 +478,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
         ),
       ),
     );
+    return _cachedWidget!;
   }
 
   /// adds the callbacks set by the user into the scripts
