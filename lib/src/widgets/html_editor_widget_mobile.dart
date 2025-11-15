@@ -72,23 +72,35 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.otherOptions.height,
-      decoration: widget.otherOptions.decoration,
-      clipBehavior: Clip.none,
-      child: Column(
+    return RepaintBoundary(
+      child: AnimatedContainer(
+        duration: Duration.zero,
+        height: widget.otherOptions.height,
+        decoration: widget.otherOptions.decoration,
+        clipBehavior: Clip.none,
+        child: Column(
             children: [
               widget.htmlToolbarOptions.toolbarPosition ==
                       ToolbarPosition.aboveEditor
-                  ? ToolbarWidget(
-                      key: toolbarKey,
-                      controller: widget.controller,
-                      htmlToolbarOptions: widget.htmlToolbarOptions,
-                      callbacks: widget.callbacks)
+                  ? RepaintBoundary(
+                      child: Transform.translate(
+                        offset: Offset.zero,
+                        transformHitTests: false,
+                        child: ToolbarWidget(
+                          key: toolbarKey,
+                          controller: widget.controller,
+                          htmlToolbarOptions: widget.htmlToolbarOptions,
+                          callbacks: widget.callbacks),
+                      ),
+                    )
                   : const SizedBox.shrink(),
               Expanded(
-                child: InAppWebView(
-                    initialFile: filePath,
+                child: RepaintBoundary(
+                  child: Transform.translate(
+                    offset: Offset.zero,
+                    transformHitTests: false,
+                    child: InAppWebView(
+                      initialFile: filePath,
                     onWebViewCreated: (InAppWebViewController controller) {
                       widget.controller.editorController = controller;
                       controller.addJavaScriptHandler(
@@ -461,16 +473,24 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             });
                       }
                     },
+                    ),
+                  ),
                 ),
               ),
               (widget.htmlToolbarOptions.toolbarPosition ==
                           ToolbarPosition.belowEditor &&
                       !widget.htmlEditorOptions.disabled)
-                  ? ToolbarWidget(
-                      key: toolbarKey,
-                      controller: widget.controller,
-                      htmlToolbarOptions: widget.htmlToolbarOptions,
-                      callbacks: widget.callbacks)
+                  ? RepaintBoundary(
+                      child: Transform.translate(
+                        offset: Offset.zero,
+                        transformHitTests: false,
+                        child: ToolbarWidget(
+                          key: toolbarKey,
+                          controller: widget.controller,
+                          htmlToolbarOptions: widget.htmlToolbarOptions,
+                          callbacks: widget.callbacks),
+                      ),
+                    )
                   :
                   //  PreferredSize(
                   //   preferredSize: const Size.fromHeight(0),
@@ -496,6 +516,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   const SizedBox.shrink(),
             ],
           ),
+      ),
     );
   }
 
