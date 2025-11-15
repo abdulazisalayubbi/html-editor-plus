@@ -72,35 +72,22 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: AnimatedContainer(
-        duration: Duration.zero,
-        height: widget.otherOptions.height,
+    return SizedBox(
+      height: widget.otherOptions.height,
+      child: DecoratedBox(
         decoration: widget.otherOptions.decoration,
-        clipBehavior: Clip.none,
         child: Column(
             children: [
-              widget.htmlToolbarOptions.toolbarPosition ==
-                      ToolbarPosition.aboveEditor
-                  ? RepaintBoundary(
-                      child: Transform.translate(
-                        offset: Offset.zero,
-                        transformHitTests: false,
-                        child: ToolbarWidget(
-                          key: toolbarKey,
-                          controller: widget.controller,
-                          htmlToolbarOptions: widget.htmlToolbarOptions,
-                          callbacks: widget.callbacks),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+              if (widget.htmlToolbarOptions.toolbarPosition ==
+                  ToolbarPosition.aboveEditor)
+                ToolbarWidget(
+                  key: toolbarKey,
+                  controller: widget.controller,
+                  htmlToolbarOptions: widget.htmlToolbarOptions,
+                  callbacks: widget.callbacks),
               Expanded(
-                child: RepaintBoundary(
-                  child: Transform.translate(
-                    offset: Offset.zero,
-                    transformHitTests: false,
-                    child: InAppWebView(
-                      initialFile: filePath,
+                child: InAppWebView(
+                  initialFile: filePath,
                     onWebViewCreated: (InAppWebViewController controller) {
                       widget.controller.editorController = controller;
                       controller.addJavaScriptHandler(
@@ -473,49 +460,18 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             });
                       }
                     },
-                    ),
-                  ),
                 ),
               ),
-              (widget.htmlToolbarOptions.toolbarPosition ==
-                          ToolbarPosition.belowEditor &&
-                      !widget.htmlEditorOptions.disabled)
-                  ? RepaintBoundary(
-                      child: Transform.translate(
-                        offset: Offset.zero,
-                        transformHitTests: false,
-                        child: ToolbarWidget(
-                          key: toolbarKey,
-                          controller: widget.controller,
-                          htmlToolbarOptions: widget.htmlToolbarOptions,
-                          callbacks: widget.callbacks),
-                      ),
-                    )
-                  :
-                  //  PreferredSize(
-                  //   preferredSize: const Size.fromHeight(0),
-                  //   child: ToolbarWidget(
-                  //       key: toolbarKey,
-                  //       controller: widget.controller,
-
-                  //       htmlToolbarOptions: const HtmlToolbarOptions(
-                  //         defaultToolbarButtons: [],
-                  //         toolbarItemHeight: 0,
-                  //         customToolbarButtons: [],
-                  //         dropdownIconSize: 0,
-                  //         dropdownItemHeight: 0,
-                  //         dropdownElevation: 0,
-                  //         dropdownMenuMaxHeight: 0,
-                  //         gridViewHorizontalSpacing: 0,
-                  //         gridViewVerticalSpacing: 0,
-
-                  //         customToolbarInsertionIndices: [],
-                  //       ),
-                  //       callbacks: widget.callbacks),
-                  // ),
-                  const SizedBox.shrink(),
+              if (widget.htmlToolbarOptions.toolbarPosition ==
+                      ToolbarPosition.belowEditor &&
+                  !widget.htmlEditorOptions.disabled)
+                ToolbarWidget(
+                  key: toolbarKey,
+                  controller: widget.controller,
+                  htmlToolbarOptions: widget.htmlToolbarOptions,
+                  callbacks: widget.callbacks),
             ],
-          ),
+        ),
       ),
     );
   }
