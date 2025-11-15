@@ -81,11 +81,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     super.build(context); // Must call super for AutomaticKeepAliveClientMixin
     // Return cached widget to prevent rebuild on keyboard show/hide
     _cachedWidget ??= RepaintBoundary(
-      child: SizedBox(
-      height: widget.otherOptions.height,
-      child: DecoratedBox(
-        decoration: widget.otherOptions.decoration,
-        child: Column(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: SizedBox(
+          height: widget.otherOptions.height,
+          child: DecoratedBox(
+            decoration: widget.otherOptions.decoration,
+            child: Column(
             children: [
               if (widget.htmlToolbarOptions.toolbarPosition ==
                   ToolbarPosition.aboveEditor)
@@ -501,8 +503,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                   htmlToolbarOptions: widget.htmlToolbarOptions,
                   callbacks: widget.callbacks),
             ],
+          ),
         ),
-      ),
+        ),
       ),
     );
     return _cachedWidget!;
