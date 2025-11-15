@@ -30,6 +30,14 @@ Add `html_editor_plus: ^0.0.1` as dependency to your pubspec.yaml.
 
 Make sure to declare internet support inside `AndroidManifest.xml`: `<uses-permission android:name="android.permission.INTERNET"/>`
 
+**For smooth keyboard animation on Android**, change `android:windowSoftInputMode` in your `AndroidManifest.xml`:
+```xml
+<activity
+    android:windowSoftInputMode="adjustPan"
+    ...>
+```
+This prevents layout resize lag when keyboard appears. Use `adjustPan` instead of `adjustResize` for better performance.
+
 Additional setup is required on iOS to allow the user to pick files from storage. See [here](https://github.com/miguelpruivo/flutter_file_picker/wiki/Setup#--ios) for more details. 
 
 For images, the package uses `FileType.image`, for video `FileType.video`, for audio `FileType.audio`, and for any other file `FileType.any`. You can just complete setup for the specific buttons you plan to enable in the editor.

@@ -94,19 +94,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       onTap: () {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
       },
-      child: Container(
-        height: docHeight + 10,
-        decoration: widget.otherOptions.decoration,
-        clipBehavior: Clip.hardEdge,
+      child: RepaintBoundary(
+        child: Container(
+          height: docHeight + 10,
+          decoration: widget.otherOptions.decoration,
+          clipBehavior: Clip.hardEdge,
           child: Column(
             children: [
               widget.htmlToolbarOptions.toolbarPosition ==
                       ToolbarPosition.aboveEditor
-                  ? ToolbarWidget(
-                      key: toolbarKey,
-                      controller: widget.controller,
-                      htmlToolbarOptions: widget.htmlToolbarOptions,
-                      callbacks: widget.callbacks)
+                  ? RepaintBoundary(
+                      child: ToolbarWidget(
+                        key: toolbarKey,
+                        controller: widget.controller,
+                        htmlToolbarOptions: widget.htmlToolbarOptions,
+                        callbacks: widget.callbacks))
                   : const SizedBox(height: 0, width: 0),
               Expanded(
                 // Use flex: 1 for consistent sizing and better performance
@@ -142,6 +144,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       builtInZoomControls: false,
                       displayZoomControls: false,
                       cacheEnabled: true,
+                      useOnDownloadStart: false,
+                      useShouldInterceptRequest: false,
                     ),
                     initialUserScripts:
                         widget.htmlEditorOptions.mobileInitialScripts
@@ -512,11 +516,12 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
               (widget.htmlToolbarOptions.toolbarPosition ==
                           ToolbarPosition.belowEditor &&
                       !widget.htmlEditorOptions.disabled)
-                  ? ToolbarWidget(
-                      key: toolbarKey,
-                      controller: widget.controller,
-                      htmlToolbarOptions: widget.htmlToolbarOptions,
-                      callbacks: widget.callbacks)
+                  ? RepaintBoundary(
+                      child: ToolbarWidget(
+                        key: toolbarKey,
+                        controller: widget.controller,
+                        htmlToolbarOptions: widget.htmlToolbarOptions,
+                        callbacks: widget.callbacks))
                   :
                   //  PreferredSize(
                   //   preferredSize: const Size.fromHeight(0),
@@ -545,6 +550,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     ),
             ],
           ),
+        ),
       ),
     );
   }
