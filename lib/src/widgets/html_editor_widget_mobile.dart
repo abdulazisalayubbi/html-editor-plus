@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -78,23 +77,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   }
 
   /// resets the height of the editor to the original height
-  void resetHeight() async {
+  void resetHeight() {
     if (mounted) {
-      // Use animated state change for smoother transitions
       setState(mounted, this.setState, () {
         docHeight = widget.otherOptions.height;
       });
-      if (mounted && widget.controller.editorController != null) {
-        try {
-          await widget.controller.editorController!.evaluateJavascript(
-              source:
-                  "\$('div.note-editable').animate({height: ${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)}}, 200);");
-        } catch (e) {
-          // Fallback to instant height change if animation fails
-          await widget.controller.editorController!.evaluateJavascript(
-              source:
-                  "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
-        }
+      if (widget.controller.editorController != null) {
+        widget.controller.editorController!.evaluateJavascript(
+            source:
+                "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
       }
     }
   }
@@ -131,9 +122,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       controller.addJavaScriptHandler(
                           handlerName: 'FormatSettings',
                           callback: (e) {
-                            var json = e[0] as Map<String, dynamic>;
-                            debugPrint(jsonEncode(json));
                             if (widget.controller.toolbar != null) {
+                              var json = e[0] as Map<String, dynamic>;
                               widget.controller.toolbar!.updateToolbar(json);
                             }
                           });
@@ -185,9 +175,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       }
                       return NavigationActionPolicy.ALLOW;
                     },
-                    onConsoleMessage: (controller, message) {
-                      debugPrint(message.message);
-                    },
+                    onConsoleMessage: null,
                     onWindowFocus: (controller) async {
                       // Removed ensureVisible to prevent keyboard lag
                     },
@@ -209,11 +197,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               + '.note-editor .note-editing-area .note-editable table td,\n'
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
-                              + '/* Smooth scrolling and performance optimizations */\n'
-                              + 'html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }\n'
-                              + 'body { overscroll-behavior: none; }\n'
-                              + '.note-editable { transform: translateZ(0); will-change: contents; }\n'
-                              + '.note-editor { transition: height 0.2s ease-out; }\n';
+                              + '.note-editable { -webkit-user-select: text; user-select: text; }\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
@@ -371,70 +355,79 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             window.flutter_inappwebview.callHandler('onChangeContent', contents);
                           });
 
+                          var selectionChangeTimeout;
                           function onSelectionChange() {
-                            let {anchorNode, anchorOffset, focusNode, focusOffset} = document.getSelection();
-                            var isBold = false;
-                            var isItalic = false;
-                            var isUnderline = false;
-                            var isStrikethrough = false;
-                            var isSuperscript = false;
-                            var isSubscript = false;
-                            var isUL = false;
-                            var isOL = false;
-                            var isLeft = false;
-                            var isRight = false;
-                            var isCenter = false;
-                            var isFull = false;
-                            var parent;
-                            var fontName;
-                            var fontSize = 16;
-                            var foreColor = "000000";
-                            var backColor = "FFFF00";
-                            var focusNode2 = \$(window.getSelection().focusNode);
-                            var parentList = focusNode2.closest("div.note-editable ol, div.note-editable ul");
-                            var parentListType = parentList.css('list-style-type');
-                            var lineHeight = \$(focusNode.parentNode).css('line-height');
-                            var direction = \$(focusNode.parentNode).css('direction');
-                            if (document.queryCommandState) {
-                              isBold = document.queryCommandState('bold');
-                              isItalic = document.queryCommandState('italic');
-                              isUnderline = document.queryCommandState('underline');
-                              isStrikethrough = document.queryCommandState('strikeThrough');
-                              isSuperscript = document.queryCommandState('superscript');
-                              isSubscript = document.queryCommandState('subscript');
-                              isUL = document.queryCommandState('insertUnorderedList');
-                              isOL = document.queryCommandState('insertOrderedList');
-                              isLeft = document.queryCommandState('justifyLeft');
-                              isRight = document.queryCommandState('justifyRight');
-                              isCenter = document.queryCommandState('justifyCenter');
-                              isFull = document.queryCommandState('justifyFull');
-                            }
-                            if (document.queryCommandValue) {
-                              parent = document.queryCommandValue('formatBlock');
-                              fontSize = document.queryCommandValue('fontSize');
-                              foreColor = document.queryCommandValue('foreColor');
-                              backColor = document.queryCommandValue('hiliteColor');
-                              fontName = document.queryCommandValue('fontName');
-                            }
-                            var message = {
-                              'style': parent,
-                              'fontName': fontName,
-                              'fontSize': fontSize,
-                              'font': [isBold, isItalic, isUnderline],
-                              'miscFont': [isStrikethrough, isSuperscript, isSubscript],
-                              'color': [foreColor, backColor],
-                              'paragraph': [isUL, isOL],
-                              'listStyle': parentListType,
-                              'align': [isLeft, isCenter, isRight, isFull],
-                              'lineHeight': lineHeight,
-                              'direction': direction,
-                            };
-                            window.flutter_inappwebview.callHandler('FormatSettings', message);
+                            clearTimeout(selectionChangeTimeout);
+                            selectionChangeTimeout = setTimeout(function() {
+                              try {
+                                let selection = document.getSelection();
+                                if (!selection || !selection.focusNode) return;
+                                
+                                var focusNode = selection.focusNode;
+                                var isBold = false;
+                                var isItalic = false;
+                                var isUnderline = false;
+                                var isStrikethrough = false;
+                                var isSuperscript = false;
+                                var isSubscript = false;
+                                var isUL = false;
+                                var isOL = false;
+                                var isLeft = false;
+                                var isRight = false;
+                                var isCenter = false;
+                                var isFull = false;
+                                var parent;
+                                var fontName;
+                                var fontSize = 16;
+                                var foreColor = "000000";
+                                var backColor = "FFFF00";
+                                var focusNode2 = \$(focusNode);
+                                var parentList = focusNode2.closest("div.note-editable ol, div.note-editable ul");
+                                var parentListType = parentList.css('list-style-type');
+                                var lineHeight = \$(focusNode.parentNode).css('line-height');
+                                var direction = \$(focusNode.parentNode).css('direction');
+                                if (document.queryCommandState) {
+                                  isBold = document.queryCommandState('bold');
+                                  isItalic = document.queryCommandState('italic');
+                                  isUnderline = document.queryCommandState('underline');
+                                  isStrikethrough = document.queryCommandState('strikeThrough');
+                                  isSuperscript = document.queryCommandState('superscript');
+                                  isSubscript = document.queryCommandState('subscript');
+                                  isUL = document.queryCommandState('insertUnorderedList');
+                                  isOL = document.queryCommandState('insertOrderedList');
+                                  isLeft = document.queryCommandState('justifyLeft');
+                                  isRight = document.queryCommandState('justifyRight');
+                                  isCenter = document.queryCommandState('justifyCenter');
+                                  isFull = document.queryCommandState('justifyFull');
+                                }
+                                if (document.queryCommandValue) {
+                                  parent = document.queryCommandValue('formatBlock');
+                                  fontSize = document.queryCommandValue('fontSize');
+                                  foreColor = document.queryCommandValue('foreColor');
+                                  backColor = document.queryCommandValue('hiliteColor');
+                                  fontName = document.queryCommandValue('fontName');
+                                }
+                                var message = {
+                                  'style': parent,
+                                  'fontName': fontName,
+                                  'fontSize': fontSize,
+                                  'font': [isBold, isItalic, isUnderline],
+                                  'miscFont': [isStrikethrough, isSuperscript, isSubscript],
+                                  'color': [foreColor, backColor],
+                                  'paragraph': [isUL, isOL],
+                                  'listStyle': parentListType,
+                                  'align': [isLeft, isCenter, isRight, isFull],
+                                  'lineHeight': lineHeight,
+                                  'direction': direction,
+                                };
+                                window.flutter_inappwebview.callHandler('FormatSettings', message);
+                              } catch(e) {}
+                            }, 100);
                           }
                       """);
                         await controller.evaluateJavascript(
                             source:
-                                "document.onselectionchange = onSelectionChange; console.log('done');");
+                                "document.onselectionchange = onSelectionChange;");
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
