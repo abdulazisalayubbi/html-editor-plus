@@ -149,26 +149,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       return NavigationActionPolicy.ALLOW;
                     },
                     onConsoleMessage: null,
-                    onWindowFocus: (controller) async {
-                      // iOS: Smooth scroll to cursor position when keyboard appears
-                      if (defaultTargetPlatform == TargetPlatform.iOS) {
-                        controller.evaluateJavascript(source: """
-                          (function() {
-                            var editable = document.querySelector('.note-editable');
-                            if (editable && document.activeElement === editable) {
-                              var selection = window.getSelection();
-                              if (selection.rangeCount > 0) {
-                                var range = selection.getRangeAt(0);
-                                var rect = range.getBoundingClientRect();
-                                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                                var targetY = rect.top + scrollTop - 100;
-                                window.scrollTo({ top: targetY, behavior: 'smooth' });
-                              }
-                            }
-                          })();
-                        """);
-                      }
-                    },
                     onLoadStop:
                         (InAppWebViewController controller, Uri? uri) async {
                       var url = uri.toString();
@@ -194,6 +174,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                             document.head.appendChild(style);
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
+                            
+                            // Source - https://stackoverflow.com/a
+                            // Posted by Vikas Kandari, modified by community. See post 'Timeline' for change history
+                            // Retrieved 2025-11-15, License - CC BY-SA 4.0
+                            // Smooth scroll to input when keyboard appears (iOS & Android)
+                            window.addEventListener('focusin', (event) => {
+                              setTimeout(() => {
+                                event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 300);
+                            });
                           })();
                         """,
                         );
