@@ -33,10 +33,10 @@ Make sure to declare internet support inside `AndroidManifest.xml`: `<uses-permi
 **For smooth keyboard animation on Android**, change `android:windowSoftInputMode` in your `AndroidManifest.xml`:
 ```xml
 <activity
-    android:windowSoftInputMode="adjustPan"
+    android:windowSoftInputMode="adjustNothing"
     ...>
 ```
-This prevents layout resize lag when keyboard appears. Use `adjustPan` instead of `adjustResize` for better performance.
+This prevents any layout animation lag when keyboard appears. Use `adjustNothing` for instant keyboard response with zero lag.
 
 Additional setup is required on iOS to allow the user to pick files from storage. See [here](https://github.com/miguelpruivo/flutter_file_picker/wiki/Setup#--ios) for more details. 
 

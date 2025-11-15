@@ -94,12 +94,14 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       onTap: () {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
       },
-      child: RepaintBoundary(
-        child: Container(
-          height: docHeight + 10,
-          decoration: widget.otherOptions.decoration,
-          clipBehavior: Clip.hardEdge,
-          child: Column(
+      child: Transform.translate(
+        offset: Offset.zero,
+        child: RepaintBoundary(
+          child: Container(
+            height: docHeight + 10,
+            decoration: widget.otherOptions.decoration,
+            clipBehavior: Clip.antiAlias,
+            child: Column(
             children: [
               widget.htmlToolbarOptions.toolbarPosition ==
                       ToolbarPosition.aboveEditor
@@ -111,11 +113,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         callbacks: widget.callbacks))
                   : const SizedBox(height: 0, width: 0),
               Expanded(
-                // Use flex: 1 for consistent sizing and better performance
                 flex: 1,
                 child: RepaintBoundary(
-                  // Isolate webview repaints for better performance
-                  child: InAppWebView(
+                  child: Transform.translate(
+                    offset: Offset.zero,
+                    child: InAppWebView(
                     initialFile: filePath,
                     onWebViewCreated: (InAppWebViewController controller) {
                       widget.controller.editorController = controller;
@@ -427,13 +429,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
-                        // Set background white once without observer to improve performance
+                        // Set background white and GPU acceleration hints
                         await controller.evaluateJavascript(
                           source: """
                           (function(){
                             var editable = document.querySelector('.note-editable');
                             if(editable){
                               editable.style.setProperty('background-color', '#ffffff', 'important');
+                              editable.style.transform = 'translateZ(0)';
+                              editable.style.backfaceVisibility = 'hidden';
+                              editable.style.perspective = '1000px';
+                            }
+                            var noteEditor = document.querySelector('.note-editor');
+                            if(noteEditor){
+                              noteEditor.style.transform = 'translateZ(0)';
+                              noteEditor.style.backfaceVisibility = 'hidden';
                             }
                           })();
                         """,
@@ -511,6 +521,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       }
                     },
                   ),
+                  ),
                 ),
               ),
               (widget.htmlToolbarOptions.toolbarPosition ==
@@ -550,6 +561,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     ),
             ],
           ),
+        ),
         ),
       ),
     );
