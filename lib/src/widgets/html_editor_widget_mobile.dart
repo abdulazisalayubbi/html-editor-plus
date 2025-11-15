@@ -118,11 +118,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     contentInsetAdjustmentBehavior:
                         ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
 
-                    // You can also try setting this to true to prevent general "bouncing"
-                    // when scrolling reaches the end, which might contribute to the "shaking."
-
-                    // Ensure the viewport meta tag is respected
-                    enableViewportScale: true,
+                    // Allow manual zoom but prevent auto-zoom on focus
+                    supportZoom: true,
+                    minimumFontSize: 16, // Prevents iOS auto-zoom (requires 16px+)
                     hardwareAcceleration: true,
 
                     // Reduce layout shifts
@@ -164,7 +162,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                               + '.note-editor .note-editing-area .note-editable table td,\n'
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
-                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; }\n'
+                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; font-size: 16px !important; }\n'
                               + '.note-editor { overflow: visible !important; }\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
@@ -172,6 +170,36 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                             document.head.appendChild(style);
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
+                            
+                            // Prevent iOS zoom reset behavior
+                            var lastScale = 1;
+                            var isUserZooming = false;
+                            
+                            document.addEventListener('touchstart', function(e) {
+                              if (e.touches.length > 1) {
+                                isUserZooming = true;
+                              }
+                            });
+                            
+                            document.addEventListener('touchend', function(e) {
+                              setTimeout(function() {
+                                isUserZooming = false;
+                              }, 300);
+                            });
+                            
+                            // Prevent viewport scale changes on focus/blur
+                            document.addEventListener('focusin', function(e) {
+                              if (!isUserZooming) {
+                                lastScale = window.visualViewport ? window.visualViewport.scale : 1;
+                              }
+                            });
+                            
+                            document.addEventListener('focusout', function(e) {
+                              // Don't auto zoom-out after focus out
+                              if (window.visualViewport && window.visualViewport.scale !== lastScale && !isUserZooming) {
+                                e.preventDefault();
+                              }
+                            });
                           })();
                         """,
                       );
