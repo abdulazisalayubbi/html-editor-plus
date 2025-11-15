@@ -118,9 +118,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     contentInsetAdjustmentBehavior:
                         ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
 
-                    // Allow manual zoom but prevent auto-zoom on focus
-                    supportZoom: true,
-                    minimumFontSize: 16, // Prevents iOS auto-zoom (requires 16px+)
+                    // You can also try setting this to true to prevent general "bouncing"
+                    // when scrolling reaches the end, which might contribute to the "shaking."
+
+                    // Ensure the viewport meta tag is respected
+                    enableViewportScale: true,
                     hardwareAcceleration: true,
 
                     // Reduce layout shifts
@@ -148,13 +150,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       (InAppWebViewController controller, Uri? uri) async {
                     var url = uri.toString();
                     var maximumFileSize = 10485760;
+                    await controller.evaluateJavascript(source: """
+  var meta = document.querySelector('meta[name=viewport]');
+  if (meta) {
+      meta.setAttribute('content',
+        'width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes'
+      );
+  }
+""");
                     if (url.contains(filePath)) {
                       // Ensure editor background is white on mobile (enabled and disabled)
                       await controller.evaluateJavascript(
                         source: """
                           (function(){
                             var css = '\n'
-                              + 'html, body { background-color: #ffffff !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\n'
+                              + 'html, body { background-color: #ffffff !important; }\n'
                               + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: #ffffff !important; }\n'
                               + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\n'
                               + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:#ffffff !important; }\n'
@@ -162,44 +172,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                               + '.note-editor .note-editing-area .note-editable table td,\n'
                               + '.note-editor .note-editing-area .note-editable table th,\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\n'
-                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; font-size: 16px !important; }\n'
-                              + '.note-editor { overflow: visible !important; }\n';
+                              + '.note-editable { -webkit-user-select: text; user-select: text; }\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
                             document.head.appendChild(style);
                             document.documentElement.style.backgroundColor = '#ffffff';
                             document.body.style.backgroundColor = '#ffffff';
-                            
-                            // Prevent iOS zoom reset behavior
-                            var lastScale = 1;
-                            var isUserZooming = false;
-                            
-                            document.addEventListener('touchstart', function(e) {
-                              if (e.touches.length > 1) {
-                                isUserZooming = true;
-                              }
-                            });
-                            
-                            document.addEventListener('touchend', function(e) {
-                              setTimeout(function() {
-                                isUserZooming = false;
-                              }, 300);
-                            });
-                            
-                            // Prevent viewport scale changes on focus/blur
-                            document.addEventListener('focusin', function(e) {
-                              if (!isUserZooming) {
-                                lastScale = window.visualViewport ? window.visualViewport.scale : 1;
-                              }
-                            });
-                            
-                            document.addEventListener('focusout', function(e) {
-                              // Don't auto zoom-out after focus out
-                              if (window.visualViewport && window.visualViewport.scale !== lastScale && !isUserZooming) {
-                                e.preventDefault();
-                              }
-                            });
                           })();
                         """,
                       );
