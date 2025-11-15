@@ -39,9 +39,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   /// Tracks whether the callbacks were initialized or not to prevent re-initializing them
   bool callbacksInitialized = false;
 
-  /// The height of the document loaded in the editor
-  late double docHeight;
-
   /// The file path to the html code
   late String filePath;
 
@@ -56,7 +53,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   void initState() {
-    docHeight = widget.otherOptions.height;
 
     key = getRandString(10);
     if (widget.htmlEditorOptions.filePath != null) {
@@ -74,50 +70,24 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
     super.dispose();
   }
 
-  /// resets the height of the editor to the original height
-  void resetHeight() {
-    if (mounted) {
-      setState(mounted, this.setState, () {
-        docHeight = widget.otherOptions.height;
-      });
-      if (widget.controller.editorController != null) {
-        widget.controller.editorController!.evaluateJavascript(
-            source:
-                "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-      },
-      child: Transform.translate(
-        offset: Offset.zero,
-        child: RepaintBoundary(
-          child: Container(
-            height: docHeight + 10,
-            decoration: widget.otherOptions.decoration,
-            clipBehavior: Clip.antiAlias,
-            child: Column(
+    return Container(
+      height: widget.otherOptions.height,
+      decoration: widget.otherOptions.decoration,
+      clipBehavior: Clip.none,
+      child: Column(
             children: [
               widget.htmlToolbarOptions.toolbarPosition ==
                       ToolbarPosition.aboveEditor
-                  ? RepaintBoundary(
-                      child: ToolbarWidget(
-                        key: toolbarKey,
-                        controller: widget.controller,
-                        htmlToolbarOptions: widget.htmlToolbarOptions,
-                        callbacks: widget.callbacks))
-                  : const SizedBox(height: 0, width: 0),
+                  ? ToolbarWidget(
+                      key: toolbarKey,
+                      controller: widget.controller,
+                      htmlToolbarOptions: widget.htmlToolbarOptions,
+                      callbacks: widget.callbacks)
+                  : const SizedBox.shrink(),
               Expanded(
-                flex: 1,
-                child: RepaintBoundary(
-                  child: Transform.translate(
-                    offset: Offset.zero,
-                    child: InAppWebView(
+                child: InAppWebView(
                     initialFile: filePath,
                     onWebViewCreated: (InAppWebViewController controller) {
                       widget.controller.editorController = controller;
@@ -345,18 +315,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           });
 
                           var selectionChangeTimeout;
-                          var isProcessingSelection = false;
+                          var lastUpdate = 0;
                           function onSelectionChange() {
-                            if (isProcessingSelection) return;
+                            var now = Date.now();
+                            if (now - lastUpdate < 300) return;
                             clearTimeout(selectionChangeTimeout);
                             selectionChangeTimeout = setTimeout(function() {
                               try {
-                                isProcessingSelection = true;
+                                lastUpdate = Date.now();
                                 let selection = document.getSelection();
-                                if (!selection || !selection.focusNode) {
-                                  isProcessingSelection = false;
-                                  return;
-                                }
+                                if (!selection || !selection.focusNode) return;
                                 
                                 var focusNode = selection.focusNode;
                                 var isBold = false;
@@ -416,11 +384,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                                   'direction': direction,
                                 };
                                 window.flutter_inappwebview.callHandler('FormatSettings', message);
-                                isProcessingSelection = false;
-                              } catch(e) {
-                                isProcessingSelection = false;
-                              }
-                            }, 200);
+                              } catch(e) {}
+                            }, 300);
                           }
                       """);
                         await controller.evaluateJavascript(
@@ -429,22 +394,12 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                         await controller.evaluateJavascript(
                             source:
                                 "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
-                        // Set background white and GPU acceleration hints
-                        await controller.evaluateJavascript(
+                        // Set background white only
+                        controller.evaluateJavascript(
                           source: """
                           (function(){
                             var editable = document.querySelector('.note-editable');
-                            if(editable){
-                              editable.style.setProperty('background-color', '#ffffff', 'important');
-                              editable.style.transform = 'translateZ(0)';
-                              editable.style.backfaceVisibility = 'hidden';
-                              editable.style.perspective = '1000px';
-                            }
-                            var noteEditor = document.querySelector('.note-editor');
-                            if(noteEditor){
-                              noteEditor.style.transform = 'translateZ(0)';
-                              noteEditor.style.backfaceVisibility = 'hidden';
-                            }
+                            if(editable) editable.style.backgroundColor = '#ffffff';
                           })();
                         """,
                         );
@@ -467,22 +422,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           controller.addJavaScriptHandler(
                               handlerName: 'setHeight',
                               callback: (height) {
-                                if (height.first == 'reset') {
-                                  resetHeight();
-                                } else {
-                                  setState(mounted, this.setState, () {
-                                    docHeight = (double.tryParse(
-                                                height.first.toString()) ??
-                                            widget.otherOptions.height) +
-                                        (toolbarKey
-                                                .currentContext?.size?.height ??
-                                            0);
-                                  });
-                                }
+                                // Height adjustment removed for performance
                               });
-                          await controller.evaluateJavascript(
-                              source:
-                                  "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
                         }
                         widget.controller.editorController!
                             .addJavaScriptHandler(
@@ -520,19 +461,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                             });
                       }
                     },
-                  ),
-                  ),
                 ),
               ),
               (widget.htmlToolbarOptions.toolbarPosition ==
                           ToolbarPosition.belowEditor &&
                       !widget.htmlEditorOptions.disabled)
-                  ? RepaintBoundary(
-                      child: ToolbarWidget(
-                        key: toolbarKey,
-                        controller: widget.controller,
-                        htmlToolbarOptions: widget.htmlToolbarOptions,
-                        callbacks: widget.callbacks))
+                  ? ToolbarWidget(
+                      key: toolbarKey,
+                      controller: widget.controller,
+                      htmlToolbarOptions: widget.htmlToolbarOptions,
+                      callbacks: widget.callbacks)
                   :
                   //  PreferredSize(
                   //   preferredSize: const Size.fromHeight(0),
@@ -555,15 +493,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   //       ),
                   //       callbacks: widget.callbacks),
                   // ),
-                  const SizedBox(
-                      height: 0,
-                      width: 0,
-                    ),
+                  const SizedBox.shrink(),
             ],
           ),
-        ),
-        ),
-      ),
     );
   }
 
