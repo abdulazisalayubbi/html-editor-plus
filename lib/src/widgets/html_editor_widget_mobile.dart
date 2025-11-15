@@ -115,17 +115,18 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       useHybridComposition:
                           widget.htmlEditorOptions.androidUseHybridComposition,
                       loadWithOverviewMode: false,
-                      enableViewportScale: false,
+                      contentInsetAdjustmentBehavior:
+                          ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
+
+                      // You can also try setting this to true to prevent general "bouncing"
+                      // when scrolling reaches the end, which might contribute to the "shaking."
+
+                      // Ensure the viewport meta tag is respected
+                      enableViewportScale: true,
                       hardwareAcceleration: true,
+
+                      // Reduce layout shifts
                       layoutAlgorithm: LayoutAlgorithm.NORMAL,
-                      disableVerticalScroll: false,
-                      disableHorizontalScroll: true,
-                      supportZoom: false,
-                      builtInZoomControls: false,
-                      displayZoomControls: false,
-                      cacheEnabled: true,
-                      useOnDownloadStart: false,
-                      useShouldInterceptRequest: false,
                     ),
                     initialUserScripts:
                         widget.htmlEditorOptions.mobileInitialScripts
