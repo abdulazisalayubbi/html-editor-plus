@@ -1264,9 +1264,16 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                             true;
                       }
                       if (proceed) {
-                        // Close keyboard when opening color picker
-                        widget.controller.editorController?.evaluateJavascript(
-                            source: "document.activeElement.blur();");
+                        // Save selection before closing keyboard
+                        await widget.controller.editorController?.evaluateJavascript(
+                            source: """
+                              window.savedSelection = null;
+                              var sel = window.getSelection();
+                              if (sel.rangeCount > 0) {
+                                window.savedSelection = sel.getRangeAt(0);
+                              }
+                              document.activeElement.blur();
+                            """);
                         
                         late Color newColor;
                         if (isFore(index)) {
@@ -1350,7 +1357,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                         child: const Text(
                                             'Reset to default colour')),
                                     TextButton(
-                                      onPressed: () {
+                                      onPressed: () async {
+                                        // Restore selection before applying color
+                                        await widget.controller.editorController?.evaluateJavascript(
+                                            source: """
+                                              if (window.savedSelection) {
+                                                var sel = window.getSelection();
+                                                sel.removeAllRanges();
+                                                sel.addRange(window.savedSelection);
+                                              }
+                                            """);
+                                        
                                         if (isFore(index)) {
                                           widget.controller.execCommand(
                                               'foreColor',
@@ -1381,10 +1398,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                         });
                                         Navigator.of(context).pop();
                                         
-                                        // Keep keyboard closed after setting color
+                                        // Keep keyboard closed and clear saved selection
                                         Future.delayed(const Duration(milliseconds: 100), () {
                                           widget.controller.editorController?.evaluateJavascript(
-                                              source: "document.activeElement.blur();");
+                                              source: """
+                                                document.activeElement.blur();
+                                                window.savedSelection = null;
+                                              """);
                                         });
                                       },
                                       child: const Text('Set colour'),
