@@ -1358,36 +1358,42 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                             'Reset to default colour')),
                                     TextButton(
                                       onPressed: () async {
-                                        // Restore selection before applying color
-                                        await widget.controller.editorController?.evaluateJavascript(
-                                            source: """
-                                              if (window.savedSelection) {
-                                                var sel = window.getSelection();
-                                                sel.removeAllRanges();
-                                                sel.addRange(window.savedSelection);
-                                              }
-                                            """);
+                                        Navigator.of(context).pop();
+                                        
+                                        // Apply color to saved selection without focusing
+                                        final colorHex = (newColor.value & 0xFFFFFF)
+                                            .toRadixString(16)
+                                            .padLeft(6, '0')
+                                            .toUpperCase();
                                         
                                         if (isFore(index)) {
-                                          widget.controller.execCommand(
-                                              'foreColor',
-                                              argument:
-                                                  (newColor.value & 0xFFFFFF)
-                                                      .toRadixString(16)
-                                                      .padLeft(6, '0')
-                                                      .toUpperCase());
+                                          await widget.controller.editorController?.evaluateJavascript(
+                                              source: """
+                                                if (window.savedSelection) {
+                                                  var sel = window.getSelection();
+                                                  sel.removeAllRanges();
+                                                  sel.addRange(window.savedSelection);
+                                                  document.execCommand('foreColor', false, '#$colorHex');
+                                                  sel.removeAllRanges();
+                                                  window.savedSelection = null;
+                                                }
+                                              """);
                                           setState(mounted, this.setState, () {
                                             _foreColorSelected = newColor;
                                           });
                                         }
                                         if (isBack(index)) {
-                                          widget.controller.execCommand(
-                                              'hiliteColor',
-                                              argument:
-                                                  (newColor.value & 0xFFFFFF)
-                                                      .toRadixString(16)
-                                                      .padLeft(6, '0')
-                                                      .toUpperCase());
+                                          await widget.controller.editorController?.evaluateJavascript(
+                                              source: """
+                                                if (window.savedSelection) {
+                                                  var sel = window.getSelection();
+                                                  sel.removeAllRanges();
+                                                  sel.addRange(window.savedSelection);
+                                                  document.execCommand('hiliteColor', false, '#$colorHex');
+                                                  sel.removeAllRanges();
+                                                  window.savedSelection = null;
+                                                }
+                                              """);
                                           setState(mounted, this.setState, () {
                                             _backColorSelected = newColor;
                                           });
@@ -1395,16 +1401,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                         setState(mounted, this.setState, () {
                                           _colorSelected[index] =
                                               !_colorSelected[index];
-                                        });
-                                        Navigator.of(context).pop();
-                                        
-                                        // Keep keyboard closed and clear saved selection
-                                        Future.delayed(const Duration(milliseconds: 100), () {
-                                          widget.controller.editorController?.evaluateJavascript(
-                                              source: """
-                                                document.activeElement.blur();
-                                                window.savedSelection = null;
-                                              """);
                                         });
                                       },
                                       child: const Text('Set colour'),
