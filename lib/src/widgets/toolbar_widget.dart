@@ -1264,6 +1264,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                             true;
                       }
                       if (proceed) {
+                        // Close keyboard when opening color picker
+                        widget.controller.editorController?.evaluateJavascript(
+                            source: "document.activeElement.blur();");
+                        
                         late Color newColor;
                         if (isFore(index)) {
                           newColor = _foreColorSelected;
@@ -1376,6 +1380,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                               !_colorSelected[index];
                                         });
                                         Navigator.of(context).pop();
+                                        
+                                        // Keep keyboard closed after setting color
+                                        Future.delayed(const Duration(milliseconds: 100), () {
+                                          widget.controller.editorController?.evaluateJavascript(
+                                              source: "document.activeElement.blur();");
+                                        });
                                       },
                                       child: const Text('Set colour'),
                                     )
