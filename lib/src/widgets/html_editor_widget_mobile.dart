@@ -95,17 +95,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                   initialFile: filePath,
                   onWebViewCreated: (InAppWebViewController controller) {
                     widget.controller.editorController = controller;
-                    var lastToolbarUpdate = DateTime.now();
                     controller.addJavaScriptHandler(
                         handlerName: 'FormatSettings',
                         callback: (e) {
-                          // Aggressive throttle - only update every 500ms
-                          final now = DateTime.now();
-                          if (now.difference(lastToolbarUpdate).inMilliseconds < 500) {
-                            return;
-                          }
-                          lastToolbarUpdate = now;
-                          
                           if (widget.controller.toolbar != null) {
                             var json = e[0] as Map<String, dynamic>;
                             widget.controller.toolbar!.updateToolbar(json);
@@ -117,7 +109,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     transparentBackground: true,
                     useShouldOverrideUrlLoading: true,
                     useHybridComposition:
-                     false,
+                      false,
+                    
                     // Allow manual zoom but prevent auto-zoom on small text
                     supportZoom: true,
                     minimumFontSize: 16,
@@ -317,19 +310,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                               $summernoteCallbacks
                           });
 
-                          var changeTimeout;
-                          var lastChangeTime = 0;
                           \$('#summernote-2').on('summernote.change', function(_, contents, \$editable) {
-                            var now = Date.now();
-                            if (now - lastChangeTime < 300) {
-                              clearTimeout(changeTimeout);
-                              changeTimeout = setTimeout(function() {
-                                lastChangeTime = Date.now();
-                                window.flutter_inappwebview.callHandler('onChangeContent', contents);
-                              }, 300);
-                              return;
-                            }
-                            lastChangeTime = now;
                             window.flutter_inappwebview.callHandler('onChangeContent', contents);
                           });
 
@@ -337,7 +318,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                           var lastUpdate = 0;
                           function onSelectionChange() {
                             var now = Date.now();
-                            if (now - lastUpdate < 500) return;
+                            if (now - lastUpdate < 300) return;
                             clearTimeout(selectionChangeTimeout);
                             selectionChangeTimeout = setTimeout(function() {
                               try {
@@ -404,7 +385,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                                 };
                                 window.flutter_inappwebview.callHandler('FormatSettings', message);
                               } catch(e) {}
-                            }, 500);
+                            }, 300);
                           }
                       """);
                       await controller.evaluateJavascript(
@@ -466,18 +447,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                           widget.callbacks!.onInit != null) {
                         widget.callbacks!.onInit!.call();
                       }
-                      //add onChange handler with throttling
-                      var lastOnChangeUpdate = DateTime.now();
+                      //add onChange handler
                       controller.addJavaScriptHandler(
                           handlerName: 'onChangeContent',
                           callback: (contents) {
-                            // Throttle onChange to reduce overhead during typing
-                            final now = DateTime.now();
-                            if (now.difference(lastOnChangeUpdate).inMilliseconds < 300) {
-                              return;
-                            }
-                            lastOnChangeUpdate = now;
-                            
+                            // Remove shouldEnsureVisible from onChange to prevent scroll jumping while typing
                             if (widget.callbacks != null &&
                                 widget.callbacks!.onChangeContent != null) {
                               widget.callbacks!.onChangeContent!
