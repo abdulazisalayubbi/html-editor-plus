@@ -79,8 +79,13 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Must call super for AutomaticKeepAliveClientMixin
-    // Return cached widget to prevent rebuild on keyboard show/hide
-    _cachedWidget ??= RepaintBoundary(
+    
+    // Build widget tree only once and cache it permanently
+    if (_cachedWidget != null) {
+      return _cachedWidget!;
+    }
+    
+    _cachedWidget = RepaintBoundary(
       child: SizedBox(
         height: widget.otherOptions.height,
         child: DecoratedBox(
@@ -125,6 +130,16 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
 
                     // Reduce layout shifts
                     layoutAlgorithm: LayoutAlgorithm.NORMAL,
+                    
+                    // Disable iOS input accessory view for smoother keyboard
+                    disableInputAccessoryView: true,
+                    
+                    // Disable vertical scroll bar to reduce render overhead
+                    disableVerticalScroll: false,
+                    disableHorizontalScroll: true,
+                    
+                    // Disable context menu for faster interaction
+                    disableContextMenu: false,
                   ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
@@ -140,7 +155,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     }
                     return NavigationActionPolicy.ALLOW;
                   },
-                  onConsoleMessage: null,
+                  onConsoleMessage: (controller, consoleMessage) {
+                    // Disable console message processing for performance
+                  },
                   onWindowFocus: (controller) async {
                     // Removed ensureVisible to prevent keyboard lag
                   },
