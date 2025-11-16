@@ -117,8 +117,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     transparentBackground: true,
                     useShouldOverrideUrlLoading: true,
                     useHybridComposition:
-                        widget.htmlEditorOptions.androidUseHybridComposition,
-                    
+                     false,
                     // Allow manual zoom but prevent auto-zoom on small text
                     supportZoom: true,
                     minimumFontSize: 16,
