@@ -1376,6 +1376,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   document.execCommand('foreColor', false, '#$colorHex');
                                                   sel.removeAllRanges();
                                                   window.savedSelection = null;
+                                                  document.activeElement.blur();
                                                 }
                                               """);
                                           setState(mounted, this.setState, () {
@@ -1392,6 +1393,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   document.execCommand('hiliteColor', false, '#$colorHex');
                                                   sel.removeAllRanges();
                                                   window.savedSelection = null;
+                                                  document.activeElement.blur();
                                                 }
                                               """);
                                           setState(mounted, this.setState, () {
