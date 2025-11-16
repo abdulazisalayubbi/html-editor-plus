@@ -53,9 +53,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   /// the editor when the keyboard is visible.
   GlobalKey toolbarKey = GlobalKey();
 
-  /// Cached widget to prevent rebuild
-  Widget? _cachedWidget;
-
   String get _assetsPath => "packages/html_editor_plus/assets";
 
   @override
@@ -80,27 +77,21 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   Widget build(BuildContext context) {
     super.build(context); // Must call super for AutomaticKeepAliveClientMixin
     
-    // Build widget tree only once and cache it permanently
-    if (_cachedWidget != null) {
-      return _cachedWidget!;
-    }
-    
-    _cachedWidget = RepaintBoundary(
-      child: SizedBox(
-        height: widget.otherOptions.height,
-        child: DecoratedBox(
-          decoration: widget.otherOptions.decoration,
-          child: Column(
-            children: [
-              if (widget.htmlToolbarOptions.toolbarPosition ==
-                  ToolbarPosition.aboveEditor)
-                ToolbarWidget(
-                    key: toolbarKey,
-                    controller: widget.controller,
-                    htmlToolbarOptions: widget.htmlToolbarOptions,
-                    callbacks: widget.callbacks),
-              Expanded(
-                child: InAppWebView(
+    return SizedBox(
+      height: widget.otherOptions.height,
+      child: DecoratedBox(
+        decoration: widget.otherOptions.decoration,
+        child: Column(
+          children: [
+            if (widget.htmlToolbarOptions.toolbarPosition ==
+                ToolbarPosition.aboveEditor)
+              ToolbarWidget(
+                  key: toolbarKey,
+                  controller: widget.controller,
+                  htmlToolbarOptions: widget.htmlToolbarOptions,
+                  callbacks: widget.callbacks),
+            Expanded(
+              child: InAppWebView(
                   initialFile: filePath,
                   onWebViewCreated: (InAppWebViewController controller) {
                     widget.controller.editorController = controller;
@@ -119,27 +110,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     useShouldOverrideUrlLoading: true,
                     useHybridComposition:
                         widget.htmlEditorOptions.androidUseHybridComposition,
-                    loadWithOverviewMode: false,
-                    contentInsetAdjustmentBehavior:
-                        ScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
-
+                    
                     // Allow manual zoom but prevent auto-zoom on small text
                     supportZoom: true,
                     minimumFontSize: 16,
-                    hardwareAcceleration: true,
-
-                    // Reduce layout shifts
-                    layoutAlgorithm: LayoutAlgorithm.NORMAL,
-                    
-                    // Disable iOS input accessory view for smoother keyboard
-                    disableInputAccessoryView: true,
-                    
-                    // Disable vertical scroll bar to reduce render overhead
-                    disableVerticalScroll: false,
-                    disableHorizontalScroll: true,
-                    
-                    // Disable context menu for faster interaction
-                    disableContextMenu: false,
                   ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
@@ -154,12 +128,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                           NavigationActionPolicy.ALLOW;
                     }
                     return NavigationActionPolicy.ALLOW;
-                  },
-                  onConsoleMessage: (controller, consoleMessage) {
-                    // Disable console message processing for performance
-                  },
-                  onWindowFocus: (controller) async {
-                    // Removed ensureVisible to prevent keyboard lag
                   },
                   onLoadStop:
                       (InAppWebViewController controller, Uri? uri) async {
@@ -502,12 +470,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     controller: widget.controller,
                     htmlToolbarOptions: widget.htmlToolbarOptions,
                     callbacks: widget.callbacks),
-            ],
-          ),
+          ],
         ),
       ),
     );
-    return _cachedWidget!;
   }
 
   /// adds the callbacks set by the user into the scripts
