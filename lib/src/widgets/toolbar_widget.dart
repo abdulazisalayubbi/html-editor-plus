@@ -1264,7 +1264,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                             true;
                       }
                       if (proceed) {
-                        // Save selection before closing keyboard
+                        // Disable heavy callbacks temporarily for performance
                         await widget.controller.editorController?.evaluateJavascript(
                             source: """
                               window.savedSelection = null;
@@ -1273,6 +1273,10 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                 window.savedSelection = sel.getRangeAt(0);
                               }
                               document.activeElement.blur();
+                              
+                              // Disable selection change callback temporarily
+                              window.selectionChangeDisabled = true;
+                              document.onselectionchange = null;
                             """);
                         
                         late Color newColor;
@@ -1320,8 +1324,47 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   ),
                                   actions: <Widget>[
                                     TextButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         Navigator.of(context).pop();
+                                        
+                                        // Re-enable selection change callback when cancelled
+                                        await widget.controller.editorController?.evaluateJavascript(
+                                            source: """
+                                              window.selectionChangeDisabled = false;
+                                              var selectionChangeTimeout;
+                                              var lastUpdate = 0;
+                                              document.onselectionchange = function onSelectionChange() {
+                                                var now = Date.now();
+                                                if (now - lastUpdate < 300) return;
+                                                clearTimeout(selectionChangeTimeout);
+                                                selectionChangeTimeout = setTimeout(function() {
+                                                  try {
+                                                    lastUpdate = Date.now();
+                                                    let selection = document.getSelection();
+                                                    if (!selection || !selection.focusNode) return;
+                                                    
+                                                    var focusNode = selection.focusNode;
+                                                    var isBold = document.queryCommandState ? document.queryCommandState('bold') : false;
+                                                    var isItalic = document.queryCommandState ? document.queryCommandState('italic') : false;
+                                                    var isUnderline = document.queryCommandState ? document.queryCommandState('underline') : false;
+                                                    var parent = document.queryCommandValue ? document.queryCommandValue('formatBlock') : '';
+                                                    var fontName = document.queryCommandValue ? document.queryCommandValue('fontName') : '';
+                                                    var fontSize = document.queryCommandValue ? document.queryCommandValue('fontSize') : 16;
+                                                    var foreColor = document.queryCommandValue ? document.queryCommandValue('foreColor') : "000000";
+                                                    var backColor = document.queryCommandValue ? document.queryCommandValue('hiliteColor') : "FFFF00";
+                                                    
+                                                    var message = {
+                                                      'style': parent,
+                                                      'fontName': fontName,
+                                                      'fontSize': fontSize,
+                                                      'font': [isBold, isItalic, isUnderline],
+                                                      'color': [foreColor, backColor]
+                                                    };
+                                                    window.flutter_inappwebview.callHandler('FormatSettings', message);
+                                                  } catch(e) {}
+                                                }, 300);
+                                              };
+                                            """);
                                       },
                                       child: const Text('Cancel'),
                                     ),
@@ -1378,6 +1421,42 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   window.savedSelection = null;
                                                   document.activeElement.blur();
                                                 }
+                                                
+                                                // Re-enable selection change callback
+                                                window.selectionChangeDisabled = false;
+                                                var selectionChangeTimeout;
+                                                var lastUpdate = 0;
+                                                document.onselectionchange = function onSelectionChange() {
+                                                  var now = Date.now();
+                                                  if (now - lastUpdate < 300) return;
+                                                  clearTimeout(selectionChangeTimeout);
+                                                  selectionChangeTimeout = setTimeout(function() {
+                                                    try {
+                                                      lastUpdate = Date.now();
+                                                      let selection = document.getSelection();
+                                                      if (!selection || !selection.focusNode) return;
+                                                      
+                                                      var focusNode = selection.focusNode;
+                                                      var isBold = document.queryCommandState ? document.queryCommandState('bold') : false;
+                                                      var isItalic = document.queryCommandState ? document.queryCommandState('italic') : false;
+                                                      var isUnderline = document.queryCommandState ? document.queryCommandState('underline') : false;
+                                                      var parent = document.queryCommandValue ? document.queryCommandValue('formatBlock') : '';
+                                                      var fontName = document.queryCommandValue ? document.queryCommandValue('fontName') : '';
+                                                      var fontSize = document.queryCommandValue ? document.queryCommandValue('fontSize') : 16;
+                                                      var foreColor = document.queryCommandValue ? document.queryCommandValue('foreColor') : "000000";
+                                                      var backColor = document.queryCommandValue ? document.queryCommandValue('hiliteColor') : "FFFF00";
+                                                      
+                                                      var message = {
+                                                        'style': parent,
+                                                        'fontName': fontName,
+                                                        'fontSize': fontSize,
+                                                        'font': [isBold, isItalic, isUnderline],
+                                                        'color': [foreColor, backColor]
+                                                      };
+                                                      window.flutter_inappwebview.callHandler('FormatSettings', message);
+                                                    } catch(e) {}
+                                                  }, 300);
+                                                };
                                               """);
                                           setState(mounted, this.setState, () {
                                             _foreColorSelected = newColor;
@@ -1395,6 +1474,42 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   window.savedSelection = null;
                                                   document.activeElement.blur();
                                                 }
+                                                
+                                                // Re-enable selection change callback
+                                                window.selectionChangeDisabled = false;
+                                                var selectionChangeTimeout;
+                                                var lastUpdate = 0;
+                                                document.onselectionchange = function onSelectionChange() {
+                                                  var now = Date.now();
+                                                  if (now - lastUpdate < 300) return;
+                                                  clearTimeout(selectionChangeTimeout);
+                                                  selectionChangeTimeout = setTimeout(function() {
+                                                    try {
+                                                      lastUpdate = Date.now();
+                                                      let selection = document.getSelection();
+                                                      if (!selection || !selection.focusNode) return;
+                                                      
+                                                      var focusNode = selection.focusNode;
+                                                      var isBold = document.queryCommandState ? document.queryCommandState('bold') : false;
+                                                      var isItalic = document.queryCommandState ? document.queryCommandState('italic') : false;
+                                                      var isUnderline = document.queryCommandState ? document.queryCommandState('underline') : false;
+                                                      var parent = document.queryCommandValue ? document.queryCommandValue('formatBlock') : '';
+                                                      var fontName = document.queryCommandValue ? document.queryCommandValue('fontName') : '';
+                                                      var fontSize = document.queryCommandValue ? document.queryCommandValue('fontSize') : 16;
+                                                      var foreColor = document.queryCommandValue ? document.queryCommandValue('foreColor') : "000000";
+                                                      var backColor = document.queryCommandValue ? document.queryCommandValue('hiliteColor') : "FFFF00";
+                                                      
+                                                      var message = {
+                                                        'style': parent,
+                                                        'fontName': fontName,
+                                                        'fontSize': fontSize,
+                                                        'font': [isBold, isItalic, isUnderline],
+                                                        'color': [foreColor, backColor]
+                                                      };
+                                                      window.flutter_inappwebview.callHandler('FormatSettings', message);
+                                                    } catch(e) {}
+                                                  }, 300);
+                                                };
                                               """);
                                           setState(mounted, this.setState, () {
                                             _backColorSelected = newColor;
