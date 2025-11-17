@@ -112,8 +112,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                         widget.htmlEditorOptions.androidUseHybridComposition,
                     
                     // Allow manual zoom but prevent auto-zoom on small text
-                    supportZoom: true,
-                    minimumFontSize: 16,
+                    // supportZoom: true,
+                    // minimumFontSize: 16,
                   ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
