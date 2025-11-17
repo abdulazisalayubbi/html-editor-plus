@@ -314,16 +314,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                             window.flutter_inappwebview.callHandler('onChangeContent', contents);
                           });
 
-                          var selectionChangeTimeout;
-                          var lastUpdate = 0;
                           function onSelectionChange() {
-                            var now = Date.now();
-                            if (now - lastUpdate < 300) return;
-                            clearTimeout(selectionChangeTimeout);
-                            selectionChangeTimeout = setTimeout(function() {
-                              try {
-                                lastUpdate = Date.now();
-                                let selection = document.getSelection();
+                            try {
+                              let selection = document.getSelection();
                                 if (!selection || !selection.focusNode) return;
                                 
                                 var focusNode = selection.focusNode;
@@ -384,8 +377,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                                   'direction': direction,
                                 };
                                 window.flutter_inappwebview.callHandler('FormatSettings', message);
-                              } catch(e) {}
-                            }, 300);
+                            } catch(e) {}
                           }
                       """);
                       await controller.evaluateJavascript(
@@ -451,7 +443,6 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       controller.addJavaScriptHandler(
                           handlerName: 'onChangeContent',
                           callback: (contents) {
-                            // Remove shouldEnsureVisible from onChange to prevent scroll jumping while typing
                             if (widget.callbacks != null &&
                                 widget.callbacks!.onChangeContent != null) {
                               widget.callbacks!.onChangeContent!
