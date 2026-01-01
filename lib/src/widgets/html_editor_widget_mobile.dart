@@ -73,11 +73,115 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     super.dispose();
   }
 
+  bool _isTruthyJsResult(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final v = value.trim().toLowerCase();
+      return v == 'true' || v == '1';
+    }
+    return false;
+  }
+
+  /// Intercepts route pops (Android system back, app bar back).
+  /// If a Summernote overlay is open (e.g. the color popup), close it and
+  /// consume the back press.
+  Future<bool> _onWillPop() async {
+    final webview = widget.controller.editorController;
+    if (webview == null) return true;
+
+    try {
+      final closedAny = await webview.evaluateJavascript(source: r"""
+(() => {
+  const isVisible = (el) => {
+    if (!el) return false;
+    const style = window.getComputedStyle ? window.getComputedStyle(el) : null;
+    if (style && (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0')) return false;
+    return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+  };
+
+  let closed = false;
+
+  // Dropdown menus (including color palette)
+  document.querySelectorAll(
+    '.dropdown-menu.show, .note-dropdown-menu.show, .note-color .dropdown-menu, .note-color .note-dropdown-menu'
+  ).forEach((menu) => {
+    if (menu.classList.contains('show') || isVisible(menu)) {
+      menu.classList.remove('show');
+      menu.style.display = 'none';
+      closed = true;
+    }
+  });
+
+  // Dropdown containers
+  document.querySelectorAll('.dropdown.show, .note-btn-group.show, .btn-group.show').forEach((el) => {
+    if (el.classList.contains('show')) {
+      el.classList.remove('show');
+      closed = true;
+    }
+  });
+
+  // Summernote dialogs/modals
+  document.querySelectorAll('.note-modal, .modal, .note-dialog').forEach((m) => {
+    if (m.classList.contains('show') || isVisible(m)) {
+      m.classList.remove('show');
+      m.style.display = 'none';
+      closed = true;
+    }
+  });
+
+  // Modal backdrops
+  document.querySelectorAll('.modal-backdrop, .note-modal-backdrop, .note-backdrop').forEach((b) => {
+    if (b && b.parentNode) {
+      b.parentNode.removeChild(b);
+      closed = true;
+    }
+  });
+
+  // Popovers
+  document.querySelectorAll('.popover, .note-popover').forEach((p) => {
+    if (isVisible(p)) {
+      p.style.display = 'none';
+      closed = true;
+    }
+  });
+
+  // jQuery safety net (Summernote uses it)
+  if (window.jQuery) {
+    const $ = window.jQuery;
+    if ($('.note-dropdown-menu:visible').length) {
+      $('.note-dropdown-menu:visible').hide();
+      closed = true;
+    }
+    if ($('.dropdown-menu.show').length) {
+      $('.dropdown-menu.show').removeClass('show').hide();
+      closed = true;
+    }
+  }
+
+  if (closed) {
+    const editable = document.querySelector('.note-editable');
+    if (editable && editable.focus) editable.focus();
+  }
+
+  return closed;
+})();
+""");
+
+      return !_isTruthyJsResult(closedAny);
+    } catch (_) {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context); // Must call super for AutomaticKeepAliveClientMixin
-    
-    return SizedBox(
+
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: SizedBox(
       height: widget.otherOptions.height,
       child: DecoratedBox(
         decoration: widget.otherOptions.decoration,
@@ -464,6 +568,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
           ],
         ),
       ),
+    ),
     );
   }
 
