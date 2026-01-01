@@ -1287,7 +1287,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         }
                         await showDialog(
                             context: context,
-                            builder: (BuildContext context) {
+                            useRootNavigator: true,
+                            builder: (BuildContext dialogContext) {
                               return PointerInterceptor(
                                 child: AlertDialog(
                                   scrollable: true,
@@ -1297,7 +1298,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                       newColor = color;
                                     },
                                     title: Text('Choose a colour',
-                                        style: Theme.of(context)
+                                        style: Theme.of(dialogContext)
                                             .textTheme
                                             .headlineLarge),
                                     width: 40,
@@ -1325,7 +1326,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   actions: <Widget>[
                                     TextButton(
                                       onPressed: () async {
-                                        Navigator.of(context).pop();
+                                        Navigator.of(dialogContext,
+                                                rootNavigator: true)
+                                            .pop();
                                         
                                         // Re-enable selection change callback when cancelled
                                         await widget.controller.editorController?.evaluateJavascript(
@@ -1395,13 +1398,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                 'hiliteColor',
                                                 argument: 'initial');
                                           }
-                                          Navigator.of(context).pop();
+                                          Navigator.of(dialogContext,
+                                                  rootNavigator: true)
+                                              .pop();
                                         },
                                         child: const Text(
                                             'Reset to default colour')),
                                     TextButton(
                                       onPressed: () async {
-                                        Navigator.of(context).pop();
+                                        Navigator.of(dialogContext,
+                                                rootNavigator: true)
+                                            .pop();
                                         
                                         // Apply color to saved selection without focusing
                                         final colorHex = (newColor.value & 0xFFFFFF)
