@@ -1289,12 +1289,25 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                             context: context,
                             useRootNavigator: true,
                             builder: (BuildContext dialogContext) {
+                              void closePicker() {
+                                final nav = Navigator.of(dialogContext,
+                                    rootNavigator: true);
+                                if (nav.canPop()) {
+                                  nav.pop();
+                                }
+                              }
+
                               return PointerInterceptor(
                                 child: AlertDialog(
                                   scrollable: true,
                                   content: ColorPicker(
                                     color: newColor,
                                     onColorChanged: (color) {
+                                      final buttonType = isFore(index)
+                                          ? ButtonType.foregroundColor
+                                          : ButtonType.highlightColor;
+                                      widget.htmlToolbarOptions.onColorChanged
+                                          ?.call(buttonType, color, closePicker);
                                       newColor = color;
                                     },
                                     title: Text('Choose a colour',

@@ -154,6 +154,7 @@ class HtmlToolbarOptions {
     this.linkInsertInterceptor,
     this.mediaLinkInsertInterceptor,
     this.mediaUploadInterceptor,
+    this.onColorChanged,
     this.onButtonPressed,
     this.onDropdownChanged,
     this.onOtherFileLinkInsert,
@@ -264,6 +265,13 @@ class HtmlToolbarOptions {
   /// If no interceptor is set, the plugin uses the internal handler.
   final FutureOr<bool> Function(PlatformFile, InsertFileType)?
       mediaUploadInterceptor;
+
+    /// Called whenever a color is changed in the toolbar color picker.
+    ///
+    /// This is triggered while the user drags the picker (may fire frequently).
+    /// The [closePicker] callback can be used to dismiss the color picker dialog.
+    final void Function(ButtonType buttonType, Color color, VoidCallback closePicker)?
+      onColorChanged;
 
   /// Allows you to intercept any button press. The function passes the ButtonType
   /// enum, which tells you which button was pressed, the current selected status of
