@@ -179,6 +179,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   Widget build(BuildContext context) {
     super.build(context); // Must call super for AutomaticKeepAliveClientMixin
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: _onWillPop,
       child: SizedBox(
