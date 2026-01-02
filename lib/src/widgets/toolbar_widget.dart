@@ -1368,53 +1368,83 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   _toolbarUiBackgroundColor(context);
                               final dialogForeground =
                                   _toolbarUiForegroundColor(context);
+                              final selectedLabelColor = _isToolbarDark(context)
+                                  ? Colors.black
+                                  : Colors.white;
+                              final baseTheme = Theme.of(context);
+                              final dialogTheme = baseTheme.copyWith(
+                                toggleButtonsTheme: ToggleButtonsThemeData(
+                                  color: dialogForeground,
+                                  selectedColor: selectedLabelColor,
+                                  borderColor:
+                                      dialogForeground.withValues(alpha: 0.25),
+                                  selectedBorderColor:
+                                      dialogForeground.withValues(alpha: 0.45),
+                                ),
+                                tabBarTheme: TabBarThemeData(
+                                  labelColor: dialogForeground,
+                                  unselectedLabelColor:
+                                      dialogForeground.withValues(alpha: 0.7),
+                                  dividerColor:
+                                      dialogForeground.withValues(alpha: 0.2),
+                                ),
+                                dividerColor:
+                                    dialogForeground.withValues(alpha: 0.2),
+                                colorScheme: baseTheme.colorScheme.copyWith(
+                                  surface: dialogBackground,
+                                  onSurface: dialogForeground,
+                                ),
+                              );
                               return PointerInterceptor(
-                                child: AlertDialog(
-                                  backgroundColor: dialogBackground,
-                                  scrollable: true,
-                                  content: ColorPicker(
-                                    color: newColor,
-                                    onColorChanged: (color) {
-                                      newColor = color;
-                                    },
-                                    title: Text('Choose a colour',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineLarge
-                                            ?.copyWith(
-                                                color: dialogForeground)),
-                                    width: 40,
-                                    height: 40,
-                                    spacing: 0,
-                                    runSpacing: 0,
-                                    borderRadius: 0,
-                                    wheelDiameter: 165,
-                                    enableOpacity: false,
-                                    showColorCode: true,
-                                    colorCodeHasColor: true,
-                                    pickersEnabled: const <ColorPickerType,
-                                        bool>{
-                                      ColorPickerType.wheel: true,
-                                    },
-                                    copyPasteBehavior:
-                                        const ColorPickerCopyPasteBehavior(
-                                      parseShortHexCode: true,
+                                child: Theme(
+                                  data: dialogTheme,
+                                  child: AlertDialog(
+                                    backgroundColor: dialogBackground,
+                                    scrollable: true,
+                                    content: ColorPicker(
+                                      color: newColor,
+                                      onColorChanged: (color) {
+                                        newColor = color;
+                                      },
+                                      title: Text('Choose a colour',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineLarge
+                                              ?.copyWith(
+                                                  color: dialogForeground)),
+                                      width: 40,
+                                      height: 40,
+                                      spacing: 0,
+                                      runSpacing: 0,
+                                      borderRadius: 0,
+                                      wheelDiameter: 165,
+                                      enableOpacity: false,
+                                      showColorCode: true,
+                                      colorCodeHasColor: true,
+                                      pickersEnabled: const <ColorPickerType,
+                                          bool>{
+                                        ColorPickerType.wheel: true,
+                                      },
+                                      copyPasteBehavior:
+                                          const ColorPickerCopyPasteBehavior(
+                                        parseShortHexCode: true,
+                                      ),
+                                      actionButtons:
+                                          const ColorPickerActionButtons(
+                                        dialogActionButtons: true,
+                                      ),
                                     ),
-                                    actionButtons:
-                                        const ColorPickerActionButtons(
-                                      dialogActionButtons: true,
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                          foregroundColor: dialogForeground),
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
+                                    actions: <Widget>[
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: dialogForeground),
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
 
-                                        // Re-enable selection change callback when cancelled
-                                        await widget.controller.editorController
-                                            ?.evaluateJavascript(source: """
+                                          // Re-enable selection change callback when cancelled
+                                          await widget
+                                              .controller.editorController
+                                              ?.evaluateJavascript(source: """
                                               window.selectionChangeDisabled = false;
                                               var selectionChangeTimeout;
                                               var lastUpdate = 0;
@@ -1450,61 +1480,62 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                 }, 300);
                                               };
                                             """);
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                          style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  dialogForeground),
+                                          onPressed: () {
+                                            if (isFore(index)) {
+                                              setState(mounted, this.setState,
+                                                  () {
+                                                _foreColorSelected =
+                                                    _defaultForegroundColor(
+                                                        context);
+                                              });
+                                              widget.controller.execCommand(
+                                                  'removeFormat',
+                                                  argument: 'foreColor');
+                                              widget.controller.execCommand(
+                                                  'foreColor',
+                                                  argument: 'initial');
+                                            }
+                                            if (isBack(index)) {
+                                              setState(mounted, this.setState,
+                                                  () {
+                                                _backColorSelected =
+                                                    Colors.yellow;
+                                              });
+                                              widget.controller.execCommand(
+                                                  'removeFormat',
+                                                  argument: 'hiliteColor');
+                                              widget.controller.execCommand(
+                                                  'hiliteColor',
+                                                  argument: 'initial');
+                                            }
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                              'Reset to default colour')),
+                                      TextButton(
                                         style: TextButton.styleFrom(
                                             foregroundColor: dialogForeground),
-                                        onPressed: () {
-                                          if (isFore(index)) {
-                                            setState(mounted, this.setState,
-                                                () {
-                                              _foreColorSelected =
-                                                  _defaultForegroundColor(
-                                                      context);
-                                            });
-                                            widget.controller.execCommand(
-                                                'removeFormat',
-                                                argument: 'foreColor');
-                                            widget.controller.execCommand(
-                                                'foreColor',
-                                                argument: 'initial');
-                                          }
-                                          if (isBack(index)) {
-                                            setState(mounted, this.setState,
-                                                () {
-                                              _backColorSelected =
-                                                  Colors.yellow;
-                                            });
-                                            widget.controller.execCommand(
-                                                'removeFormat',
-                                                argument: 'hiliteColor');
-                                            widget.controller.execCommand(
-                                                'hiliteColor',
-                                                argument: 'initial');
-                                          }
+                                        onPressed: () async {
                                           Navigator.of(context).pop();
-                                        },
-                                        child: const Text(
-                                            'Reset to default colour')),
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                          foregroundColor: dialogForeground),
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
 
-                                        // Apply color to saved selection without focusing
-                                        final colorHex =
-                                            (newColor.value & 0xFFFFFF)
-                                                .toRadixString(16)
-                                                .padLeft(6, '0')
-                                                .toUpperCase();
+                                          // Apply color to saved selection without focusing
+                                          final colorHex =
+                                              (newColor.value & 0xFFFFFF)
+                                                  .toRadixString(16)
+                                                  .padLeft(6, '0')
+                                                  .toUpperCase();
 
-                                        if (isFore(index)) {
-                                          await widget
-                                              .controller.editorController
-                                              ?.evaluateJavascript(source: """
+                                          if (isFore(index)) {
+                                            await widget
+                                                .controller.editorController
+                                                ?.evaluateJavascript(source: """
                                                 if (window.savedSelection) {
                                                   var sel = window.getSelection();
                                                   sel.removeAllRanges();
@@ -1551,14 +1582,15 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   }, 300);
                                                 };
                                               """);
-                                          setState(mounted, this.setState, () {
-                                            _foreColorSelected = newColor;
-                                          });
-                                        }
-                                        if (isBack(index)) {
-                                          await widget
-                                              .controller.editorController
-                                              ?.evaluateJavascript(source: """
+                                            setState(mounted, this.setState,
+                                                () {
+                                              _foreColorSelected = newColor;
+                                            });
+                                          }
+                                          if (isBack(index)) {
+                                            await widget
+                                                .controller.editorController
+                                                ?.evaluateJavascript(source: """
                                                 if (window.savedSelection) {
                                                   var sel = window.getSelection();
                                                   sel.removeAllRanges();
@@ -1605,18 +1637,20 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   }, 300);
                                                 };
                                               """);
+                                            setState(mounted, this.setState,
+                                                () {
+                                              _backColorSelected = newColor;
+                                            });
+                                          }
                                           setState(mounted, this.setState, () {
-                                            _backColorSelected = newColor;
+                                            _colorSelected[index] =
+                                                !_colorSelected[index];
                                           });
-                                        }
-                                        setState(mounted, this.setState, () {
-                                          _colorSelected[index] =
-                                              !_colorSelected[index];
-                                        });
-                                      },
-                                      child: const Text('Set colour'),
-                                    )
-                                  ],
+                                        },
+                                        child: const Text('Set colour'),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             });
