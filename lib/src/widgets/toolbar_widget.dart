@@ -1402,6 +1402,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     backgroundColor: dialogBackground,
                                     scrollable: true,
                                     content: ColorPicker(
+                                      
+                                      
                                       color: newColor,
                                       onColorChanged: (color) {
                                         newColor = color;
@@ -1421,9 +1423,14 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                       enableOpacity: false,
                                       showColorCode: true,
                                       colorCodeHasColor: true,
+                                      pickerTypeTextStyle: TextStyle(
+                                        color: dialogForeground,
+                                      ),
                                       pickersEnabled: const <ColorPickerType,
                                           bool>{
                                         ColorPickerType.wheel: true,
+                                        ColorPickerType.primary: true,
+                                        ColorPickerType.accent: true,
                                       },
                                       heading: Text("Primary",
                                           style: Theme.of(context)
@@ -1450,6 +1457,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                       actionButtons:
                                           const ColorPickerActionButtons(
                                         dialogActionButtons: true,
+
                                       ),
                                     ),
                                     actions: <Widget>[
