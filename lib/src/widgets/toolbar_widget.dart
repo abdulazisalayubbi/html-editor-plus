@@ -1426,6 +1426,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                       pickerTypeTextStyle: TextStyle(
                                         color: dialogForeground,
                                       ),
+                                      selectedPickerTypeColor: dialogForeground,
                                       pickersEnabled: const <ColorPickerType,
                                           bool>{
                                         ColorPickerType.wheel: true,
