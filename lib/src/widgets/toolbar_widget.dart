@@ -93,6 +93,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   /// Tracks the expanded status of the toolbar
   bool _isExpanded = false;
 
+  Color _defaultForegroundColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+  }
+
   @override
   void initState() {
     widget.controller.toolbar = this;
@@ -186,7 +192,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       });
     } else {
       setState(mounted, this.setState, () {
-        _foreColorSelected = Colors.black;
+        _foreColorSelected = _defaultForegroundColor(context);
       });
     }
     if (colorList[1] != null && colorList[1]!.isNotEmpty) {
@@ -411,7 +417,6 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     _isExpanded
                                         ? Icons.expand_less
                                         : Icons.expand_more,
-                                    color: Colors.grey,
                                   ),
                                   onPressed: () async {
                                     setState(mounted, this.setState, () {
@@ -478,7 +483,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
-    
+
     // Define separator widget - use custom separator or default vertical divider
     final Widget separator = widget.htmlToolbarOptions.separatorWidget ??
         Container(
@@ -487,7 +492,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             width: 1,
             height: 20,
             child: Container(
-              color: Colors.grey.withOpacity(0.4),
+              color: Theme.of(context).dividerColor,
             ),
           ),
         );
@@ -1226,10 +1231,12 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                             true;
                         if (proceed) {
                           widget.controller.execCommand('foreColor',
-                              argument: (Colors.black.value & 0xFFFFFF)
-                                  .toRadixString(16)
-                                  .padLeft(6, '0')
-                                  .toUpperCase());
+                              argument:
+                                  (_defaultForegroundColor(context).value &
+                                          0xFFFFFF)
+                                      .toRadixString(16)
+                                      .padLeft(6, '0')
+                                      .toUpperCase());
                           updateStatus(null);
                         }
                       }
@@ -1265,8 +1272,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                       if (proceed) {
                         // Disable heavy callbacks temporarily for performance
-                        await widget.controller.editorController?.evaluateJavascript(
-                            source: """
+                        await widget.controller.editorController
+                            ?.evaluateJavascript(source: """
                               window.savedSelection = null;
                               var sel = window.getSelection();
                               if (sel.rangeCount > 0) {
@@ -1278,7 +1285,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                               window.selectionChangeDisabled = true;
                               document.onselectionchange = null;
                             """);
-                        
+
                         late Color newColor;
                         if (isFore(index)) {
                           newColor = _foreColorSelected;
@@ -1287,31 +1294,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         }
                         await showDialog(
                             context: context,
-                            useRootNavigator: true,
-                            builder: (BuildContext dialogContext) {
-                              void closePicker() {
-                                final nav = Navigator.of(dialogContext,
-                                    rootNavigator: true);
-                                if (nav.canPop()) {
-                                  nav.pop();
-                                }
-                              }
-
+                            builder: (BuildContext context) {
                               return PointerInterceptor(
                                 child: AlertDialog(
                                   scrollable: true,
                                   content: ColorPicker(
                                     color: newColor,
                                     onColorChanged: (color) {
-                                      final buttonType = isFore(index)
-                                          ? ButtonType.foregroundColor
-                                          : ButtonType.highlightColor;
-                                      widget.htmlToolbarOptions.onColorChanged
-                                          ?.call(buttonType, color, closePicker);
                                       newColor = color;
                                     },
                                     title: Text('Choose a colour',
-                                        style: Theme.of(dialogContext)
+                                        style: Theme.of(context)
                                             .textTheme
                                             .headlineLarge),
                                     width: 40,
@@ -1339,13 +1332,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   actions: <Widget>[
                                     TextButton(
                                       onPressed: () async {
-                                        Navigator.of(dialogContext,
-                                                rootNavigator: true)
-                                            .pop();
-                                        
+                                        Navigator.of(context).pop();
+
                                         // Re-enable selection change callback when cancelled
-                                        await widget.controller.editorController?.evaluateJavascript(
-                                            source: """
+                                        await widget.controller.editorController
+                                            ?.evaluateJavascript(source: """
                                               window.selectionChangeDisabled = false;
                                               var selectionChangeTimeout;
                                               var lastUpdate = 0;
@@ -1389,7 +1380,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           if (isFore(index)) {
                                             setState(mounted, this.setState,
                                                 () {
-                                              _foreColorSelected = Colors.black;
+                                              _foreColorSelected =
+                                                  _defaultForegroundColor(
+                                                      context);
                                             });
                                             widget.controller.execCommand(
                                                 'removeFormat',
@@ -1411,27 +1404,25 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                 'hiliteColor',
                                                 argument: 'initial');
                                           }
-                                          Navigator.of(dialogContext,
-                                                  rootNavigator: true)
-                                              .pop();
+                                          Navigator.of(context).pop();
                                         },
                                         child: const Text(
                                             'Reset to default colour')),
                                     TextButton(
                                       onPressed: () async {
-                                        Navigator.of(dialogContext,
-                                                rootNavigator: true)
-                                            .pop();
-                                        
+                                        Navigator.of(context).pop();
+
                                         // Apply color to saved selection without focusing
-                                        final colorHex = (newColor.value & 0xFFFFFF)
-                                            .toRadixString(16)
-                                            .padLeft(6, '0')
-                                            .toUpperCase();
-                                        
+                                        final colorHex =
+                                            (newColor.value & 0xFFFFFF)
+                                                .toRadixString(16)
+                                                .padLeft(6, '0')
+                                                .toUpperCase();
+
                                         if (isFore(index)) {
-                                          await widget.controller.editorController?.evaluateJavascript(
-                                              source: """
+                                          await widget
+                                              .controller.editorController
+                                              ?.evaluateJavascript(source: """
                                                 if (window.savedSelection) {
                                                   var sel = window.getSelection();
                                                   sel.removeAllRanges();
@@ -1483,8 +1474,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           });
                                         }
                                         if (isBack(index)) {
-                                          await widget.controller.editorController?.evaluateJavascript(
-                                              source: """
+                                          await widget
+                                              .controller.editorController
+                                              ?.evaluateJavascript(source: """
                                                 if (window.savedSelection) {
                                                   var sel = window.getSelection();
                                                   sel.removeAllRanges();
