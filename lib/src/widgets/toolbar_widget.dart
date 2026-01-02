@@ -93,20 +93,25 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   /// Tracks the expanded status of the toolbar
   bool _isExpanded = false;
 
+  static const Color _darkUiBackground = Color(0xFF222222);
+
   bool _isToolbarDark(BuildContext context) {
     return widget.htmlToolbarOptions.toolbarDarkMode ??
         Theme.of(context).brightness == Brightness.dark;
   }
 
-  // Inverted UI theme per request:
-  // - Light mode toolbar: black background + white foreground
-  // - Dark mode toolbar: white background + black foreground
+  // Background follows theme:
+  // - Dark mode toolbar/dialog: #222222 background
+  // - Light mode toolbar/dialog: white background
   Color _toolbarUiBackgroundColor(BuildContext context) {
-    return _isToolbarDark(context) ? Colors.white : Colors.black;
+    return _isToolbarDark(context) ? _darkUiBackground : Colors.white;
   }
 
+  // Foreground uses contrasting color for readability:
+  // - Dark mode: white icons/text
+  // - Light mode: black icons/text
   Color _toolbarUiForegroundColor(BuildContext context) {
-    return _isToolbarDark(context) ? Colors.black : Colors.white;
+    return _isToolbarDark(context) ? Colors.white : Colors.black;
   }
 
   TextStyle _toolbarUiTextStyle(BuildContext context, TextStyle? base) {
@@ -360,9 +365,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   Widget build(BuildContext context) {
     final isToolbarDark = _isToolbarDark(context);
     final toolbarBackgroundColor =
-        isToolbarDark ? Colors.white : Colors.black; // inverted
-    final toolbarForegroundColor =
-        isToolbarDark ? Colors.black : Colors.white; // inverted
+        isToolbarDark ? _darkUiBackground : Colors.white;
+    final toolbarForegroundColor = isToolbarDark ? Colors.white : Colors.black;
 
     Widget themedToolbar(Widget child) {
       final themedChild = DefaultTextStyle.merge(
