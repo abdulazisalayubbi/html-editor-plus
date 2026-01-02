@@ -93,6 +93,27 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   /// Tracks the expanded status of the toolbar
   bool _isExpanded = false;
 
+  bool _isToolbarDark(BuildContext context) {
+    return widget.htmlToolbarOptions.toolbarDarkMode ??
+        Theme.of(context).brightness == Brightness.dark;
+  }
+
+  // Inverted UI theme per request:
+  // - Light mode toolbar: black background + white foreground
+  // - Dark mode toolbar: white background + black foreground
+  Color _toolbarUiBackgroundColor(BuildContext context) {
+    return _isToolbarDark(context) ? Colors.white : Colors.black;
+  }
+
+  Color _toolbarUiForegroundColor(BuildContext context) {
+    return _isToolbarDark(context) ? Colors.black : Colors.white;
+  }
+
+  TextStyle _toolbarUiTextStyle(BuildContext context, TextStyle? base) {
+    return (base ?? const TextStyle())
+        .copyWith(color: _toolbarUiForegroundColor(context));
+  }
+
   Color _defaultForegroundColor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
         ? Colors.white
@@ -337,22 +358,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isToolbarDark = widget.htmlToolbarOptions.toolbarDarkMode ??
-        Theme.of(context).brightness == Brightness.dark;
-    final toolbarBackgroundColor = isToolbarDark ? Colors.black : Colors.white;
-    final toolbarForegroundColor = isToolbarDark ? Colors.white : Colors.black;
+    final isToolbarDark = _isToolbarDark(context);
+    final toolbarBackgroundColor =
+        isToolbarDark ? Colors.white : Colors.black; // inverted
+    final toolbarForegroundColor =
+        isToolbarDark ? Colors.black : Colors.white; // inverted
 
     Widget themedToolbar(Widget child) {
-      final shouldOverrideIconTheme =
-          widget.htmlToolbarOptions.toolbarDarkMode != null &&
-              widget.htmlToolbarOptions.buttonColor == null;
-
       final themedChild = DefaultTextStyle.merge(
         style: TextStyle(color: toolbarForegroundColor),
         child: child,
       );
-
-      if (!shouldOverrideIconTheme) return themedChild;
 
       return IconTheme.merge(
         data: IconThemeData(color: toolbarForegroundColor),
@@ -526,6 +542,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
   List<Widget> _buildChildren() {
     var toolbarChildren = <Widget>[];
 
+    final uiBackground = _toolbarUiBackgroundColor(context);
+    final uiForeground = _toolbarUiForegroundColor(context);
+    final uiTextStyle =
+        _toolbarUiTextStyle(context, widget.htmlToolbarOptions.textStyle);
+
     // Define separator widget - use custom separator or default vertical divider
     final Widget separator = widget.htmlToolbarOptions.separatorWidget ??
         Container(
@@ -534,7 +555,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             width: 1,
             height: 20,
             child: Container(
-              color: Theme.of(context).dividerColor,
+              color: uiForeground.withValues(alpha: 0.35),
             ),
           ),
         );
@@ -552,19 +573,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -574,7 +595,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'Courier New',
@@ -630,19 +651,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<double>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -652,7 +673,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 1,
@@ -756,19 +777,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -778,7 +799,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'pt',
@@ -825,19 +846,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -847,7 +868,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'Courier New',
@@ -903,19 +924,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<double>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -925,7 +946,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 1,
@@ -1029,19 +1050,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -1051,7 +1072,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'pt',
@@ -1098,8 +1119,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-              color: widget.htmlToolbarOptions.buttonColor,
-              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              color: widget.htmlToolbarOptions.buttonColor ?? uiForeground,
+              selectedColor:
+                  widget.htmlToolbarOptions.buttonSelectedColor ?? uiForeground,
               fillColor: widget.htmlToolbarOptions.buttonFillColor,
               focusColor: widget.htmlToolbarOptions.buttonFocusColor,
               highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
@@ -1111,7 +1133,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
               borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
               renderBorder: widget.htmlToolbarOptions.renderBorder,
-              textStyle: widget.htmlToolbarOptions.textStyle,
+              textStyle: uiTextStyle,
               onPressed: (int index) async {
                 void updateStatus() {
                   setState(mounted, this.setState, () {
@@ -1171,8 +1193,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-              color: widget.htmlToolbarOptions.buttonColor,
-              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              color: widget.htmlToolbarOptions.buttonColor ?? uiForeground,
+              selectedColor:
+                  widget.htmlToolbarOptions.buttonSelectedColor ?? uiForeground,
               fillColor: widget.htmlToolbarOptions.buttonFillColor,
               focusColor: widget.htmlToolbarOptions.buttonFocusColor,
               highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
@@ -1184,7 +1207,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
               borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
               renderBorder: widget.htmlToolbarOptions.renderBorder,
-              textStyle: widget.htmlToolbarOptions.textStyle,
+              textStyle: uiTextStyle,
               onPressed: (int index) async {
                 void updateStatus() {
                   setState(mounted, this.setState, () {
@@ -1337,8 +1360,13 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         await showDialog(
                             context: context,
                             builder: (BuildContext context) {
+                              final dialogBackground =
+                                  _toolbarUiBackgroundColor(context);
+                              final dialogForeground =
+                                  _toolbarUiForegroundColor(context);
                               return PointerInterceptor(
                                 child: AlertDialog(
+                                  backgroundColor: dialogBackground,
                                   scrollable: true,
                                   content: ColorPicker(
                                     color: newColor,
@@ -1348,7 +1376,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     title: Text('Choose a colour',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headlineLarge),
+                                            .headlineLarge
+                                            ?.copyWith(
+                                                color: dialogForeground)),
                                     width: 40,
                                     height: 40,
                                     spacing: 0,
@@ -1373,6 +1403,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   ),
                                   actions: <Widget>[
                                     TextButton(
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: dialogForeground),
                                       onPressed: () async {
                                         Navigator.of(context).pop();
 
@@ -1418,6 +1450,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                       child: const Text('Cancel'),
                                     ),
                                     TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: dialogForeground),
                                         onPressed: () {
                                           if (isFore(index)) {
                                             setState(mounted, this.setState,
@@ -1451,6 +1485,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                         child: const Text(
                                             'Reset to default colour')),
                                     TextButton(
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: dialogForeground),
                                       onPressed: () async {
                                         Navigator.of(context).pop();
 
@@ -1583,7 +1619,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       }
                     }
                   },
-                  child: t.getIcons()[index],
+                  child: ColorFiltered(
+                    colorFilter:
+                        ColorFilter.mode(uiForeground, BlendMode.srcIn),
+                    child: t.getIcons()[index],
+                  ),
                 ),
               ),
             ),
@@ -1603,8 +1643,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-              color: widget.htmlToolbarOptions.buttonColor,
-              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              color: widget.htmlToolbarOptions.buttonColor ?? uiForeground,
+              selectedColor:
+                  widget.htmlToolbarOptions.buttonSelectedColor ?? uiForeground,
               fillColor: widget.htmlToolbarOptions.buttonFillColor,
               focusColor: widget.htmlToolbarOptions.buttonFocusColor,
               highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
@@ -1616,7 +1657,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
               borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
               renderBorder: widget.htmlToolbarOptions.renderBorder,
-              textStyle: widget.htmlToolbarOptions.textStyle,
+              textStyle: uiTextStyle,
               onPressed: (int index) async {
                 void updateStatus() {
                   setState(mounted, this.setState, () {
@@ -1657,19 +1698,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -1679,7 +1720,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'decimal',
@@ -1765,8 +1806,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-              color: widget.htmlToolbarOptions.buttonColor,
-              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              color: widget.htmlToolbarOptions.buttonColor ?? uiForeground,
+              selectedColor:
+                  widget.htmlToolbarOptions.buttonSelectedColor ?? uiForeground,
               fillColor: widget.htmlToolbarOptions.buttonFillColor,
               focusColor: widget.htmlToolbarOptions.buttonFocusColor,
               highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
@@ -1778,7 +1820,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
               borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
               renderBorder: widget.htmlToolbarOptions.renderBorder,
-              textStyle: widget.htmlToolbarOptions.textStyle,
+              textStyle: uiTextStyle,
               onPressed: (int index) async {
                 void updateStatus() {
                   _alignSelected =
@@ -1842,8 +1884,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-              color: widget.htmlToolbarOptions.buttonColor,
-              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              color: widget.htmlToolbarOptions.buttonColor ?? uiForeground,
+              selectedColor:
+                  widget.htmlToolbarOptions.buttonSelectedColor ?? uiForeground,
               fillColor: widget.htmlToolbarOptions.buttonFillColor,
               focusColor: widget.htmlToolbarOptions.buttonFocusColor,
               highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
@@ -1855,7 +1898,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
               borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
               renderBorder: widget.htmlToolbarOptions.renderBorder,
-              textStyle: widget.htmlToolbarOptions.textStyle,
+              textStyle: uiTextStyle,
               onPressed: (int index) async {
                 if (t.getIcons2()[index].icon == Icons.format_indent_increase) {
                   var proceed = await widget.htmlToolbarOptions.onButtonPressed
@@ -1888,18 +1931,20 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   ? null
                   : widget.htmlToolbarOptions.dropdownBoxDecoration ??
                       BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          border: const Border()),
+                          color: uiBackground, border: const Border()),
               child: CustomDropdownButtonHideUnderline(
                 child: CustomDropdownButton<double>(
                   elevation: widget.htmlToolbarOptions.dropdownElevation,
                   icon: widget.htmlToolbarOptions.dropdownIcon,
-                  iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                  iconEnabledColor:
+                      widget.htmlToolbarOptions.dropdownIconColor ??
+                          uiForeground,
                   iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                   itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                   focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                   dropdownColor:
-                      widget.htmlToolbarOptions.dropdownBackgroundColor,
+                      widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                          uiBackground,
                   menuDirection:
                       widget.htmlToolbarOptions.dropdownMenuDirection ??
                           (widget.htmlToolbarOptions.toolbarPosition ==
@@ -1909,7 +1954,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                   menuMaxHeight:
                       widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                           MediaQuery.of(context).size.height / 3,
-                  style: widget.htmlToolbarOptions.textStyle,
+                  style: uiTextStyle,
                   items: [
                     CustomDropdownMenuItem(
                         value: 1,
@@ -1985,8 +2030,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 width: 20,
                 height: widget.htmlToolbarOptions.toolbarItemHeight - 2,
               ),
-              color: widget.htmlToolbarOptions.buttonColor,
-              selectedColor: widget.htmlToolbarOptions.buttonSelectedColor,
+              color: widget.htmlToolbarOptions.buttonColor ?? uiForeground,
+              selectedColor:
+                  widget.htmlToolbarOptions.buttonSelectedColor ?? uiForeground,
               fillColor: widget.htmlToolbarOptions.buttonFillColor,
               focusColor: widget.htmlToolbarOptions.buttonFocusColor,
               highlightColor: widget.htmlToolbarOptions.buttonHighlightColor,
@@ -1998,7 +2044,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               borderRadius: widget.htmlToolbarOptions.buttonBorderRadius,
               borderWidth: widget.htmlToolbarOptions.buttonBorderWidth,
               renderBorder: widget.htmlToolbarOptions.renderBorder,
-              textStyle: widget.htmlToolbarOptions.textStyle,
+              textStyle: uiTextStyle,
               onPressed: (int index) async {
                 void updateStatus() {
                   _textDirectionSelected = List<bool>.filled(2, false);
@@ -2045,19 +2091,19 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             decoration: !widget.htmlToolbarOptions.renderBorder
                 ? null
                 : widget.htmlToolbarOptions.dropdownBoxDecoration ??
-                    BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        border: const Border()),
+                    BoxDecoration(color: uiBackground, border: const Border()),
             child: CustomDropdownButtonHideUnderline(
               child: CustomDropdownButton<String>(
                 elevation: widget.htmlToolbarOptions.dropdownElevation,
                 icon: widget.htmlToolbarOptions.dropdownIcon,
-                iconEnabledColor: widget.htmlToolbarOptions.dropdownIconColor,
+                iconEnabledColor:
+                    widget.htmlToolbarOptions.dropdownIconColor ?? uiForeground,
                 iconSize: widget.htmlToolbarOptions.dropdownIconSize,
                 itemHeight: widget.htmlToolbarOptions.dropdownItemHeight,
                 focusColor: widget.htmlToolbarOptions.dropdownFocusColor,
                 dropdownColor:
-                    widget.htmlToolbarOptions.dropdownBackgroundColor,
+                    widget.htmlToolbarOptions.dropdownBackgroundColor ??
+                        uiBackground,
                 menuDirection:
                     widget.htmlToolbarOptions.dropdownMenuDirection ??
                         (widget.htmlToolbarOptions.toolbarPosition ==
@@ -2067,7 +2113,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 menuMaxHeight:
                     widget.htmlToolbarOptions.dropdownMenuMaxHeight ??
                         MediaQuery.of(context).size.height / 3,
-                style: widget.htmlToolbarOptions.textStyle,
+                style: uiTextStyle,
                 items: [
                   CustomDropdownMenuItem(
                     value: 'lower',
@@ -2173,42 +2219,62 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         await showDialog(
                             context: context,
                             builder: (BuildContext context) {
+                              final dialogBackground =
+                                  _toolbarUiBackgroundColor(context);
+                              final dialogForeground =
+                                  _toolbarUiForegroundColor(context);
                               return PointerInterceptor(
                                 child: StatefulBuilder(builder:
                                     (BuildContext context,
                                         StateSetter setState) {
                                   return AlertDialog(
+                                    backgroundColor: dialogBackground,
+                                    titleTextStyle: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(color: dialogForeground),
+                                    contentTextStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(color: dialogForeground),
                                     title: const Text('Insert Table'),
                                     scrollable: true,
-                                    content: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          NumberPicker(
-                                            value: currentRows,
-                                            minValue: 1,
-                                            maxValue: 10,
-                                            onChanged: (value) => setState(
-                                                () => currentRows = value),
-                                          ),
-                                          const Text('x'),
-                                          NumberPicker(
-                                            value: currentCols,
-                                            minValue: 1,
-                                            maxValue: 10,
-                                            onChanged: (value) => setState(
-                                                () => currentCols = value),
-                                          ),
-                                        ]),
+                                    content: DefaultTextStyle.merge(
+                                      style: TextStyle(color: dialogForeground),
+                                      child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            NumberPicker(
+                                              value: currentRows,
+                                              minValue: 1,
+                                              maxValue: 10,
+                                              onChanged: (value) => setState(
+                                                  () => currentRows = value),
+                                            ),
+                                            const Text('x'),
+                                            NumberPicker(
+                                              value: currentCols,
+                                              minValue: 1,
+                                              maxValue: 10,
+                                              onChanged: (value) => setState(
+                                                  () => currentCols = value),
+                                            ),
+                                          ]),
+                                    ),
                                     actions: [
                                       TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: dialogForeground),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
                                         child: const Text('Cancel'),
                                       ),
                                       TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: dialogForeground),
                                         onPressed: () async {
                                           if (kIsWeb) {
                                             widget.controller.insertTable(
@@ -2248,7 +2314,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                       borderRadius:
                           widget.htmlToolbarOptions.buttonBorderRadius,
                     ),
-                    child: t.getIcons()[index],
+                    child: ColorFiltered(
+                      colorFilter:
+                          ColorFilter.mode(uiForeground, BlendMode.srcIn),
+                      child: t.getIcons()[index],
+                    ),
                   ),
                 ),
               )));
@@ -2326,11 +2396,24 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         await showDialog(
                             context: context,
                             builder: (BuildContext context) {
+                              final dialogBackground =
+                                  _toolbarUiBackgroundColor(context);
+                              final dialogForeground =
+                                  _toolbarUiForegroundColor(context);
                               return PointerInterceptor(
                                 child: StatefulBuilder(builder:
                                     (BuildContext context,
                                         StateSetter setState) {
                                   return AlertDialog(
+                                    backgroundColor: dialogBackground,
+                                    titleTextStyle: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(color: dialogForeground),
+                                    contentTextStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(color: dialogForeground),
                                     title: const Text('Help'),
                                     scrollable: true,
                                     content: SizedBox(
@@ -2571,6 +2654,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     ),
                                     actions: [
                                       TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: dialogForeground),
                                         onPressed: () async {
                                           Navigator.of(context).pop();
                                         },
