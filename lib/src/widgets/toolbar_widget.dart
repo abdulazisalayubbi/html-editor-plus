@@ -1425,6 +1425,24 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           bool>{
                                         ColorPickerType.wheel: true,
                                       },
+                                      heading: Text("Primary",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                  color: dialogForeground)),
+                                      subheading: Text("Accent",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                  color: dialogForeground)),
+                                      wheelSubheading: Text("Wheel",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                  color: dialogForeground)),
                                       copyPasteBehavior:
                                           const ColorPickerCopyPasteBehavior(
                                         parseShortHexCode: true,
