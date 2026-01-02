@@ -161,6 +161,7 @@ class HtmlToolbarOptions {
     this.onOtherFileUpload,
     this.toolbarType = ToolbarType.nativeScrollable,
     this.toolbarPosition = ToolbarPosition.aboveEditor,
+    this.toolbarDarkMode,
     this.videoExtensions,
     this.dropdownElevation = 8,
     this.dropdownIcon,
@@ -266,11 +267,12 @@ class HtmlToolbarOptions {
   final FutureOr<bool> Function(PlatformFile, InsertFileType)?
       mediaUploadInterceptor;
 
-    /// Called whenever a color is changed in the toolbar color picker.
-    ///
-    /// This is triggered while the user drags the picker (may fire frequently).
-    /// The [closePicker] callback can be used to dismiss the color picker dialog.
-    final void Function(ButtonType buttonType, Color color, VoidCallback closePicker)?
+  /// Called whenever a color is changed in the toolbar color picker.
+  ///
+  /// This is triggered while the user drags the picker (may fire frequently).
+  /// The [closePicker] callback can be used to dismiss the color picker dialog.
+  final void Function(
+          ButtonType buttonType, Color color, VoidCallback closePicker)?
       onColorChanged;
 
   /// Allows you to intercept any button press. The function passes the ButtonType
@@ -335,6 +337,13 @@ class HtmlToolbarOptions {
   ///
   /// By default the toolbar is above the editor.
   final ToolbarPosition toolbarPosition;
+
+  /// Controls whether the toolbar uses a dark background.
+  ///
+  /// - `null` (default): follow `Theme.of(context).brightness`.
+  /// - `true`: force dark toolbar background.
+  /// - `false`: force light toolbar background.
+  final bool? toolbarDarkMode;
 
   /// Allows you to set the allowed extensions when a user inserts a video.
   ///
