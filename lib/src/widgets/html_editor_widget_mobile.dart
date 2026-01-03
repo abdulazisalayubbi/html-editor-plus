@@ -508,6 +508,47 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                             '<link href="${"${widget.htmlEditorOptions.filePath != null ? "file:///android_asset/flutter_assets/packages/html_editor_plus/assets/" : ""}summernote-lite-dark.css"}" rel="stylesheet">';
                         await controller.evaluateJavascript(
                             source: "\$('head').append('$darkCSS');");
+
+                        // Preserve existing content colors (e.g., inline spans/links) so
+                        // dark-mode CSS doesn't force everything to white.
+                        await controller.evaluateJavascript(source: r"""
+(function() {
+  setTimeout(function() {
+    try {
+      const root = document.querySelector('.note-editable');
+      if (!root) return;
+
+      // 1) Upgrade inline colors to !important so they can't be overridden.
+      root.querySelectorAll('[style]').forEach(function(el) {
+        const inlineColor = el.style.color;
+        if (inlineColor) {
+          el.style.setProperty('color', inlineColor, 'important');
+        } else {
+          // If this element is inside a link, ensure it inherits the link color.
+          // This fixes cases where a broad `span { color: ... !important }` rule
+          // makes link text white.
+          const parentLink = el.closest && el.closest('a');
+          if (parentLink) {
+            el.style.setProperty('color', 'inherit', 'important');
+          }
+        }
+
+        const inlineBg = el.style.backgroundColor;
+        if (inlineBg) {
+          el.style.setProperty('background-color', inlineBg, 'important');
+        }
+      });
+
+      // 2) Also fix spans inside links even if they don't have an inline style.
+      root.querySelectorAll('a span').forEach(function(span) {
+        if (!span.style.color) {
+          span.style.setProperty('color', 'inherit', 'important');
+        }
+      });
+    } catch (_) {}
+  }, 0);
+})();
+""");
                       }
                       //set the text once the editor is loaded
                       if (widget.htmlEditorOptions.initialText != null) {
