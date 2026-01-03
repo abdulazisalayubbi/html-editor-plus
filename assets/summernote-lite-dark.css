@@ -1,14 +1,14 @@
-.note-editing-area, .note-status-output, .note-codable, .CodeMirror, .CodeMirror-gutter, .note-modal-content, .note-input, .note-editable {
+.note-editing-area, .note-status-output, .note-codable, .CodeMirror, .CodeMirror-gutter, .note-modal-content, .note-input {
 	background: #121212 !important;
 }
 .panel-heading, .note-toolbar, .note-statusbar {
 	background: #343434 !important;
 }
-input, select, textarea, .CodeMirror, .note-editable, [class^="note-icon-"], .caseConverter-toggle,
+input, select, textarea, .CodeMirror, [class^="note-icon-"], .caseConverter-toggle,
 button > b, button > code, button > var, button > kbd, button > samp, button > small, button > ins, button > del, button > p, button > i {
     color: #fff !important;
 }
-textarea:focus, input:focus, span, label, .note-status-output {
+textarea:focus, input:focus, label, .note-status-output {
     color: #fff !important;
 }
 .note-icon-font {
