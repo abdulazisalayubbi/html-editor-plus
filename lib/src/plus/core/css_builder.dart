@@ -49,8 +49,7 @@ class CssBuilder {
         selector:
             '.note-editor.note-airframe .note-editing-area .note-editable, .note-editor.note-frame .note-editing-area .note-editable, .note-editable',
         properties: {
-          'color': hexFromColor(color: colorScheme.onSurface),
-          'background-color': '#ffffff',
+          // Background is forced to white; keep text readable regardless of theme.
         },
       );
 
@@ -66,7 +65,8 @@ class CssBuilder {
   static String placeholder({required ColorScheme colorScheme}) => elementCss(
         selector: '.note-placeholder',
         properties: {
-          'color': "${hexFromColor(color: colorScheme.onSurface)}73",
+          // Match forced-white editor background.
+          'color': '#00000073',
         },
       );
 

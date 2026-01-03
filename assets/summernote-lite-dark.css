@@ -1,53 +1,20 @@
-.note-editing-area, .note-status-output, .note-codable, .CodeMirror, .CodeMirror-gutter, .note-modal-content, .note-input {
+.note-editing-area, .note-status-output, .note-codable, .CodeMirror, .CodeMirror-gutter, .note-modal-content, .note-input, .note-editable {
 	background: #121212 !important;
 }
 .panel-heading, .note-toolbar, .note-statusbar {
 	background: #343434 !important;
 }
-/*
-	Keep Summernote UI readable in dark mode without overriding the user's content
-	colors inside .note-editable.
-*/
-
-/* Default editor text should be light, but allow inline/user colors to win. */
+/* Default editor text: allow inline/user colors to override. */
 .note-editing-area .note-editable {
 	color: #fff;
 }
 
-/* Toolbar/status/modal UI text */
-.panel-heading,
-.panel-heading *,
-.note-toolbar,
-.note-toolbar *,
-.note-statusbar,
-.note-statusbar *,
-.note-status-output,
-.note-status-output *,
-.note-modal-content,
-.note-modal-content *,
-.note-input,
-.note-input *,
-.CodeMirror,
-.CodeMirror * {
-	color: #fff !important;
+input, select, textarea, .CodeMirror, [class^="note-icon-"], .caseConverter-toggle,
+button > b, button > code, button > var, button > kbd, button > samp, button > small, button > ins, button > del, button > p, button > i {
+    color: #fff !important;
 }
-
-/* Form controls used by Summernote dialogs */
-.note-modal-content input,
-.note-modal-content select,
-.note-modal-content textarea {
-	color: #fff !important;
-	background: #121212 !important;
-}
-
-.note-modal-content textarea:focus,
-.note-modal-content input:focus {
-	color: #fff !important;
-}
-
-/* Icons */
-[class^="note-icon-"] {
-	color: #fff !important;
+textarea:focus, input:focus, label, .note-status-output {
+    color: #fff !important;
 }
 .note-icon-font {
 	color: #000 !important;
