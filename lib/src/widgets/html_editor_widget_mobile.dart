@@ -84,6 +84,12 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     return false;
   }
 
+  String _cssHex(Color color) {
+    final argb = color.value.toRadixString(16).padLeft(8, '0');
+    // Strip alpha (AARRGGBB -> RRGGBB)
+    return '#${argb.substring(2)}';
+  }
+
   /// Intercepts route pops (Android system back, app bar back).
   /// If a Summernote overlay is open (e.g. the color popup), close it and
   /// consume the back press.
@@ -247,27 +253,31 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   }
 """);
                     if (url.contains(filePath)) {
-                      // Ensure editor background is white on mobile (enabled and disabled)
+                      final theme = Theme.of(context);
+                      final backgroundCss = _cssHex(theme.colorScheme.surface);
+                      final foregroundCss = _cssHex(theme.colorScheme.onSurface);
+
+                      // Ensure editor background matches app theme (enabled and disabled)
                       await controller.evaluateJavascript(
                         source: """
                           (function(){
                             var css = '\n'
-                              + 'html, body { background-color: #ffffff !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
-                              + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: #ffffff !important; }\\n'
+                              + 'html, body { background-color: $backgroundCss !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: $backgroundCss !important; color: $foregroundCss !important; caret-color: $foregroundCss !important; }\\n'
                               + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\\n'
-                              + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:#ffffff !important; }\\n'
+                              + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:$backgroundCss !important; color: $foregroundCss !important; }\\n'
                               + '.note-editor .note-editing-area .note-editable table,\\n'
                               + '.note-editor .note-editing-area .note-editable table td,\\n'
                               + '.note-editor .note-editing-area .note-editable table th,\\n'
-                              + '.note-editor .note-editing-area .note-editable table * { background-color: #ffffff !important; }\\n'
+                              + '.note-editor .note-editing-area .note-editable table * { background-color: $backgroundCss !important; }\\n'
                               + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; }\\n'
                               + '.note-editor { overflow: visible !important; }\\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
                             document.head.appendChild(style);
-                            document.documentElement.style.backgroundColor = '#ffffff';
-                            document.body.style.backgroundColor = '#ffffff';
+                            document.documentElement.style.backgroundColor = '$backgroundCss';
+                            document.body.style.backgroundColor = '$backgroundCss';
                           })();
                         """,
                       );
@@ -491,12 +501,17 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       await controller.evaluateJavascript(
                           source:
                               "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
-                      // Set background white only
+
+                      // Ensure editable background matches theme
                       controller.evaluateJavascript(
                         source: """
                           (function(){
                             var editable = document.querySelector('.note-editable');
-                            if(editable) editable.style.backgroundColor = '#ffffff';
+                            if(editable) {
+                              editable.style.backgroundColor = '$backgroundCss';
+                              editable.style.color = '$foregroundCss';
+                              editable.style.caretColor = '$foregroundCss';
+                            }
                           })();
                         """,
                       );

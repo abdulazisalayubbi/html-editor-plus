@@ -62,6 +62,12 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
   String get _assetsPath => "packages/html_editor_plus/assets";
 
+  String _cssHex(Color color) {
+    final argb = color.value.toRadixString(16).padLeft(8, '0');
+    // Strip alpha (AARRGGBB -> RRGGBB)
+    return '#${argb.substring(2)}';
+  }
+
   @override
   void initState() {
     actualHeight = widget.otherOptions.height;
@@ -73,11 +79,31 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
   void initSummernote() async {
     var headString = '';
+    final theme = Theme.of(widget.initBC);
+    final backgroundCss = _cssHex(theme.colorScheme.surface);
+    final foregroundCss = _cssHex(theme.colorScheme.onSurface);
+    final placeholderCss = '${_cssHex(theme.colorScheme.onSurface)}73';
+
     // CSS overrides that must load after Summernote CSS.
     // - Remove Summernote's default editor frame border
-    // - Force disabled editor background to white (override Summernote's default grey)
-    const disabledEditorCss = '''
+    // - Ensure editor starts with correct theme colors (prevents white->dark flash)
+    final disabledEditorCss = '''
 <style>
+html, body {
+  background-color: $backgroundCss !important;
+}
+
+.note-editor .note-editing-area,
+.note-editor .note-editing-area .note-editable {
+  background-color: $backgroundCss !important;
+  color: $foregroundCss !important;
+  caret-color: $foregroundCss !important;
+}
+
+.note-placeholder {
+  color: $placeholderCss !important;
+}
+
 .note-editor.note-airframe, .note-editor.note-frame {
   border: 0 !important;
   box-shadow: none !important;
@@ -89,7 +115,8 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
 .note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],
 .note-editor.note-frame .note-editing-area .note-editable[contenteditable=false] {
-  background-color: #ffffff !important;
+  background-color: $backgroundCss !important;
+  color: $foregroundCss !important;
 }
 </style>
 ''';

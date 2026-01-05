@@ -44,12 +44,14 @@ class CssBuilder {
   }
 
   /// Build the css for the Summernote editor, using a strong selector so it overrides defaults.
-  /// Force white background to satisfy app requirement.
+  /// Use theme colors so the editor matches light/dark mode immediately.
   static String editor({required ColorScheme colorScheme}) => elementCss(
         selector:
             '.note-editor.note-airframe .note-editing-area .note-editable, .note-editor.note-frame .note-editing-area .note-editable, .note-editable',
         properties: {
-          // Background is forced to white; keep text readable regardless of theme.
+          'background-color': "${hexFromColor(color: colorScheme.surface)} !important",
+          'color': "${hexFromColor(color: colorScheme.onSurface)} !important",
+          'caret-color': "${hexFromColor(color: colorScheme.onSurface)} !important",
         },
       );
 
@@ -57,7 +59,8 @@ class CssBuilder {
   static String editorDisabled({required ThemeData theme}) => elementCss(
         selector: '.note-editing-area .note-editable[contenteditable=false]',
         properties: {
-          'background-color': "#ffffff !important",
+          'background-color': "${hexFromColor(color: theme.colorScheme.surface)} !important",
+          'color': "${hexFromColor(color: theme.colorScheme.onSurface)} !important",
         },
       );
 
@@ -65,8 +68,8 @@ class CssBuilder {
   static String placeholder({required ColorScheme colorScheme}) => elementCss(
         selector: '.note-placeholder',
         properties: {
-          // Match forced-white editor background.
-          'color': '#00000073',
+          // Match editor text color, but lighter.
+          'color': '${hexFromColor(color: colorScheme.onSurface)}73',
         },
       );
 
