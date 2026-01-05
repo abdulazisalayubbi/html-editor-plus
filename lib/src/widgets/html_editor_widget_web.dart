@@ -106,6 +106,11 @@ html, body {
   transition: background-color 150ms ease, color 150ms ease;
 }
 
+.note-editor .note-editing-area,
+.note-editor .note-editing-area .note-editable {
+  overflow-y: auto !important;
+}
+
 .note-placeholder {
   color: $placeholderCss !important;
 }

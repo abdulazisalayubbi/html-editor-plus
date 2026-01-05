@@ -268,14 +268,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                             var css = ''
                               + 'html, body { background-color: $backgroundCss !important; transition: background-color 150ms ease; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
                               + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: $backgroundCss !important; color: $foregroundCss !important; caret-color: $foregroundCss !important; transition: background-color 150ms ease, color 150ms ease; }\\n'
+                              + '.note-editor .note-editing-area { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + '.note-editor .note-editing-area .note-editable { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
                               + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\\n'
                               + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:$backgroundCss !important; color: $foregroundCss !important; }\\n'
                               + '.note-editor .note-editing-area .note-editable table,\\n'
                               + '.note-editor .note-editing-area .note-editable table td,\\n'
                               + '.note-editor .note-editing-area .note-editable table th,\\n'
                               + '.note-editor .note-editing-area .note-editable table * { background-color: $backgroundCss !important; }\\n'
-                              + '.note-editable { -webkit-user-select: text; user-select: text; overflow: visible !important; }\\n'
-                              + '.note-editor { overflow: visible !important; }\\n';
+                              + '.note-editable { -webkit-user-select: text; user-select: text; }\\n';
                             var style = document.createElement('style');
                             style.type = 'text/css';
                             style.appendChild(document.createTextNode(css));
