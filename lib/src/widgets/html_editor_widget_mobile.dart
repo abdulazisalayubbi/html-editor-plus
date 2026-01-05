@@ -279,6 +279,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                               + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: $backgroundCss !important; color: $foregroundCss !important; caret-color: $foregroundCss !important; transition: background-color 150ms ease, color 150ms ease; }\\n'
                               + '.note-editor .note-editing-area { overflow-y: $overflowCss !important; -webkit-overflow-scrolling: touch !important; }\\n'
                               + '.note-editor .note-editing-area .note-editable { overflow-y: $overflowCss !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + 'html, body, .note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { -ms-overflow-style: none !important; scrollbar-width: none !important; }\\n'
+                              + 'html::-webkit-scrollbar, body::-webkit-scrollbar, .note-editor .note-editing-area::-webkit-scrollbar, .note-editor .note-editing-area .note-editable::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }\\n'
                               + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\\n'
                               + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:$backgroundCss !important; color: $foregroundCss !important; }\\n'
                               + '.note-editor .note-editing-area .note-editable table,\\n'

@@ -100,6 +100,19 @@ html, body {
   overflow-y: $overflowCss !important;
 }
 
+html, body, .note-editor .note-editing-area, .note-editor .note-editing-area .note-editable {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar,
+.note-editor .note-editing-area::-webkit-scrollbar,
+.note-editor .note-editing-area .note-editable::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
 .note-editor .note-editing-area,
 .note-editor .note-editing-area .note-editable {
   background-color: $backgroundCss !important;
