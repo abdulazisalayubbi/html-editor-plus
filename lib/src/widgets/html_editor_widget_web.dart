@@ -87,6 +87,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
     final backgroundCss = isDark ? _darkBackground : _cssHex(theme.colorScheme.surface);
     final foregroundCss = _cssHex(theme.colorScheme.onSurface);
     final placeholderCss = '${_cssHex(theme.colorScheme.onSurface)}73';
+    final overflowCss = widget.htmlEditorOptions.disabled ? 'hidden' : 'auto';
 
     // CSS overrides that must load after Summernote CSS.
     // - Remove Summernote's default editor frame border
@@ -96,6 +97,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 html, body {
   background-color: $backgroundCss !important;
   transition: background-color 150ms ease;
+  overflow-y: $overflowCss !important;
 }
 
 .note-editor .note-editing-area,
@@ -104,11 +106,7 @@ html, body {
   color: $foregroundCss !important;
   caret-color: $foregroundCss !important;
   transition: background-color 150ms ease, color 150ms ease;
-}
-
-.note-editor .note-editing-area,
-.note-editor .note-editing-area .note-editable {
-  overflow-y: auto !important;
+  overflow-y: $overflowCss !important;
 }
 
 .note-placeholder {

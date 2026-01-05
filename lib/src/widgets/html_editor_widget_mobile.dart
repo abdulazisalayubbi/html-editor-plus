@@ -39,6 +39,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     with AutomaticKeepAliveClientMixin {
   static const String _darkBackground = '#1A1A1A';
 
+  late double _currentHeight;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -60,6 +62,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
   @override
   void initState() {
     key = getRandString(10);
+    _currentHeight = widget.otherOptions.height;
     if (widget.htmlEditorOptions.filePath != null) {
       filePath = widget.htmlEditorOptions.filePath!;
     } else if (widget.plugins.isEmpty) {
@@ -69,6 +72,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     }
     super.initState();
   }
+
+  bool get _isDisplayOnly => widget.htmlEditorOptions.disabled;
+
+  bool get _useAutoHeightForDisplay =>
+      widget.htmlEditorOptions.autoAdjustHeight && _isDisplayOnly;
 
   @override
   void dispose() {
@@ -191,7 +199,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: SizedBox(
-      height: widget.otherOptions.height,
+      height: _useAutoHeightForDisplay ? _currentHeight : widget.otherOptions.height,
       child: DecoratedBox(
         decoration: widget.otherOptions.decoration,
         child: Column(
@@ -260,16 +268,17 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                           widget.htmlEditorOptions.darkMode != false;
                       final backgroundCss = isDark ? _darkBackground : _cssHex(theme.colorScheme.surface);
                       final foregroundCss = _cssHex(theme.colorScheme.onSurface);
+                      final overflowCss = _isDisplayOnly ? 'hidden' : 'auto';
 
                       // Ensure editor background matches app theme (enabled and disabled)
                       await controller.evaluateJavascript(
                         source: """
                           (function(){
                             var css = ''
-                              + 'html, body { background-color: $backgroundCss !important; transition: background-color 150ms ease; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + 'html, body { background-color: $backgroundCss !important; transition: background-color 150ms ease; overflow-y: $overflowCss !important; -webkit-overflow-scrolling: touch !important; }\\n'
                               + '.note-editor .note-editing-area, .note-editor .note-editing-area .note-editable { background-color: $backgroundCss !important; color: $foregroundCss !important; caret-color: $foregroundCss !important; transition: background-color 150ms ease, color 150ms ease; }\\n'
-                              + '.note-editor .note-editing-area { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
-                              + '.note-editor .note-editing-area .note-editable { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + '.note-editor .note-editing-area { overflow-y: $overflowCss !important; -webkit-overflow-scrolling: touch !important; }\\n'
+                              + '.note-editor .note-editing-area .note-editable { overflow-y: $overflowCss !important; -webkit-overflow-scrolling: touch !important; }\\n'
                               + '.note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],\\n'
                               + '.note-editor.note-frame .note-editing-area .note-editable[contenteditable=false]{ background-color:$backgroundCss !important; color: $foregroundCss !important; }\\n'
                               + '.note-editor .note-editing-area .note-editable table,\\n'
@@ -580,7 +589,29 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                         controller.addJavaScriptHandler(
                             handlerName: 'setHeight',
                             callback: (height) {
-                              // Height adjustment removed for performance
+                              if (!mounted) return null;
+                              if (height.isEmpty) return null;
+
+                              final value = height.first;
+                              if (value is String && value == 'reset') {
+                                if (_currentHeight != widget.otherOptions.height) {
+                                  this.setState(() => _currentHeight = widget.otherOptions.height);
+                                }
+                                return null;
+                              }
+
+                              final nextHeight = (value is num)
+                                  ? value.toDouble()
+                                  : double.tryParse(value.toString());
+
+                              if (nextHeight == null || nextHeight <= 0) return null;
+                              if ((nextHeight - _currentHeight).abs() < 1) return null;
+
+                              // Only auto-resize the widget itself in display-only mode.
+                              if (_useAutoHeightForDisplay) {
+                                this.setState(() => _currentHeight = nextHeight);
+                              }
+                              return null;
                             });
                       }
                       widget.controller.editorController!.addJavaScriptHandler(
@@ -593,6 +624,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                       if (widget.htmlEditorOptions.disabled &&
                           !callbacksInitialized) {
                         widget.controller.disable();
+                      }
+
+                      // In display-only mode, auto-size to content to avoid internal scrolling.
+                      if (_useAutoHeightForDisplay) {
+                        widget.controller.recalculateHeight();
                       }
                       //initialize callbacks
                       if (widget.callbacks != null && !callbacksInitialized) {
