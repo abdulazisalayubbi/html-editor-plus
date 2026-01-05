@@ -231,6 +231,14 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                     useShouldOverrideUrlLoading: true,
                     useHybridComposition:
                         widget.htmlEditorOptions.androidUseHybridComposition,
+
+                    // Prevent native WebView scrollbars flashing during load.
+                    verticalScrollBarEnabled: false,
+                    horizontalScrollBarEnabled: false,
+
+                    // In display-only mode, do not allow the WebView itself to scroll.
+                    disableVerticalScroll: widget.htmlEditorOptions.disabled,
+                    disableHorizontalScroll: true,
                     
                     // Allow manual zoom but prevent auto-zoom on small text
                     // supportZoom: true,
