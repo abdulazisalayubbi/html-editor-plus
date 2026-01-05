@@ -238,7 +238,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
                   ),
                   initialUserScripts:
                       widget.htmlEditorOptions.mobileInitialScripts
-                          as UnmodifiableListView<UserScript>?,
+                        as UnmodifiableListView<UserScript>?,
                   contextMenu: widget.htmlEditorOptions.mobileContextMenu
                       as ContextMenu?,
                   shouldOverrideUrlLoading: (controller, action) async {

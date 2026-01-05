@@ -26,6 +26,21 @@
   .note-frame {
       border-radius: 0px;
   }
+
+    /* Prevent white scrollbar flash; keep scrollbar visually hidden */
+    html, body {
+      scrollbar-color: #1A1A1A #1A1A1A;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      background: #1A1A1A;
+    }
+    html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+      background-color: #1A1A1A;
+    }
 </style>
 </body>
 </html>

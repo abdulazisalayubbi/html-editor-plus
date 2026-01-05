@@ -98,6 +98,7 @@ html, body {
   background-color: $backgroundCss !important;
   transition: background-color 150ms ease;
   overflow-y: $overflowCss !important;
+  scrollbar-color: $backgroundCss $backgroundCss !important;
 }
 
 html, body, .note-editor .note-editing-area, .note-editor .note-editing-area .note-editable {
@@ -111,6 +112,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar,
   width: 0 !important;
   height: 0 !important;
   display: none !important;
+  background: $backgroundCss !important;
+}
+
+html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb,
+.note-editor .note-editing-area::-webkit-scrollbar-thumb,
+.note-editor .note-editing-area .note-editable::-webkit-scrollbar-thumb {
+  background-color: $backgroundCss !important;
 }
 
 .note-editor .note-editing-area,
