@@ -37,6 +37,8 @@ class HtmlEditorWidget extends StatefulWidget {
 /// A stateful widget is necessary here to allow the height to dynamically adjust.
 class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
     with AutomaticKeepAliveClientMixin {
+  static const String _darkBackground = '#1A1A1A';
+
   @override
   bool get wantKeepAlive => true;
 
@@ -254,7 +256,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget>
 """);
                     if (url.contains(filePath)) {
                       final theme = Theme.of(context);
-                      final backgroundCss = _cssHex(theme.colorScheme.surface);
+                      final isDark = (theme.brightness == Brightness.dark || widget.htmlEditorOptions.darkMode == true) &&
+                          widget.htmlEditorOptions.darkMode != false;
+                      final backgroundCss = isDark ? _darkBackground : _cssHex(theme.colorScheme.surface);
                       final foregroundCss = _cssHex(theme.colorScheme.onSurface);
 
                       // Ensure editor background matches app theme (enabled and disabled)

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 /// The CSS will be based of current [Theme.colorScheme] to ensure the editor is always
 /// displayed with the correct colors. Both in light and dark modes.
 class CssBuilder {
+  static const String _darkBackground = '#1A1A1A';
+
   /// Get the hex code for the [color].
   ///
   /// `#` is added to the start of the hex code.
@@ -49,7 +51,7 @@ class CssBuilder {
         selector:
             '.note-editor.note-airframe .note-editing-area .note-editable, .note-editor.note-frame .note-editing-area .note-editable, .note-editable',
         properties: {
-          'background-color': "${hexFromColor(color: colorScheme.surface)} !important",
+          'background-color': "${colorScheme.brightness == Brightness.dark ? _darkBackground : hexFromColor(color: colorScheme.surface)} !important",
           'color': "${hexFromColor(color: colorScheme.onSurface)} !important",
           'caret-color': "${hexFromColor(color: colorScheme.onSurface)} !important",
         },
@@ -59,7 +61,7 @@ class CssBuilder {
   static String editorDisabled({required ThemeData theme}) => elementCss(
         selector: '.note-editing-area .note-editable[contenteditable=false]',
         properties: {
-          'background-color': "${hexFromColor(color: theme.colorScheme.surface)} !important",
+          'background-color': "${theme.colorScheme.brightness == Brightness.dark ? _darkBackground : hexFromColor(color: theme.colorScheme.surface)} !important",
           'color': "${hexFromColor(color: theme.colorScheme.onSurface)} !important",
         },
       );

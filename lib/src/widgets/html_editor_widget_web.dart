@@ -42,6 +42,8 @@ class HtmlEditorWidget extends StatefulWidget {
 /// A stateful widget is necessary here, otherwise the IFrameElement will be
 /// rebuilt excessively, hurting performance
 class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
+  static const String _darkBackground = '#1A1A1A';
+
   /// The view ID for the IFrameElement. Must be unique.
   late String createdViewId;
 
@@ -80,7 +82,9 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   void initSummernote() async {
     var headString = '';
     final theme = Theme.of(widget.initBC);
-    final backgroundCss = _cssHex(theme.colorScheme.surface);
+    final isDark = (theme.brightness == Brightness.dark || widget.htmlEditorOptions.darkMode == true) &&
+        widget.htmlEditorOptions.darkMode != false;
+    final backgroundCss = isDark ? _darkBackground : _cssHex(theme.colorScheme.surface);
     final foregroundCss = _cssHex(theme.colorScheme.onSurface);
     final placeholderCss = '${_cssHex(theme.colorScheme.onSurface)}73';
 
