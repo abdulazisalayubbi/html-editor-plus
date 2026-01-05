@@ -73,9 +73,20 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
   void initSummernote() async {
     var headString = '';
-    // Force disabled editor background to white (override Summernote's default grey)
+    // CSS overrides that must load after Summernote CSS.
+    // - Remove Summernote's default editor frame border
+    // - Force disabled editor background to white (override Summernote's default grey)
     const disabledEditorCss = '''
 <style>
+.note-editor.note-airframe, .note-editor.note-frame {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.note-frame {
+  border-radius: 0 !important;
+}
+
 .note-editor.note-airframe .note-editing-area .note-editable[contenteditable=false],
 .note-editor.note-frame .note-editing-area .note-editable[contenteditable=false] {
   background-color: #ffffff !important;

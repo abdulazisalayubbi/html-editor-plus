@@ -430,16 +430,12 @@ class HtmlToolbarOptions {
 /// Other options such as the height of the widget and the decoration surrounding it
 class OtherOptions {
   const OtherOptions({
-    this.decoration = const BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(4)),
-      border:
-          Border.fromBorderSide(BorderSide(color: Color(0xffececec), width: 1)),
-    ),
+    this.decoration = const BoxDecoration(),
     this.height = 400,
   });
 
   /// The BoxDecoration to use around the Html editor. By default, the widget
-  /// uses a thin, dark, rounded rectangle border around the widget.
+  /// has no border decoration.
   final BoxDecoration decoration;
 
   /// Sets the height of the Html editor widget. This takes the toolbar into
