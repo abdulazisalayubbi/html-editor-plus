@@ -95,6 +95,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 <style>
 html, body {
   background-color: $backgroundCss !important;
+  transition: background-color 150ms ease;
 }
 
 .note-editor .note-editing-area,
@@ -102,6 +103,7 @@ html, body {
   background-color: $backgroundCss !important;
   color: $foregroundCss !important;
   caret-color: $foregroundCss !important;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 .note-placeholder {
