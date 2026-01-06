@@ -155,6 +155,7 @@ class HtmlToolbarOptions {
     this.mediaLinkInsertInterceptor,
     this.mediaUploadInterceptor,
     this.onColorChanged,
+    this.onColorPickerVisibilityChanged,
     this.onButtonPressed,
     this.onDropdownChanged,
     this.onOtherFileLinkInsert,
@@ -274,6 +275,14 @@ class HtmlToolbarOptions {
   final void Function(
           ButtonType buttonType, Color color, VoidCallback closePicker)?
       onColorChanged;
+
+    /// Called whenever the toolbar color picker dialog is shown/hidden.
+    ///
+    /// Use this to track whether the foreground/highlight color popup is open.
+    /// The [buttonType] will be either [ButtonType.foregroundColor] or
+    /// [ButtonType.highlightColor].
+    final void Function(ButtonType buttonType, bool isVisible)?
+      onColorPickerVisibilityChanged;
 
   /// Allows you to intercept any button press. The function passes the ButtonType
   /// enum, which tells you which button was pressed, the current selected status of

@@ -1361,9 +1361,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                         } else {
                           newColor = _backColorSelected;
                         }
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
+                        final pickerButtonType = isFore(index)
+                            ? ButtonType.foregroundColor
+                            : ButtonType.highlightColor;
+
+                        widget.htmlToolbarOptions.onColorPickerVisibilityChanged
+                            ?.call(pickerButtonType, true);
+
+                        try {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
                               final dialogBackground =
                                   _toolbarUiBackgroundColor(context);
                               final dialogForeground =
@@ -1407,6 +1415,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                       color: newColor,
                                       onColorChanged: (color) {
                                         newColor = color;
+
+                                        widget.htmlToolbarOptions.onColorChanged
+                                            ?.call(
+                                          pickerButtonType,
+                                          color,
+                                          () {
+                                            if (Navigator.of(context).canPop()) {
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                        );
                                       },
                                       title: Text('Choose a colour',
                                           style: Theme.of(context)
@@ -1461,6 +1480,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
                                       ),
                                     ),
+                                  
                                     actions: <Widget>[
                                       TextButton(
                                         style: TextButton.styleFrom(
@@ -1514,7 +1534,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           style: TextButton.styleFrom(
                                               foregroundColor:
                                                   dialogForeground),
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (isFore(index)) {
                                               setState(mounted, this.setState,
                                                   () {
@@ -1543,6 +1563,17 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                   argument: 'initial');
                                             }
                                             Navigator.of(context).pop();
+
+                                            // Re-enable selection change callback after reset
+                                            await widget
+                                                .controller.editorController
+                                                ?.evaluateJavascript(source: """
+                                              window.selectionChangeDisabled = false;
+                                              if (typeof onSelectionChange === 'function') {
+                                                document.onselectionchange = onSelectionChange;
+                                                try { onSelectionChange(); } catch(e) {}
+                                              }
+                                            """);
                                           },
                                           child: const Text(
                                               'Reset to default colour')),
@@ -1669,18 +1700,25 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                               _backColorSelected = newColor;
                                             });
                                           }
+                                          // Do not keep this button in a selected/toggled state.
+                                          // The dialog already provides a reset action.
                                           setState(mounted, this.setState, () {
-                                            _colorSelected[index] =
-                                                !_colorSelected[index];
+                                            _colorSelected[index] = false;
                                           });
                                         },
                                         child: const Text('Set colour'),
                                       )
                                     ],
+                               
                                   ),
                                 ),
                               );
                             });
+                        } finally {
+                          widget.htmlToolbarOptions
+                              .onColorPickerVisibilityChanged
+                              ?.call(pickerButtonType, false);
+                        }
                       }
                     }
                   },
@@ -1690,6 +1728,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     child: t.getIcons()[index],
                   ),
                 ),
+             
               ),
             ),
           );
