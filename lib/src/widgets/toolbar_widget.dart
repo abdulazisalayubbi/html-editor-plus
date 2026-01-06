@@ -1421,9 +1421,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           pickerButtonType,
                                           color,
                                           () {
-                                            if (Navigator.of(context).canPop()) {
-                                              Navigator.of(context).pop();
-                                            }
+                                            // if (Navigator.of(context).canPop()) {
+                                            //   Navigator.of(context).pop();
+                                            // }
                                           },
                                         );
                                       },
